@@ -15,7 +15,12 @@
     "karma-jasmine": "^0.3.5",
     "karma-junit-reporter": "^0.2.2",
     "protractor": "^2.1.0",
-    "shelljs": "^0.2.6"
+    "shelljs": "^0.2.6",
+    "express": "4.x.x"
+  },
+  "dependencies":{
+    "body-parser": "1.x.x",
+    "youtube-node": "1.3.x"
   },
   "scripts": {
     "postinstall": "bower install",

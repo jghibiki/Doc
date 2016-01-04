@@ -7,13 +7,13 @@ docServices.factory("authentication", ["$resource", function($resource){
 
 	authService.authToken = null;
 
-	authService.xhr = $resource("authenticate/:verify", {}, {
+	authService._xhr = $resource("api/authenticate/:verify", {}, {
 		verify: {method: "POST", params:{verify: "verify"}, isArray:false},
 		login: {method: "POST", params:{}, isArray:false}
 	});
 
 	authService.login = function(username, password, callback){
-		this.xhr.login({
+		this._xhr.login({
 			username: username,
 			password: password
 		}, function(response){
@@ -32,7 +32,7 @@ docServices.factory("authentication", ["$resource", function($resource){
 	authService._verify = function(){
 		if(!this._verifying && this.authToken !== null){
 			this._verifying = true;
-			this.xhr.verify({
+			this._xhr.verify({
 				auth_token: this.authToken
 			}, function(response){
 				if(response.valid === false){
@@ -55,3 +55,22 @@ docServices.factory("authentication", ["$resource", function($resource){
 
 	return authService;
 }]);
+
+docServices.factory("queue", ["$resource", function($resource){
+	var queueService = {};
+
+	queueService._xhr = $resource("api/queue/:requestId", {}, {});
+
+	queueService.get = function(callback){
+		var queue = this._xhr.query();
+		callback(queue);
+	};
+
+	queueService.add = function(request, callback){
+		var response = this._xhr.save(request);
+		callback(response);	
+	}
+
+	return queueService;
+}]);
+

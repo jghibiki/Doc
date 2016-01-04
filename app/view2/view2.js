@@ -13,5 +13,5 @@ angular.module('doc.view2', ['ngRoute'])
 	socket.on("s2c", function(msg){
 		$scope.count = msg;
 		socket.emit('c2s', msg+1);
-	})	
+	});
 }]);

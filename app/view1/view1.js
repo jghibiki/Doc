@@ -9,6 +9,24 @@ angular.module('doc.view1', ['ngRoute'])
   });
 }])
 
-.controller('View1Ctrl', [function() {
+.controller('View1Ctrl', ["$scope", "queue", function($scope, queue) {
+	function updateQueue(){
+		queue.get(function(response){
+			$scope.queue = response
+		});
+	}
 
+	updateQueue();
+
+	$scope.submitRequest = function(){
+		queue.add({
+			url: $scope.url,
+			title: $scope.title,
+			uploader: "",
+			description: "",
+			thumbnail: ""
+		}, function(res){
+			updateQueue();
+		});
+	}	
 }]);

@@ -1,1 +1,23 @@
 <p>This is the partial for view 1.</p>
+
+<h3>Queue:</h3>
+<div>
+	<ul ng-repeat="request in queue">
+		<li>
+			Title: {{request.title}}
+			<ul>
+				<li>
+					URL: {{request.url}}
+				</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+
+<h3>Add Request</h3>
+<div>
+	<p>url: <input ng-model="url"></p>
+	<p>title:<input ng-model="title"></p>
+	<p><button ng-click="submitRequest()">Submit</button>
+</div>
+

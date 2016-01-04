@@ -3,6 +3,7 @@
 // Declare app level module which depends on views, and components
 angular.module('doc', [
   'ngRoute',
+  'ngResource',
   'btford.socket-io',
   'doc.view1',
   'doc.view2',
