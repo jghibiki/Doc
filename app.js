@@ -1,12 +1,13 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var YouTube = require("youtube-node");
+var moment = require("moment");
 
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-server.listen(8000);
+server.listen(8000, "0.0.0.0");
 console.log("Listening on port 8000.")
 app.use(express.static("./app"))
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -56,6 +57,7 @@ router.get('/queue', function(req, res){
 router.post('/queue', function(req, res){
 	var obj = {
 		id: guid(),
+		yt: req.body.yt,
 		url: req.body.url,
 		title: req.body.title,
 		uploader: req.body.uploader,
@@ -63,8 +65,19 @@ router.post('/queue', function(req, res){
 		thumbnail: req.body.thumbnail,
 		date: new Date(),
 	};
-	queue.push(obj);
-	res.json(obj);
+
+	youtube.getById(req.body.yt, function(error, result){
+		if(error){
+			console.log("Error: " + error)
+		}
+		else{
+			obj.duration = result.items[0].contentDetails.duration;
+			obj.description = result.items[0].snippet.description;
+			queue.push(obj);
+		}
+	});
+
+	// res.json(obj);
 });
 
 /* Search */
@@ -79,9 +92,10 @@ router.get("/search/:q", function(req, res){
 				if(result.items[i].id.kind === "youtube#video"){
 					item = result.items[i];
 					payload.push({
-						url: item.id.videoId,
+						url: "https://www.youtube.com/embed/" + item.id.videoId + "?autoplay=1",
+						yt: item.id.videoId,
 						title: item.snippet.title,
-						uploader: "",
+						uploader: item.snippet.channelTittle,
 						description: item.snippet.description,
 						thumbnail: item.snippet.thumbnails.high
 					});
@@ -99,16 +113,23 @@ app.use("/api", router)
 Web Sockets
 **********/
 io.on('connection', function (socket) {
-  var i = 0;
-  socket.emit('s2c', i++);
-
-  socket.on('c2s', function (data) {
-    console.log(data);
-    setTimeout(function(){
-		socket.emit('s2c', i++);
-	}, 1000);
-  });
+	socket.on("newSong", function(){
+		newSong(socket);
+	})
 });
+
+function newSong(socket){
+	if(queue.length > 0){
+		var song = queue.shift();
+		console.log("Sending Song url: " + song.url);
+		socket.emit("song", song);
+	}
+	else{
+		console.log("No songs yet...")	
+		setTimeout(newSong, 1000, socket);
+	}
+}
+
 
 
 

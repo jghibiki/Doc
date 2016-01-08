@@ -1,0 +1,36 @@
+<div>
+<h3>Queue</h3>
+<span ng-if="queue.length === 0"><em>No reqests in queue.</em></span>
+<ul ng-repeat="request in queue">
+  <li>
+    Title: {{request.title}}
+    <ul>
+      <li>
+        <span>URL: {{request.url}}</span>
+        <span><burron ng-click="requestSong(request.id)"></burron></span>
+      </li>
+    </ul>
+  </li>
+</ul>
+<div>
+
+<div>
+<h3>Add Request</h3>
+<div>
+  <p>Query: <input ng-model="url"></p>
+  <p><button ng-click="searchSong()">Submit</button>
+</div>
+<div>
+
+<div ng-if="searchResults.length > 0">
+<h3>Search Results</h3>
+<ul ng-repeat="result in searchResults">
+  <li>
+    <div>
+      <span>{{result.title}}</span>
+      <span>{{result.url}}</span>
+      <button ng-click="requestSong(result.yt)">Request</button>
+    </div>
+  </li>
+</ul>
+</div>

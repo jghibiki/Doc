@@ -62,15 +62,28 @@ docServices.factory("queue", ["$resource", function($resource){
 	queueService._xhr = $resource("api/queue/:requestId", {}, {});
 
 	queueService.get = function(callback){
-		var queue = this._xhr.query();
-		callback(queue);
+		var queue = this._xhr.query(function(){
+			callback(queue);
+		});
 	};
 
 	queueService.add = function(request, callback){
-		var response = this._xhr.save(request);
-		callback(response);	
+		var response = this._xhr.save(request, function(){
+			callback(response);	
+		});
 	}
 
 	return queueService;
+}]);
+
+docServices.factory("search", ["$resource", function($resource){
+	var xhr = $resource("api/search/:q", {}, {})
+
+	return function(query, callback){
+		var result = xhr.query({q: query}, function(){
+			callback(result);	
+		});
+	}
+
 }]);
 

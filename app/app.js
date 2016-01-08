@@ -5,13 +5,19 @@ angular.module('doc', [
   'ngRoute',
   'ngResource',
   'btford.socket-io',
-  'doc.view1',
-  'doc.view2',
+  'doc.client',
+  'doc.player',
   'doc.version',
   'docServices'
 ]).
-config(['$routeProvider', function($routeProvider) {
-  $routeProvider.otherwise({redirectTo: '/view1'});
+config(['$routeProvider', "$sceDelegateProvider", function($routeProvider, $sceDelegateProvider) {
+  $routeProvider.otherwise({redirectTo: '/'});
+
+  $sceDelegateProvider.resourceUrlWhitelist([
+    "self",
+    "http://www.youtube.com/**",
+    "https://www.youtube.com/**"
+    ])
 }]).
 factory('socket', function (socketFactory) {
   return socketFactory({
