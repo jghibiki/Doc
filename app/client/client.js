@@ -13,16 +13,88 @@ angular.module('doc.client', ['ngRoute'])
   });
 }])
 
-.controller('ClientCtrl', ["$scope", "queue", "search", function($scope, queue, search) {
+.controller('ClientCtrl', ["$scope", "queue", "search", "playback", function($scope, queue, search, playback) {
 	function updateQueue(){
 		queue.get(function(response){
 			if($scope.queue.length != response.length){
-				$scope.queue = response
+				$scope.queue = response.queue;
+				$scope.currentlyPlaying = response.current;
 			}
 		});
 	}
 	$scope.queue = [];
+	$scope.currentlyPlaying = null;
 	$scope.queueTimer = setInterval(updateQueue, 2000);
+	$scope.relatedCheckbox = false;
+	$scope.recentCheckbox = false;
+	$scope.relatedToRecentCheckbox = false;
+
+
+	/* Skip Current Song */
+	$scope.skipSong = function(){
+		playback.skip();
+	}
+
+	/* Related */
+
+	$scope.relatedCheckboxClicked = function(){
+		playback.setRelated($scope.relatedCheckbox, function(resp){
+			$scope.relatedCheckbox = resp.state;
+		});
+	}
+	
+	function updateRelatedCheckbox(){
+		playback.getRelated(function(resp){
+			$scope.relatedCheckbox = resp.state;
+		})
+	}
+
+	updateRelatedCheckbox();
+	$scope.updateRelatedCheckboxTimer = setInterval(updateRelatedCheckbox, 10000);
+
+	$scope.clearRelated = function(){
+		playback.clearRelatedList();
+	}
+
+
+	/* Related To Recent */
+
+	$scope.relatedToRecentCheckboxClicked = function(){
+		playback.setRelatedToRecent($scope.relatedToRecentCheckbox, function(resp){
+			$scope.relatedToRecentCheckbox = resp.state;
+		});
+	}
+
+	function updateRelatedToRecentCheckbox(){
+		playback.getRelatedToRecent(function(resp){
+			$scope.relatedToRecentCheckbox = resp.state;
+		});
+	};
+
+	updateRelatedToRecentCheckbox();
+	$scope.updateRelatedToRecentCheckboxTimer = setInterval(updateRelatedToRecentCheckbox, 10000);
+
+
+
+	/* Recent */
+
+	$scope.recentCheckboxClicked = function(){
+		playback.setRecent($scope.recentCheckbox, function(resp){
+			$scope.recentCheckbox = resp.state;
+		});
+	}
+
+	function updateRecentCheckbox(){
+		playback.getRecent(function(resp){
+			$scope.recentCheckbox = resp.state;
+		});
+	}
+
+	updateRelatedCheckbox();
+	$scope.updateRecentCheckboxTimer = setInterval(updateRelatedCheckbox, 10000);
+
+
+	/* Search Song */
 
 	$scope.searchSong = function(){
 		search($scope.url, function(results){

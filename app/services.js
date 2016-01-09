@@ -59,7 +59,9 @@ docServices.factory("authentication", ["$resource", function($resource){
 docServices.factory("queue", ["$resource", function($resource){
 	var queueService = {};
 
-	queueService._xhr = $resource("api/queue/:requestId", {}, {});
+	queueService._xhr = $resource("api/queue/:requestId", {}, {
+		query: { action: "GET", isArray: false}
+	});
 
 	queueService.get = function(callback){
 		var queue = this._xhr.query(function(){
@@ -85,5 +87,76 @@ docServices.factory("search", ["$resource", function($resource){
 		});
 	}
 
+}]);
+
+docServices.factory("playback", ["$resource", function($resource){
+	var playbackService = {};
+	
+	playbackService._related_xhr =  $resource("api/playback/related", {}, {});
+	playbackService._recent_xhr = $resource("api/playback/recent", {}, {});
+	playbackService._skip_xhr = $resource("api/playback/skip", {}, {});
+	playbackService._relatedToRecent_xhr = $resource("api/playback/relatedToRecent", {}, {});
+
+	/*  Recent */
+
+	playbackService.getRecent = function(callback){
+		var response = this._recent_xhr.get(function(){
+			callback(response);
+		});
+	};
+
+	playbackService.setRecent = function(value, callback){
+		var response = this._recent_xhr.save({state: value}, function(){
+			callback(response);
+		});
+	};
+
+	playbackService.clearRecentList = function(callback){
+		var response = this._recent_xhr.delete(function(){
+			if(callback !== null){
+				callback(response);
+			}
+		});
+	};
+
+	/* Related To Recent */
+
+	playbackService.getRelatedToRecent = function(callback){
+		var response = this._relatedToRecent_xhr.get(function(){
+			callback(response);
+		});
+	};
+
+	playbackService.setRelatedToRecent = function(value, callback){
+		var response = this._relatedToRecent_xhr.save({state: value}, function(){
+			callback(response);	
+		});
+	};
+
+	
+	/* Related */
+
+	playbackService.getRelated = function(callback){
+		var response = this._related_xhr.get(function(){
+			callback(response);
+		});
+	};
+
+	playbackService.setRelated = function(value, callback){
+		var response = this._related_xhr.save({state: value}, function(){
+			callback(response);
+		});
+	};
+
+
+	playbackService.skip = function(callback){
+		var response = this._skip_xhr.save(function(){
+			if(callback === null){
+				callback(response);
+			}
+		});
+	};
+
+	return playbackService;
 }]);
 

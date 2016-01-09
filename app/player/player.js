@@ -11,15 +11,28 @@ angular.module('doc.player', ['ngRoute'])
 
 .controller('PlayerCtrl', ["$scope", "socket", function($scope, socket) {
 	$scope.song = null
+	$scope.stale = false;
 	socket.on("song", function(song){
 		$scope.song = song;
-		setTimeout(function(){
+		$scope.songTimeout = setTimeout(function(){
 			$scope.song = null;
 			$scope.$apply();
 			console.log("Requesting next song.");
 			socket.emit("newSong");
 		}, moment.duration(song.duration).asMilliseconds());
 	});
+
+	socket.on("ready", function(){
+		if($scope.song !== null){
+			socket.emit("fixCurrent", $scope.song);
+		}
+	})
+
+	socket.on("skip", function(){
+		clearTimeout($scope.songTimeout);
+		$scope.song = null;
+		socket.emit("newSong");
+	})
 
 	socket.emit("newSong");
 }]);

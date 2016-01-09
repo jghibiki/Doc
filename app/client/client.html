@@ -1,36 +1,55 @@
 <div>
-<h3>Queue</h3>
-<span ng-if="queue.length === 0"><em>No reqests in queue.</em></span>
-<ul ng-repeat="request in queue">
-  <li>
-    Title: {{request.title}}
-    <ul>
-      <li>
-        <span>URL: {{request.url}}</span>
-        <span><burron ng-click="requestSong(request.id)"></burron></span>
-      </li>
-    </ul>
-  </li>
-</ul>
+  <h3>Currently Playing</h3>
+  <span ng-if="!currentlyPlaying"><em>Nothing is currently playing.</em></span>
+  <span>{{currentlyPlaying}}</span>
+</div>
+
+<div>
+  <h3>Queue</h3>
+  <span ng-if="queue.length === 0"><em>No reqests in queue.</em></span>
+  <ol ng-repeat="request in queue">
+    <li>
+      {{request.title}}
+      <!--
+      <ul>
+        <li>
+          <span>Description {{request.description}}</span>
+          <span><burron ng-click="requestSong(request.id)"></burron></span>
+        </li>
+      </ul>
+      -->
+    </li>
+  </ol>
 <div>
 
 <div>
-<h3>Add Request</h3>
-<div>
-  <p>Query: <input ng-model="url"></p>
-  <p><button ng-click="searchSong()">Submit</button>
+  <h3>Controls</h3>
+  <div>
+    <p><input type="checkbox" ng-model="recentCheckbox" ng-click="recentCheckboxClicked()"> Allow recent songs to be replayed (Once per hour) automatically.</p>
+    <p><input type="checkbox" ng-model="relatedCheckbox"  ng-click="relatedCheckboxClicked()"> Allow songs related to songs that have already been played to be queued automatically.</p>
+    <p><input type="checkbox" ng-model="relatedToRecentCheckbox" ng-click="relatedToRecentCheckboxClicked()"> Allow a related song to be added to the list of recently played songs. <em>Note: this will allow the player to play a related song to a related song and so forth, eventually resulting in a large drift from the original song that was played.</em>
+    <p><button ng-click="skipSong()">Skip Current Song</button></p>
+    <p><button ng-click="clearRecent()">Clear Recently Played Songs List</button>
+  </div>
 </div>
+
+<div>
+  <h3>Add Request</h3>
+  <div>
+    <p>Query: <input ng-model="url"></p>
+    <p><button ng-click="searchSong()">Submit</button>
+  </div>
 <div>
 
 <div ng-if="searchResults.length > 0">
-<h3>Search Results</h3>
-<ul ng-repeat="result in searchResults">
-  <li>
-    <div>
-      <span>{{result.title}}</span>
-      <span>{{result.url}}</span>
-      <button ng-click="requestSong(result.yt)">Request</button>
-    </div>
-  </li>
-</ul>
+  <h3>Search Results</h3>
+  <ul ng-repeat="result in searchResults">
+    <li>
+      <div>
+        <span>{{result.title}}</span>
+        <span>{{result.url}}</span>
+        <button ng-click="requestSong(result.yt)">Request</button>
+      </div>
+    </li>
+  </ul>
 </div>
