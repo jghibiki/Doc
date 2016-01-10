@@ -5,37 +5,42 @@
 describe('my app', function() {
 
 
-  it('should automatically redirect to /view1 when location hash/fragment is empty', function() {
+  it('should automatically redirect to / when location hash/fragment is empty', function() {
     browser.get('index.html');
-    expect(browser.getLocationAbsUrl()).toMatch("/view1");
+    expect(browser.getLocationAbsUrl()).toMatch("/");
+  });
+
+  it("should dispaly the correct title for the page", function(){
+    browser.get('index.html');
+    expect(browser.getTitle()).toEqual('Doc');    
   });
 
 
-  describe('view1', function() {
+  describe('client', function() {
 
     beforeEach(function() {
-      browser.get('index.html#/view1');
+      browser.get('index.html#/client');
     });
 
 
-    it('should render view1 when user navigates to /view1', function() {
-      expect(element.all(by.css('[ng-view] p')).first().getText()).
-        toMatch(/partial for view 1/);
+    it('should render client when user navigates to /client', function() {
+      expect(element.all(by.css('[ng-view] h3')).first().getText()).
+        toMatch(/Currently Playing/);
     });
 
   });
 
 
-  describe('view2', function() {
+  describe('player', function() {
 
     beforeEach(function() {
-      browser.get('index.html#/view2');
+      browser.get('index.html#/player');
     });
 
 
-    it('should render view2 when user navigates to /view2', function() {
-      expect(element.all(by.css('[ng-view] p')).first().getText()).
-        toMatch(/partial for view 2/);
+    it('should render player when user navigates to /player', function() {
+      expect(element.all(by.css('[ng-view] div em')).first().getText()).
+        toMatch(/Nothing is playing. Go to mopey.ndacm.org to request a song./);
     });
 
   });

@@ -1,16 +1,32 @@
 'use strict';
 
 describe('doc.player module', function() {
+	var playerCtrl, $scope, socket = null; 
 
-  beforeEach(module('doc.player'));
+	beforeEach(module('doc.player'));
 
-  describe('player controller', function(){
+	beforeEach(inject(function($rootScope, $controller){
 
-    it('should ....', inject(function($controller) {
-      //spec body
-      var playerCtrl = $controller('PlayerCtrl');
-      expect(playerCtrl).toBeDefined();
-    }));
+		$scope = $rootScope.$new();
 
-  });
+		socket = {
+			on: function(){},
+			emit: function(){}
+		};
+
+		playerCtrl = $controller('PlayerCtrl', {
+			$scope: $scope,
+			socket: socket
+		});
+
+	}));
+
+	describe('player controller', function(){
+
+		it('should ....', inject(function($controller) {
+			//spec body
+			expect(playerCtrl).toBeDefined();
+		}));
+
+	});
 });
