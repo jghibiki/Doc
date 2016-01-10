@@ -14,6 +14,21 @@ angular.module('doc.client', ['ngRoute'])
 }])
 
 .controller('ClientCtrl', ["$scope", "queue", "search", "playback", function($scope, queue, search, playback) {
+
+
+	/* Definitions */ 
+
+	$scope.queue = [];
+	$scope.currentlyPlaying = null;
+	$scope.relatedCheckbox = false;
+	$scope.recentCheckbox = false;
+	$scope.relatedToRecentCheckbox = false;
+	$scope.showControls = false;
+	$scope.playbackState = false;
+
+
+	/* Queue */
+
 	function updateQueue(){
 		queue.get(function(response){
 			if($scope.queue.length != response.length){
@@ -22,18 +37,13 @@ angular.module('doc.client', ['ngRoute'])
 			}
 		});
 	}
-	$scope.queue = [];
-	$scope.currentlyPlaying = null;
-	$scope.queueTimer = setInterval(updateQueue, 2000);
-	$scope.relatedCheckbox = false;
-	$scope.recentCheckbox = false;
-	$scope.relatedToRecentCheckbox = false;
 
 
 	/* Skip Current Song */
 	$scope.skipSong = function(){
 		playback.skip();
 	}
+
 
 	/* Related */
 
@@ -44,13 +54,12 @@ angular.module('doc.client', ['ngRoute'])
 	}
 	
 	function updateRelatedCheckbox(){
-		playback.getRelated(function(resp){
-			$scope.relatedCheckbox = resp.state;
-		})
+		if($scope.showControls){
+			playback.getRelated(function(resp){
+				$scope.relatedCheckbox = resp.state;
+			})
+		}
 	}
-
-	updateRelatedCheckbox();
-	$scope.updateRelatedCheckboxTimer = setInterval(updateRelatedCheckbox, 10000);
 
 	$scope.clearRelated = function(){
 		playback.clearRelatedList();
@@ -66,14 +75,12 @@ angular.module('doc.client', ['ngRoute'])
 	}
 
 	function updateRelatedToRecentCheckbox(){
-		playback.getRelatedToRecent(function(resp){
-			$scope.relatedToRecentCheckbox = resp.state;
-		});
+		if($scope.showControls){
+			playback.getRelatedToRecent(function(resp){
+				$scope.relatedToRecentCheckbox = resp.state;
+			});
+		}
 	};
-
-	updateRelatedToRecentCheckbox();
-	$scope.updateRelatedToRecentCheckboxTimer = setInterval(updateRelatedToRecentCheckbox, 10000);
-
 
 
 	/* Recent */
@@ -82,16 +89,42 @@ angular.module('doc.client', ['ngRoute'])
 		playback.setRecent($scope.recentCheckbox, function(resp){
 			$scope.recentCheckbox = resp.state;
 		});
-	}
+	};
 
 	function updateRecentCheckbox(){
-		playback.getRecent(function(resp){
-			$scope.recentCheckbox = resp.state;
-		});
-	}
+		if($scope.showControls){
+			playback.getRecent(function(resp){
+				$scope.recentCheckbox = resp.state;
+			});
+		}
+	};
 
-	updateRelatedCheckbox();
-	$scope.updateRecentCheckboxTimer = setInterval(updateRelatedCheckbox, 10000);
+
+	/* Playback State */
+
+	$scope.playbackStateMessage = function(){
+		if($scope.playbackSate){
+			return "Plause Playback";
+		}
+		else{
+			return "Resume Playback";
+		}
+	};
+
+	$scope.playbackStateButtonClicked = function(){
+		$scope.playbackSate = !$scope.playbackSate
+		playback.setState($scope.playbackSate, function(resp){
+			$scope.playbackSate = resp.state;
+		});
+	};
+
+	function updatePlaybackState(){
+		if($scope.showControls){
+			playback.getState(function(resp){
+				$scope.playbackSate = resp.state;
+			})
+		}
+	};
 
 
 	/* Search Song */
@@ -100,7 +133,7 @@ angular.module('doc.client', ['ngRoute'])
 		search($scope.url, function(results){
 			$scope.searchResults = results;
 		})
-	}
+	};
 
 	$scope.requestSong = function(ytid){
 		for(var i=0; i < $scope.searchResults.length; i++){
@@ -120,5 +153,28 @@ angular.module('doc.client', ['ngRoute'])
 				break;
 			}
 		}
-	}	
+	};
+
+
+	/* Hide/Show Controls */
+
+	$scope.toggleControls = function(){
+		$scope.showControls = !$scope.showControls;
+		RestUpdate();
+	};
+
+
+	/* UI REST Data Update Timer */
+
+	function RestUpdate(){
+		updateQueue();
+		updateRelatedCheckbox();
+		updateRelatedToRecentCheckbox();
+		updateRecentCheckbox();
+		updatePlaybackState();
+	};
+
+	RestUpdate();
+	$scope.updateTimer = setInterval(RestUpdate, 10000);
+
 }]);

@@ -96,6 +96,7 @@ docServices.factory("playback", ["$resource", function($resource){
 	playbackService._recent_xhr = $resource("api/playback/recent", {}, {});
 	playbackService._skip_xhr = $resource("api/playback/skip", {}, {});
 	playbackService._relatedToRecent_xhr = $resource("api/playback/relatedToRecent", {}, {});
+	playbackService._state_xhr = $resource("api/playback/state", {}, {});
 
 	/*  Recent */
 
@@ -152,6 +153,21 @@ docServices.factory("playback", ["$resource", function($resource){
 	playbackService.skip = function(callback){
 		var response = this._skip_xhr.save(function(){
 			if(callback === null){
+				callback(response);
+			}
+		});
+	};
+
+	/* Playback */
+	playbackService.getState = function(callback){
+		var response = this._state_xhr.get(function(){
+			callback(response);
+		});
+	};
+
+	playbackService.setState = function(value, callback){
+		var response = this._state_xhr.save({state: value}, function(){
+			if(callback !== null){
 				callback(response);
 			}
 		});

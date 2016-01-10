@@ -19,7 +19,7 @@ angular.module('doc.player', ['ngRoute'])
 			$scope.$apply();
 			console.log("Requesting next song.");
 			socket.emit("newSong");
-		}, moment.duration(song.duration).asMilliseconds());
+		}, moment.duration(song.duration).asMilliseconds()+ 5000);
 	});
 
 	socket.on("ready", function(){

@@ -16,7 +16,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var youtube = new YouTube();
-youtube.setKey("AIzaSyAPLpQrMuQj6EO4R1XwjwS2g47dqpFXW3Y")
+youtube.setKey("AIzaSyAPLpQrMuQj6EO4R1XwjwS2g47dqpFXW3Y");
+youtube.addParam("order", "relevance")
 
 /*********************
 Modify Date Prototype
@@ -42,6 +43,7 @@ var skip = false;
 var newSongTimer = null;
 var watchForSkipTimer = null;
 var hasConnection = false;
+var playing = true;
 
 /***************
  Rest end points 
@@ -114,6 +116,22 @@ router.post('/playback/skip', function(req, res){
 	}
 	res.json({"result": "success"});
 })
+
+router.get('/playback/state', function(req, res){
+	res.json({state: playing});
+});
+
+router.post('/playback/state', function(req, res){
+	playing = req.body.state;
+	if(playing){
+		console.log("Starting Playback.");
+	}
+	else{
+		console.log("Pausing Playback.");
+	}
+	res.json({state: playing});
+});
+
 
 /* Queue */
 router.get('/queue', function(req, res){
@@ -194,13 +212,15 @@ io.on('connection', function (socket) {
 
 		socket.on("disconnect", function(){
 			clearTimeout(newSongTimer);
+			newSongTimer = null;
 			clearTimeout(watchForSkipTimer);
+			watchForSkipTimer = null;
 			hasConnection = false;
 			console.log("Client Disconnected");
 		});
 
 		socket.on("fixCurrent", function(current){
-			currentlyPlaying = current;
+			currentlyPlaying = current.title;
 			recent.push({song: current, lastPlayed:Date()});
 		})
 
@@ -212,7 +232,7 @@ io.on('connection', function (socket) {
 });
 
 function watchForSkip(socket){
-	if(skip){
+	if(skip && playing){
 		console.log("Song Skipped.");
 		skip = false;
 		clearTimeout(newSongTimer);
@@ -223,6 +243,11 @@ function watchForSkip(socket){
 
 function newSong(socket){
 	console.log("There are " + queue.length + " items in the queue and " + recent.length + " items played recently.");
+	if(!playing){
+		console.log("Playback is paused waiting.");
+		newSongTimer = setTimeout(newSong, 1000, socket);
+		return;
+	}
 	if(queue.length > 0){
 		var song = queue.shift();
 		recent.push({ song:song, lastPlayed:Date() });
@@ -268,7 +293,7 @@ function newSong(socket){
 						youtube.getById(song.yt, function(error, result){
 							if(error){
 								console.log("Error: " + error)
-								setTimeout(newSong, 1000, socket);
+								newSongTimer = setTimeout(newSong, 1000, socket);
 							}
 							else{
 								song.duration = result.items[0].contentDetails.duration;
@@ -277,6 +302,7 @@ function newSong(socket){
 								if(relatedToRecent){
 									recent.push({song:song, lastPlayed:Date()});
 								}
+								currentlyPlaying = song.title;
 								socket.emit("song", song);
 							}
 
