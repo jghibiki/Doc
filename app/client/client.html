@@ -13,8 +13,8 @@
     <div>
       <h3>Queue</h3>
       <span ng-if="queue.length === 0"><em>No reqests in queue.</em></span>
-      <ol ng-repeat="request in queue">
-        <li>
+      <ol>
+        <li ng-repeat="request in queue">
           {{request.title}}
           <!--
           <ul>
