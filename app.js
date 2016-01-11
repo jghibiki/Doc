@@ -16,11 +16,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var youtube = new YouTube();
-youtube.setKey("AIzaSyAPLpQrMuQj6EO4R1XwjwS2g47dqpFXW3Y");
 resetParts();
 
 
 function resetParts(){
+	youtube.clearParts();
+	youtube.setKey("AIzaSyAPLpQrMuQj6EO4R1XwjwS2g47dqpFXW3Y");
 	youtube.addParam("order", "relevance")
 }
 
