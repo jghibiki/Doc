@@ -17,7 +17,12 @@ app.use(bodyParser.json());
 
 var youtube = new YouTube();
 youtube.setKey("AIzaSyAPLpQrMuQj6EO4R1XwjwS2g47dqpFXW3Y");
-youtube.addParam("order", "relevance")
+resetParts();
+
+
+function resetParts(){
+	youtube.addParam("order", "relevance")
+}
 
 /*********************
 Modify Date Prototype
@@ -169,6 +174,7 @@ router.post('/queue', function(req, res){
 
 /* Search */
 router.get("/search/:q", function(req, res){
+	resetParts();
 	youtube.search(req.params.q, 50, function(error, result){
 		if(error){
 			console.log(error);
@@ -264,6 +270,7 @@ function newSong(socket){
 		}
 		else if(playRelated){
 			console.log("Attempting to play a related song.");
+			resetParts();
 			youtube.related(recentSong.song.yt, 20, function(error, result){
 				if(error){
 					console.log(error);
@@ -290,6 +297,7 @@ function newSong(socket){
 							thumbnail: item.snippet.thumbnails.high
 						}
 
+						resetParts();
 						youtube.getById(song.yt, function(error, result){
 							if(error){
 								console.log("Error: " + error)
