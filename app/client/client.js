@@ -20,16 +20,18 @@ angular.module('doc.client', ['ngRoute'])
 
 	$scope.queue = [];
 	$scope.currentlyPlaying = null;
-	$scope.relatedCheckbox = false;
-	$scope.recentCheckbox = false;
-	$scope.relatedToRecentCheckbox = false;
+	$scope.chk = {
+		recent: false,
+		related: false,
+		relatedToRecent: false
+	}
 	$scope.showControls = false;
 	$scope.playbackState = false;
 
 
 	/* Queue */
 
-	function updateQueue(){
+	$scope.updateQueue = function (){
 		queue.get(function(response){
 			if($scope.queue.length != response.length){
 				$scope.queue = response.queue;
@@ -48,15 +50,15 @@ angular.module('doc.client', ['ngRoute'])
 	/* Related */
 
 	$scope.relatedCheckboxClicked = function(){
-		playback.setRelated($scope.relatedCheckbox, function(resp){
-			$scope.relatedCheckbox = resp.state;
+		playback.setRelated($scope.chk.related, function(resp){
+			$scope.chk.related = resp.state;
 		});
 	}
 	
-	function updateRelatedCheckbox(){
+	$scope.updateRelatedCheckbox = function(){
 		if($scope.showControls){
 			playback.getRelated(function(resp){
-				$scope.relatedCheckbox = resp.state;
+				$scope.chk.related = resp.state;
 			})
 		}
 	}
@@ -69,15 +71,15 @@ angular.module('doc.client', ['ngRoute'])
 	/* Related To Recent */
 
 	$scope.relatedToRecentCheckboxClicked = function(){
-		playback.setRelatedToRecent($scope.relatedToRecentCheckbox, function(resp){
-			$scope.relatedToRecentCheckbox = resp.state;
+		playback.setRelatedToRecent($scope.chk.relatedToRecent, function(resp){
+			$scope.chk.relatedToRecent = resp.state;
 		});
 	}
 
-	function updateRelatedToRecentCheckbox(){
+	$scope.updateRelatedToRecentCheckbox = function(){
 		if($scope.showControls){
 			playback.getRelatedToRecent(function(resp){
-				$scope.relatedToRecentCheckbox = resp.state;
+				$scope.chk.relatedToRecent = resp.state;
 			});
 		}
 	};
@@ -86,15 +88,15 @@ angular.module('doc.client', ['ngRoute'])
 	/* Recent */
 
 	$scope.recentCheckboxClicked = function(){
-		playback.setRecent($scope.recentCheckbox, function(resp){
+		playback.setRecent($scope.chk.recent, function(resp){
 			$scope.recentCheckbox = resp.state;
 		});
 	};
 
-	function updateRecentCheckbox(){
+	$scope.updateRecentCheckbox = function(){
 		if($scope.showControls){
 			playback.getRecent(function(resp){
-				$scope.recentCheckbox = resp.state;
+				$scope.chk.recent = resp.state;
 			});
 		}
 	};
@@ -118,7 +120,7 @@ angular.module('doc.client', ['ngRoute'])
 		});
 	};
 
-	function updatePlaybackState(){
+	$scope.updatePlaybackState = function(){
 		if($scope.showControls){
 			playback.getState(function(resp){
 				$scope.playbackSate = resp.state;
@@ -166,15 +168,15 @@ angular.module('doc.client', ['ngRoute'])
 
 	/* UI REST Data Update Timer */
 
-	function RestUpdate(){
-		updateQueue();
-		updateRelatedCheckbox();
-		updateRelatedToRecentCheckbox();
-		updateRecentCheckbox();
-		updatePlaybackState();
+	$scope.restUpdate = function(){
+		$scope.updateQueue();
+		$scope.updateRelatedCheckbox();
+		$scope.updateRelatedToRecentCheckbox();
+		$scope.updateRecentCheckbox();
+		$scope.updatePlaybackState();
 	};
 
-	RestUpdate();
-	$scope.updateTimer = setInterval(RestUpdate, 10000);
+	$scope.restUpdate();
+	$scope.updateTimer = setInterval($scope.restUpdate, 10000);
 
 }]);

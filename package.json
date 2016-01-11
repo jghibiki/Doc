@@ -1,9 +1,9 @@
 {
-  "name": "angular-seed",
-  "private": true,
-  "version": "0.0.2",
-  "description": "A starter project for AngularJS",
-  "repository": "https://github.com/angular/angular-seed",
+  "name": "Doc",
+  "private": false,
+  "version": "0.0.3",
+  "description": "A simple crowd controlled music request system.",
+  "repository": "https://github.com/jghibiki/doc",
   "license": "MIT",
   "devDependencies": {
     "bower": "^1.3.1",
@@ -18,6 +18,8 @@
     "karma-firefox-launcher": "^0.1.6",
     "karma-jasmine": "^0.3.5",
     "karma-junit-reporter": "^0.2.2",
+    "karma-phantomjs-launcher": "^0.2.3",
+    "phantomjs": "^1.9.19",
     "protractor": "^2.1.0",
     "shelljs": "^0.2.6"
   },
@@ -34,7 +36,7 @@
     "pretest": "npm install",
     "test": "karma start karma.conf.js",
     "test-single-run": "karma start karma.conf.js  --single-run",
-    "coverage": "rm -rf coverge && npm run test-single-run && cat ./coverage/*/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "coverage": "rm -rf coverge && npm run test-single-run && xdg-open ./coverage/lcov-report/index.html",
     "preupdate-webdriver": "npm install",
     "update-webdriver": "webdriver-manager update",
     "preprotractor": "npm run update-webdriver",

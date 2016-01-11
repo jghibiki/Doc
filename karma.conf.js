@@ -15,19 +15,17 @@ module.exports = function(config){
       'app/components/**/*.js',
       'app/player/**/*.js',
       'app/client/**/*.js'
-      //'test/player/**/*.js',
-      //'test/client/**/*.js'
-      //'test/components/**/*.js',
     ],
 
     autoWatch : true,
 
     frameworks: ['jasmine'],
 
-    browsers : ['Chrome'],
+    browsers : ['Chrome', 'PhantomJS'],
 
     plugins : [
             'karma-chrome-launcher',
+            'karma-phantomjs-launcher',
             'karma-firefox-launcher',
             'karma-jasmine',
             'karma-junit-reporter',
@@ -35,12 +33,15 @@ module.exports = function(config){
             ],
 
     reporters: [
-        "coverage"
+      "progress",
+      "junit",
+      "coverage"
     ],
 
     coverageReporter: {
         type: "lcov",
-        dir: "coverage/"
+        dir: "coverage",
+        subdir: "."
     },
 
     junitReporter : {

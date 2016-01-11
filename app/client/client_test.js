@@ -5,44 +5,162 @@ describe('doc.client module', function() {
 
 	beforeEach(module('doc.client'));
 
-	beforeEach(inject(function($rootScope, $controller) {
+	beforeEach(inject(function($rootScope) {
 		$scope = $rootScope.$new();
 
-		queue = {
-			get: function(){}
-		};
+		queue = jasmine.createSpyObj("queue", [
+			"get",
+			"add"
+		]);
+		search = jasmine.createSpy("search");
 
-		search = {
+		playback = jasmine.createSpyObj("playback", [
+			"getRecent",
+			"setRecent",
+			"clearRecentList",
+			"getRelatedToRecent",
+			"setRelatedToRecent",
+			"getRelated",
+			"setRelated",
+			"skip",
+			"getState",
+			"setState"	
+		]);
 
-		};
-
-		playback = {
-
-		};
-
-		clientCtrl = $controller('ClientCtrl', {
-			$scope: $scope,
-			queue: queue,
-			search: search,
-			playback: playback
-		});
 	}));  
 
 	afterEach(function(){
 		clientCtrl, $scope, queue, search, playback = null;
 	})
 
+	function initClientctrl($controller){
+			clientCtrl = $controller('ClientCtrl', {
+				$scope: $scope,
+				queue: queue,
+				search: search,
+				playback: playback
+			});
+	}
+
 	describe('client controller', function(){
 
-		it('should initialize values to sane defaults',inject(function() {
+		it('should initialize values to sane defaults',inject(function($controller) {
 			//spec bod
+
+			initClientctrl($controller);
+
 			expect($scope.queue.length).toBe(0);
 			expect($scope.currentlyPlaying).toBe(null);
-			expect($scope.relatedCheckbox).toBe(false);
-			expect($scope.recentCheckbox).toBe(false);
-			expect($scope.relatedToRecentCheckbox).toBe(false);
+			expect($scope.chk.related).toBe(false);
+			expect($scope.chk.recent).toBe(false);
+			expect($scope.chk.relatedToRecent).toBe(false);
 			expect($scope.showControls).toBe(false);
 			expect($scope.playbackState).toBe(false);
+
+		}));
+
+		it('should update the queue', inject(function($controller){
+			var expected = ["a", "b", "c"]
+			queue.get.and.callFake(function(callback){
+				callback({queue: expected});
+			});
+
+			initClientctrl($controller);
+
+			expect(queue.get.calls.count()).toEqual(1);
+			expect($scope.queue).toBe(expected);
+		}));
+
+		it('should call playback.skip when skip is called', inject(function($controller){
+
+			initClientctrl($controller);
+
+			$scope.skipSong();
+
+			expect(playback.skip.calls.count()).toBe(1);
+
+		}));
+
+		it('should call playback.setRelated and set $scope.chk.related when relatedCheckboxClicked is called', inject(function($controller){
+			
+			var expected1 = true;
+			var expected2 = false;
+
+
+			initClientctrl($controller);
+
+			playback.setRelated.and.callFake(function(value, callback){
+				callback({state: expected1});
+			});
+
+			expect($scope.chk.related).toBe(false);
+			expect(playback.setRelated.calls.count()).toBe(0);
+
+			$scope.relatedCheckboxClicked();
+
+			expect(playback.setRelated.calls.count()).toBe(1);
+			expect($scope.chk.related).toBe(expected1);
+
+			playback.setRelated.and.callFake(function(value, callback){
+				callback({state: expected2});
+			});
+
+			$scope.relatedCheckboxClicked();
+
+			expect(playback.setRelated.calls.count()).toBe(2);
+			expect($scope.chk.related).toBe(expected2);
+
+
+		}));
+
+		it('should not do anything when $scope.showControl === true',inject(function($controller){
+			initClientctrl($controller);
+
+			var expected = true;
+
+			playback.getRelated.and.callFake(function(callback){
+				callback({state: expected});
+			});
+
+			expect($scope.chk.related).toBe(false);
+			expect(playback.getRelated.calls.count()).toBe(0);
+
+			$scope.updateRelatedCheckbox();
+
+			expect($scope.chk.related).toBe(false);
+			expect(playback.getRelated.calls.count()).toBe(0);
+
+		}));
+
+		it('should call playback.getRelated and $scope.chk.related when updateRelatedCheckbox is called and $scope.showControl === true', inject(function($controller){
+
+			var expected1 = true;
+			var expected2 = false;
+
+			initClientctrl($controller);
+
+			$scope.showControls = true;
+
+			playback.getRelated.and.callFake(function(callback){
+				callback({state: expected1});
+			})
+
+			expect($scope.chk.related).toBe(false);
+			expect(playback.getRelated.calls.count()).toBe(0);
+
+			$scope.updateRelatedCheckbox();
+
+			expect($scope.chk.related).toBe(expected1);
+			expect(playback.getRelated.calls.count()).toBe(1);
+
+			playback.getRelated.and.callFake(function(callback){
+				callback({state: expected2});
+			})
+
+			$scope.updateRelatedCheckbox();
+
+			expect($scope.chk.related).toBe(expected2);
+			expect(playback.getRelated.calls.count()).toBe(2);
 
 		}));
 

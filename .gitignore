@@ -38,3 +38,4 @@ dist
 .tmp
 .sass-cache
 bower_components
+test_out/
