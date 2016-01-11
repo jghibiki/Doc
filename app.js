@@ -15,11 +15,13 @@ app.use(express.static("./app"))
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var youtube = new YouTube();
+var youtube = null;
 resetParts();
 
 
 function resetParts(){
+	console.log("Clear Parts");
+	youtube = new YouTube();
 	youtube.clearParts();
 	youtube.setKey("AIzaSyAPLpQrMuQj6EO4R1XwjwS2g47dqpFXW3Y");
 	youtube.addParam("order", "relevance")
@@ -250,6 +252,7 @@ function watchForSkip(socket){
 
 function newSong(socket){
 	console.log("There are " + queue.length + " items in the queue and " + recent.length + " items played recently.");
+	resetParts();
 	if(!playing){
 		console.log("Playback is paused waiting.");
 		newSongTimer = setTimeout(newSong, 1000, socket);
@@ -271,7 +274,6 @@ function newSong(socket){
 		}
 		else if(playRelated){
 			console.log("Attempting to play a related song.");
-			resetParts();
 			youtube.related(recentSong.song.yt, 20, function(error, result){
 				if(error){
 					console.log(error);
