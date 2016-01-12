@@ -33,10 +33,8 @@ angular.module('doc.client', ['ngRoute'])
 
 	$scope.updateQueue = function (){
 		queue.get(function(response){
-			if($scope.queue.length != response.length){
-				$scope.queue = response.queue;
-				$scope.currentlyPlaying = response.current;
-			}
+			$scope.queue = response.queue;
+			$scope.currentlyPlaying = response.current;
 		});
 	}
 
@@ -63,8 +61,8 @@ angular.module('doc.client', ['ngRoute'])
 		}
 	}
 
-	$scope.clearRelated = function(){
-		playback.clearRelatedList();
+	$scope.clearRecent = function(){
+		playback.clearRecentList();
 	}
 
 
@@ -162,7 +160,7 @@ angular.module('doc.client', ['ngRoute'])
 
 	$scope.toggleControls = function(){
 		$scope.showControls = !$scope.showControls;
-		RestUpdate();
+		$scope.restUpdate();
 	};
 
 

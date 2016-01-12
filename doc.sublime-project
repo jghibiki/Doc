@@ -1,0 +1,44 @@
+{
+	"folders":
+	[
+		{
+			"path": "/home/jghibiki/Git/Doc"
+		}
+	],
+
+	"build_systems": [
+		{
+
+			"name": "Doc Test Debug",
+			"path": "/usr/local/share/npm/bin:/usr/local/bin:$PATH",
+			"cmd": ["npm", "test"],
+			"working_dir": "${project_path:${folder}}",
+
+
+			"target": "ansi_color_build",
+		    "syntax": "Packages/ANSIescape/ANSI.tmLanguage"
+		},
+		{
+
+			"name": "Doc Test",
+			"path": "/usr/local/share/npm/bin:/usr/local/bin:$PATH",
+			"cmd": ["npm", "run", "test-single-run"],
+			"working_dir": "${project_path:${folder}}",
+
+
+			"target": "ansi_color_build",
+		    "syntax": "Packages/ANSIescape/ANSI.tmLanguage"
+		},
+		{
+
+			"name": "Doc Coverage Report",
+			"path": "/usr/local/share/npm/bin:/usr/local/bin:$PATH",
+			"cmd": ["xdg-open", "coverage/lcov-report/index.html"],
+			"working_dir": "${project_path:${folder}}",
+
+
+			"target": "ansi_color_build",
+		    "syntax": "Packages/ANSIescape/ANSI.tmLanguage"
+		}
+	]
+}

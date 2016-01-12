@@ -33,15 +33,25 @@ module.exports = function(config){
             ],
 
     reporters: [
-      "progress",
+      "dots",
       "junit",
       "coverage"
     ],
 
     coverageReporter: {
-        type: "lcov",
-        dir: "coverage",
-        subdir: "."
+      reporters: [
+        {
+          type: "lcov",
+          dir: "coverage",
+          subdir: "."
+        },
+        {
+          type: "json",
+          dir: "coverage",
+          subdir: ".",
+          file: "coverage.json"
+        }
+      ]
     },
 
     junitReporter : {
