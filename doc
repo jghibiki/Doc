@@ -29,23 +29,25 @@ def main():
         r = requests.post(baseUrl + "playback/skip")
 
     elif sys.argv[1] == "search" or sys.argv[1] == "s":
-        if len(sys.argv) >= 3:
-            print ("Searching %s" % sys.argv[2])
-            r = requests.get(baseUrl + "search/" + sys.argv[2])
+        if len(sys.argv) < 3:
+            printCommands()
+        else:
+            query = ' '.join(sys.argv[2:len(sys.argv)])
+            print ("Searching %s" % query)
+            r = requests.get(baseUrl + "search/" + query)
             page = 1
             pagination = 20
             finished = False 
             while not finished:
                 os.system('clear') 
                 subset = r.json()[0+((page-1)*pagination):pagination+((page-1)*pagination)]
-                print("Enter id of song to select.\n"
-                      "Next for next page\n"
-                      "Previous for previous page.\n"
-                      "Quit to quit.\n"
-                      "Current Page: %s" % page)
+                print("Results for %s\n"
+                      "Current Page: %s"% (query, page)) 
+
                 for idx,item in enumerate(subset):
-                    print("%s: %s" % (idx+1, item["title"]))
-                selection = input("> ")
+                    print("|{0:>2}|: {1}".format(idx+1, item["title"]))
+                selection = input("\nOptions: <id>, next, previous, quit\n"
+                                  "> ")
 
                 request = None
 
