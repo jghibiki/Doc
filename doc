@@ -1,0 +1,78 @@
+#!/bin/python
+#
+# This sciprt requires python 3 and requests
+#
+#   Install Requests:
+#       sudo pip install requests
+#
+
+import sys
+import os
+import requests
+
+baseUrl = "http://mopey.ndacm.org/api/"
+
+def printCommands():
+    print("Available Commands:\n"
+          "\ts, search [query] : Searches the given query "
+          "and provides a prompt to request a result.\n"
+          "\tq, queue : Prints current queue.\n"
+          "\tskip: Skips the currently playing song."
+    )
+
+def main():
+    if len(sys.argv) < 2:
+        printCommands()
+        exit()
+    if sys.argv[1] == "skip":
+        print("Skipping Song")
+        r = requests.post(baseUrl + "playback/skip")
+
+    elif sys.argv[1] == "search" or sys.argv[1] == "s":
+        if len(sys.argv) >= 3:
+            print ("Searching %s" % sys.argv[2])
+            r = requests.get(baseUrl + "search/" + sys.argv[2])
+            page = 1
+            pagination = 20
+            finished = False 
+            while not finished:
+                os.system('clear') 
+                subset = r.json()[0+((page-1)*pagination):pagination+((page-1)*pagination)]
+                print("Enter id of song to select.\n"
+                      "Next for next page\n"
+                      "Previous for previous page.\n"
+                      "Quit to quit.\n"
+                      "Current Page: %s" % page)
+                for idx,item in enumerate(subset):
+                    print("%s: %s" % (idx+1, item["title"]))
+                selection = input("> ")
+
+                request = None
+
+                if selection == "next":
+                    page += 1
+                elif selection == "previous" and page > 1:
+                    page -= 1
+                elif selection == "Quit" or selection == "quit" or selection == "Quit":
+                    exit() 
+                else:
+                    request = subset[int(selection)-1]
+
+                if request:
+                    print("Requesting: %s" % request["title"])
+                    r = requests.post(baseUrl + "queue/", request)
+                    finished = True
+    elif sys.argv[1] == "queue" or sys.argv[1] == "q":
+        r = requests.get(baseUrl + "queue")
+        
+        print("Currently Playing: %s" % r.json()["current"])
+        for idx,song in enumerate(r.json()["queue"]):
+            print("%s: %s" % (idx+1, song["title"]))
+    elif sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+        printCommands()
+
+
+                
+
+if __name__ == "__main__":
+    main()
