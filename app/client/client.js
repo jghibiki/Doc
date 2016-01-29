@@ -104,24 +104,24 @@ angular.module('doc.client', ['ngRoute'])
 
 	$scope.playbackStateMessage = function(){
 		if($scope.playbackState){
-			return "Resume Playback";
+			return "Pause Playback";
 		}
 		else{
-			return "Pause Playback";
+			return "Resume Playback";
 		}
 	};
 
 	$scope.playbackStateButtonClicked = function(){
-		$scope.playbackSate = !$scope.playbackSate
-		playback.setState($scope.playbackSate, function(resp){
-			$scope.playbackSate = resp.state;
+		$scope.playbackState = !$scope.playbackState
+		playback.setState($scope.playbackState, function(resp){
+			$scope.playbackState = resp.state;
 		});
 	};
 
 	$scope.updatePlaybackState = function(){
 		if($scope.showControls){
 			playback.getState(function(resp){
-				$scope.playbackSate = resp.state;
+				$scope.playbackState = resp.state;
 			})
 		}
 	};
