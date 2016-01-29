@@ -1,5 +1,5 @@
 <div class="pure-g">
-  <div class="pure-u-1-3">
+  <div class="pure-u-1 pure-u-md-1-3">
     <div>
       <h3>Currently Playing</h3>
       <ul>
@@ -45,7 +45,7 @@
   </div>
 
 
-  <div class="pure-u-2-3">
+  <div class="pure-u-1 pure-u-md-2-3">
     <div>
       <h3>Add Request</h3>
       <div>
@@ -55,8 +55,9 @@
 
     <div ng-if="searchResults.length > 0">
       <h3>Search Results</h3>
+      <p>Filter Results: <input type="text" ng-model="filterResult"/></p>
       <div style="overflow-y: scroll; height: 500px; border-width: 2px; border-style: solid;">
-        <ul ng-repeat="result in searchResults" >
+        <ul ng-repeat="result in searchResults | filter:filterResult" >
           <li>
             <div>
               <span>{{result.title}}</span>

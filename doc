@@ -70,6 +70,14 @@ def main():
         print("Currently Playing: %s" % r.json()["current"])
         for idx,song in enumerate(r.json()["queue"]):
             print("%s: %s" % (idx+1, song["title"]))
+
+    elif sys.argv[1] == "play":
+        r = requests.post(baseUrl + "playback/state", data={"state": True})
+
+    elif sys.argv[1] == "pause":
+        r = requests.post(baseUrl + "playback/state", data={"state": False})
+
+
     elif sys.argv[1] == "help" or sys.argv[1] == "-h" or sys.argv[1] == "--help":
         printCommands()
 

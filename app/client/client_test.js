@@ -175,5 +175,23 @@ describe('doc.client module', function() {
 
         }));
 
+        it('should call playback.setRelatedToRecent when relatedToRecentCheckboxClicked is called.', inject(function($controller){
+            initClientctrl($controller);
+
+            playback.setRelatedToRecent.and.callFake(function(value, callback){
+                callback({state: value});
+            });
+
+            expect($scope.chk.relatedToRecent).toBe(false);
+            expect(playback.setRelatedToRecent.calls.count()).toBe(0);
+
+            $scope.chk.relatedToRecent = true;
+            $scope.relatedToRecentCheckboxClicked();
+
+            expect($scope.chk.relatedToRecent).toBe(true);
+            expect(playback.setRelatedToRecent.calls.count()).toBe(1);
+
+        }))
+
     });
 });
