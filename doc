@@ -13,11 +13,15 @@ import requests
 baseUrl = "http://mopey.ndacm.org/api/"
 
 def printCommands():
-    print("Available Commands:\n"
-          "\ts, search [query] : Searches the given query "
+    print("Doc Terminal Client - Version 1.4\n"
+          "------------------------------\n"
+          "Available Commands:\n"
+          "- s, search [query] : Searches the given query "
           "and provides a prompt to request a result.\n"
-          "\tq, queue : Prints current queue.\n"
-          "\tskip: Skips the currently playing song."
+          "- q, queue : Prints current queue.\n"
+          "- skip: Skips the currently playing song.\n"
+          "- play: Resumes playback of queue.\n"
+          "- pause: Pauses playback of queue."
     )
 
 def main():
