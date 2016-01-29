@@ -104,10 +104,10 @@ angular.module('doc.client', ['ngRoute'])
 
 	$scope.playbackStateMessage = function(){
 		if($scope.playbackState){
-			return "Pause Playback";
+			return "Resume Playback";
 		}
 		else{
-			return "Resume Playback";
+			return "Pause Playback";
 		}
 	};
 
