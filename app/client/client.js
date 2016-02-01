@@ -120,20 +120,18 @@ angular.module('doc.client', ['ngRoute'])
 	};
 
 	$scope.updatePlaybackState = function(){
-		if($scope.showControls){
-			playback.getState(function(resp){
-				$scope.playbackState = resp.state;
+		playback.getState(function(resp){
+			$scope.playbackState = resp.state;
 
-				if($scope.playbackState){
-					$scope.playbackStateIcon = "fa fa-pause fa-2x";
-					$scope.playbackStateMessage = "Pause Playback fa-2x";
-				}
-				else{
-					$scope.playbackStateIcon = "fa fa-play";
-					$scope.playbackStateMessage = "Resume Playback";
-				}
-			})
-		}
+			if($scope.playbackState){
+				$scope.playbackStateIcon = "fa fa-pause fa-2x";
+				$scope.playbackStateMessage = "Pause Playback fa-2x";
+			}
+			else{
+				$scope.playbackStateIcon = "fa fa-play";
+				$scope.playbackStateMessage = "Resume Playback";
+			}
+		})
 	};
 
 
