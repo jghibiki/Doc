@@ -55,6 +55,7 @@ angular.module('doc.client', ['ngRoute'])
 	$scope.relatedCheckboxClicked = function(){
 		playback.setRelated($scope.chk.related, function(resp){
 			$scope.chk.related = resp.state;
+			$scope.updateMagicModeState();
 		});
 	}
 	
@@ -74,6 +75,7 @@ angular.module('doc.client', ['ngRoute'])
 	$scope.relatedToRecentCheckboxClicked = function(){
 		playback.setRelatedToRecent($scope.chk.relatedToRecent, function(resp){
 			$scope.chk.relatedToRecent = resp.state;
+			$scope.updateMagicModeState();
 		});
 	}
 
