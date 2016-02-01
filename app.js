@@ -52,6 +52,8 @@ var newSongTimer = null;
 var watchForSkipTimer = null;
 var hasConnection = false;
 var playing = true;
+var maxLength = 60;
+var maxLengthLimit = true;
 
 /***************
  Rest end points 
@@ -140,6 +142,21 @@ router.post('/playback/state', function(req, res){
 	res.json({state: playing});
 });
 
+router.get('/playback/max-length', function(req, res){
+	res.json({state: maxLengthLimit});
+});
+
+router.post('/playback/max-length', function(req, res){
+	maxLengthLimit = !maxLengthLimit;
+	if(maxLengthLimit){
+		console.log("Enabling Max Length Limit.");
+	}	
+	else{
+		console.log("Disabling Max Length Limit.");
+	}
+	res.json({state: maxLengthLimit});
+});
+
 
 /* Queue */
 router.get('/queue', function(req, res){
@@ -153,22 +170,27 @@ router.post('/queue', function(req, res){
 			console.log("Error: " + error)
 		}
 		else{
-			var obj = {
-				id: guid(),
-				yt: req.body.yt,
-				url: req.body.url,
-				title: req.body.title,
-				uploader: req.body.uploader,
-				description: result.items[0].snippet.description,
-				thumbnail: req.body.thumbnail,
-				date: new Date(),
-				duration: result.items[0].contentDetails.duration,
+			var duration = result.items[0].contentDetails.duration;
+			if( (moment.duration(duration) < moment.duration(maxLength, "minutes")) || !maxLengthLimit){
+				var obj = {
+					id: guid(),
+					yt: req.body.yt,
+					url: req.body.url,
+					title: req.body.title,
+					uploader: req.body.uploader,
+					description: result.items[0].snippet.description,
+					thumbnail: req.body.thumbnail,
+					date: new Date(),
+					duration: result.items[0].contentDetails.duration,
 
-			};
+				};
 
-			queue.push(obj);
-			res.json(obj);
-
+				queue.push(obj);
+				res.json(obj);
+			}
+			else{
+				console.log("Song " + req.body.title + " too long.")
+			}
 		}
 	});
 
@@ -307,14 +329,22 @@ function newSong(socket){
 								newSongTimer = setTimeout(newSong, 1000, socket);
 							}
 							else{
-								song.duration = result.items[0].contentDetails.duration;
-								song.description = result.items[0].snippet.description;
-								console.log("Sending related song: " + song.url);
-								if(relatedToRecent){
-									recent.push({song:song, lastPlayed:Date()});
+								var duration = result.items[0].contentDetails.duration;
+								console.log("Duration " + moment.duration(duration));
+								if( (moment.duration(duration) < moment.duration(maxLength, 'minutes') ) || !maxLengthLimit){
+									song.duration = duration;
+									song.description = result.items[0].snippet.description;
+									console.log("Sending related song: " + song.url);
+									if(relatedToRecent){
+										recent.push({song:song, lastPlayed:Date()});
+									}
+									currentlyPlaying = song.title;
+									socket.emit("song", song);
 								}
-								currentlyPlaying = song.title;
-								socket.emit("song", song);
+								else{
+									console.log("Song " + song.title + " too long.");
+									newSongTimer = setTimeout(newSong, 1000, socket);
+								}
 							}
 
 						});

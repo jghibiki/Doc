@@ -29,18 +29,28 @@
     </div>
     <div>
       <h3>Controls</h3>
+      <p>
+        <button ng-click="easterEgg()" class="fa fa-backward fa-2x" title="Symetry"></button>
+        <button ng-click="playbackStateButtonClicked()" class="{{ playbackStateIcon }}" title="{{ playbackStateMessage }}"></button>
+        <button ng-click="skipSong()" class="fa fa-forward fa-2x" title="Skip Current Song"></button>
+      </p>
+      <p>
+        <button ng-click="toggleMagicMode()" ><span class="fa fa-asterisk" ng-class="{ 'fa-spin': magicModeState }"></span> Magic Mode</button>
+      </p>
+      <p>
+        <button ng-click="clearRecent()" title="Clear Recently Played Songs List" class="fa-remove"> Clear Recently Played</button> 
+      </p>
+
       <div ng-if="showControls">
         <div>
           <p><input type="checkbox" ng-model="chk.recent" ng-click="recentCheckboxClicked()"> Allow recent songs to be replayed (Once per hour) automatically.</p>
           <p><input type="checkbox" ng-model="chk.related"  ng-click="relatedCheckboxClicked()"> Allow songs related to songs that have already been played to be queued automatically.</p>
           <p><input type="checkbox" ng-model="chk.relatedToRecent" ng-click="relatedToRecentCheckboxClicked()"> Allow a related song to be added to the list of recently played songs. <em>Note: this will allow the player to play a related song to a related song and so forth, eventually resulting in a large drift from the original song that was played.</em></p>
-          <p><button ng-click="skipSong()">Skip Current Song</button></p>
-          <p><button ng-click="clearRecent()">Clear Recently Played Songs List</button></p>
-          <p><button ng-click="playbackStateButtonClicked()">{{playbackStateMessage()}}</button>
         </div>
-        <button ng-click="toggleControls()">Hide Controls</button>
+        <p ng-if="!playbackMaxLengthState" class="fa-music"></p>
+        <button ng-click="toggleControls()" class="fa-gear"> Hide Advanced Settings</button>
       </div>
-      <button ng-if="!showControls" ng-click="toggleControls()">Show Controls</button>
+      <button ng-if="!showControls" ng-click="toggleControls()" class="fa-gear"> Advanced Settings</button>
     </div>
   </div>
 

@@ -97,6 +97,7 @@ docServices.factory("playback", ["$resource", function($resource){
 	playbackService._skip_xhr = $resource("api/playback/skip", {}, {});
 	playbackService._relatedToRecent_xhr = $resource("api/playback/relatedToRecent", {}, {});
 	playbackService._state_xhr = $resource("api/playback/state", {}, {});
+	playbackService._max_length_xhr = $resource("api/playback/max-length", {}, {});
 
 	/*  Recent */
 
@@ -170,6 +171,20 @@ docServices.factory("playback", ["$resource", function($resource){
 			if(callback !== null){
 				callback(response);
 			}
+		});
+	};
+
+	/* Max Length */
+
+	playbackService.getMaxLengthState = function(callback){
+		var response = this._max_length_xhr.get(function(){
+			callback(response);
+		})
+	};
+
+	playbackService.toggleMaxLengthState = function(callback){
+		var response = this._max_length_xhr.save({"some": "data"}, function(){
+			callback(response)
 		});
 	};
 

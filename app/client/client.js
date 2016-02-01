@@ -27,6 +27,11 @@ angular.module('doc.client', ['ngRoute'])
 	}
 	$scope.showControls = false;
 	$scope.playbackState = false;
+	$scope.magicModeState = false;
+	$scope.playbackStateIcon = "fa fa-play fa-2x";
+	$scope.playbackStateMessage = "Resume Playback";
+	$scope.playbackMaxLengthState = true;
+	$scope.magicModeState = false;
 
 
 	/* Queue */
@@ -54,11 +59,9 @@ angular.module('doc.client', ['ngRoute'])
 	}
 	
 	$scope.updateRelatedCheckbox = function(){
-		if($scope.showControls){
-			playback.getRelated(function(resp){
-				$scope.chk.related = resp.state;
-			})
-		}
+		playback.getRelated(function(resp){
+			$scope.chk.related = resp.state;
+		})
 	}
 
 	$scope.clearRecent = function(){
@@ -75,11 +78,9 @@ angular.module('doc.client', ['ngRoute'])
 	}
 
 	$scope.updateRelatedToRecentCheckbox = function(){
-		if($scope.showControls){
-			playback.getRelatedToRecent(function(resp){
-				$scope.chk.relatedToRecent = resp.state;
-			});
-		}
+		playback.getRelatedToRecent(function(resp){
+			$scope.chk.relatedToRecent = resp.state;
+		});
 	};
 
 
@@ -92,29 +93,27 @@ angular.module('doc.client', ['ngRoute'])
 	};
 
 	$scope.updateRecentCheckbox = function(){
-		if($scope.showControls){
-			playback.getRecent(function(resp){
-				$scope.chk.recent = resp.state;
-			});
-		}
+		playback.getRecent(function(resp){
+			$scope.chk.recent = resp.state;
+		});
 	};
 
 
 	/* Playback State */
 
-	$scope.playbackStateMessage = function(){
-		if($scope.playbackState){
-			return "Pause Playback";
-		}
-		else{
-			return "Resume Playback";
-		}
-	};
-
 	$scope.playbackStateButtonClicked = function(){
 		$scope.playbackState = !$scope.playbackState
 		playback.setState($scope.playbackState, function(resp){
 			$scope.playbackState = resp.state;
+
+			if($scope.playbackState){
+				$scope.playbackStateIcon = "fa fa-pause fa-2x";
+				$scope.playbackStateMessage = "Pause Playback";
+			}
+			else{
+				$scope.playbackStateIcon = "fa fa-play fa-2x";
+				$scope.playbackStateMessage = "Resume Playback";
+			}
 		});
 	};
 
@@ -122,6 +121,15 @@ angular.module('doc.client', ['ngRoute'])
 		if($scope.showControls){
 			playback.getState(function(resp){
 				$scope.playbackState = resp.state;
+
+				if($scope.playbackState){
+					$scope.playbackStateIcon = "fa fa-pause fa-2x";
+					$scope.playbackStateMessage = "Pause Playback fa-2x";
+				}
+				else{
+					$scope.playbackStateIcon = "fa fa-play";
+					$scope.playbackStateMessage = "Resume Playback";
+				}
 			})
 		}
 	};
@@ -160,8 +168,40 @@ angular.module('doc.client', ['ngRoute'])
 
 	$scope.toggleControls = function(){
 		$scope.showControls = !$scope.showControls;
-		$scope.restUpdate();
 	};
+
+
+	/* Magic Mode */
+	$scope.toggleMagicMode = function(){
+		$scope.chk.related = !$scope.chk.related;
+		$scope.chk.relatedToRecent = !$scope.chk.relatedToRecent;
+		$scope.relatedCheckboxClicked();
+		$scope.relatedToRecentCheckboxClicked();
+		$scope.magicModeState = !$scope.magicModeState;		
+	}
+
+	$scope.updateMagicModeState = function(){
+		$scope.magicModeState =($scope.chk.related && $scope.chk.relatedToRecent);
+	}
+
+
+	/* Easter Eggs */
+	$scope.easterEgg = function(){
+		alert("It looked unbalanced without the one on the left...");
+	}
+
+	var egg = new Egg("up,up,down,down,left,right,left,right,b,a", function() {
+		playback.toggleMaxLengthState(function(resp){
+			$scope.playbackMaxLengthState = resp.state;
+		});
+	}).listen();
+
+	$scope.updateMaxLength = function(){
+		playback.getMaxLengthState(function(resp){
+			$scope.playbackMaxLengthState = resp.state;
+		});
+	};
+
 
 
 	/* UI REST Data Update Timer */
@@ -172,9 +212,12 @@ angular.module('doc.client', ['ngRoute'])
 		$scope.updateRelatedToRecentCheckbox();
 		$scope.updateRecentCheckbox();
 		$scope.updatePlaybackState();
+		$scope.updateMaxLength();
+		$scope.updateMagicModeState();
 	};
 
 	$scope.restUpdate();
 	$scope.updateTimer = setInterval($scope.restUpdate, 10000);
+
 
 }]);

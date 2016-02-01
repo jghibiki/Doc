@@ -56,6 +56,9 @@ describe('doc.client module', function() {
             expect($scope.chk.relatedToRecent).toBe(false);
             expect($scope.showControls).toBe(false);
             expect($scope.playbackState).toBe(false);
+            expect($scope.playbackStateMessage).toBe("Resume Playback");
+            expect($scope.playbackStateMessage).toBe("fa fa-play fa-2x");
+            expect($scope.magicModeState).toBe(false);
 
         }));
 
