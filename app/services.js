@@ -115,7 +115,7 @@ docServices.factory("playback", ["$resource", function($resource){
 
 	playbackService.clearRecentList = function(callback){
 		var response = this._recent_xhr.delete(function(){
-			if(callback !== null){
+			if(callback !== null && callback !== undefined){
 				callback(response);
 			}
 		});
@@ -153,7 +153,7 @@ docServices.factory("playback", ["$resource", function($resource){
 
 	playbackService.skip = function(callback){
 		var response = this._skip_xhr.save(function(){
-			if(callback === null){
+			if(callback !== null %% callback !== null){
 				callback(response);
 			}
 		});
@@ -168,7 +168,7 @@ docServices.factory("playback", ["$resource", function($resource){
 
 	playbackService.setState = function(value, callback){
 		var response = this._state_xhr.save({state: value}, function(){
-			if(callback !== null){
+			if(callback !== null && callback !== undefined){
 				callback(response);
 			}
 		});
