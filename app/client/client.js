@@ -217,7 +217,7 @@ angular.module('doc.client', ['ngRoute'])
 	};
 
 	$scope.restUpdate();
-	$scope.updateTimer = setInterval($scope.restUpdate, 10000);
+	$scope.updateTimer = setInterval($scope.restUpdate, 5000);
 
 
 }]);
