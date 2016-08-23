@@ -21,11 +21,11 @@ config(['$routeProvider', "$sceDelegateProvider", function($routeProvider, $sceD
 }])
 .factory('playerSocket', function (socketFactory) {
   return socketFactory({
-      ioSocket: io.connect('localhost:80/player')
+      ioSocket: io.connect('/player')
   });
 })
 .factory('controllerSocket', function (socketFactory) {
   return socketFactory({
-      ioSocket: io.connect('localhost:80/controller')
+      ioSocket: io.connect('/controller')
   });
 });
