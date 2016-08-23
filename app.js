@@ -3,14 +3,15 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var YouTube = require("youtube-node");
 var moment = require("moment");
+var loudness = require('loudness');
 var lev = require("./levenshtein.js")
 
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-server.listen(8000, "0.0.0.0");
-console.log("Listening on port 8000.")
+server.listen(80, "0.0.0.0");
+console.log("Listening on port 80.")
 app.use(express.static("./app"))
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -158,79 +159,116 @@ router.post('/playback/max-length', function(req, res){
 });
 
 
-/* Queue */
-router.get('/queue', function(req, res){
-	res.json({ queue:queue, current:currentlyPlaying });
-});
-
-router.post('/queue', function(req, res){
-	console.log("Recived request for song: " + req.body.url);
-	youtube.getById(req.body.yt, function(error, result){
-		if(error){
-			console.log("Error: " + error)
-		}
-		else{
-			var duration = result.items[0].contentDetails.duration;
-			if( (moment.duration(duration) < moment.duration(maxLength, "minutes")) || !maxLengthLimit){
-				var obj = {
-					id: guid(),
-					yt: req.body.yt,
-					url: req.body.url,
-					title: req.body.title,
-					uploader: req.body.uploader,
-					description: result.items[0].snippet.description,
-					thumbnail: req.body.thumbnail,
-					date: new Date(),
-					duration: result.items[0].contentDetails.duration,
-
-				};
-
-				queue.push(obj);
-				res.json(obj);
-			}
-			else{
-				console.log("Song " + req.body.title + " too long.")
-			}
-		}
-	});
-
-	// res.json(obj);
-});
-
-/* Search */
-router.get("/search/:q", function(req, res){
-	resetParts();
-	youtube.search(req.params.q, 50, function(error, result){
-		if(error){
-			console.log(error);
-		}
-		else{
-			var payload = [];
-			for(var i=0; i<result.items.length; i++){
-				if(result.items[i].id.kind === "youtube#video"){
-					var item = result.items[i];
-					payload.push({
-						url: "https://www.youtube.com/embed/" + item.id.videoId + "?autoplay=1",
-						yt: item.id.videoId,
-						title: item.snippet.title,
-						uploader: item.snippet.channelTittle,
-						description: item.snippet.description,
-						thumbnail: item.snippet.thumbnails.high
-					});
-				}
-			}	
-			res.json(payload);
-		}
-	})	
-});
-
 
 app.use("/api", router)
 
-/**********
-Web Sockets
-**********/
-io.on('connection', function (socket) {
+
+var controllerSocket = io.of('/controller')
+controllerSocket.on('connection', function(socket){
+    console.log("Controller connected.");
+
+    /* Search */
+    socket.on("search", function(query){
+
+        resetParts();
+
+        youtube.search(query, 50, function(error, result){
+            if(error){
+                console.log(error);
+            }
+            else{
+                var payload = [];
+                for(var i=0; i<result.items.length; i++){
+                    if(result.items[i].id.kind === "youtube#video"){
+                        var item = result.items[i];
+                        payload.push({
+                            url: "https://www.youtube.com/embed/" + item.id.videoId + "?autoplay=1",
+                            yt: item.id.videoId,
+                            title: item.snippet.title,
+                            uploader: item.snippet.channelTittle,
+                            description: item.snippet.description,
+                            thumbnail: item.snippet.thumbnails.high
+                        });
+                    }
+                }	
+                socket.emit('search::response', payload);
+            }
+        })	
+    });
+
+
+    /* Queue add */
+    socket.on("queue:add", function(song){
+        console.log("Recived request for song: " + song.url);
+        youtube.getById(song.yt, function(error, result){
+            if(error){
+                console.log("Error: " + error)
+            }
+            else{
+                var duration = result.items[0].contentDetails.duration;
+                if( (moment.duration(duration) < moment.duration(maxLength, "minutes")) || !maxLengthLimit){
+                    var obj = {
+                        id: guid(),
+                        yt: song.yt,
+                        url: song.url,
+                        title: song.title,
+                        uploader: song.uploader,
+                        description: result.items[0].snippet.description,
+                        thumbnail: song.thumbnail,
+                        date: new Date(),
+                        duration: result.items[0].contentDetails.duration,
+
+                    };
+
+                    queue.push(obj);
+                    socket.emit("queue:add::response", obj);
+                    controllerSocket.emit("queue:get::response", { queue:queue, current:currentlyPlaying });
+                }
+                else{
+                    console.log("Song " + req.body.title + " too long.")
+                }
+            }
+        });
+    });
+
+    socket.on("queue:get", function(req){
+        socket.emit("queue:get::response", { queue:queue, current:currentlyPlaying });
+    });
+
+    /* Volume */
+    socket.on("volume:get", function(){
+        console.log("getting volume");
+        loudness.getVolume(function(err, vol){
+            if(err !== null){
+                console.log(err);
+            }
+            else{
+                console.log("volume: " + vol);
+                socket.emit("volume:get::response", vol);
+            }
+        });
+    });
+
+    socket.on("volume:set", function(vol){
+        console.log("Setting volume to " + vol + "%");
+        loudness.setVolume(vol, function(err){
+            if(err !== null){
+                console.log(err);
+            }
+            else{
+                console.log("Volume set to " + vol + "%");
+                controllerSocket.emit("volume:get::response", vol);
+            }
+        });
+    });
+
+});
+
+/*****************
+Player Web Sockets
+******************/
+var playerSocket = io.of('/player')
+playerSocket.on('connection', function (socket) {
 	if(!hasConnection){
 		console.log("Client Connected")
 		hasConnection = true;
@@ -258,9 +296,10 @@ io.on('connection', function (socket) {
 		socket.emit("ready");
 	}
 	else{
-		console.log("Client connection exists denying new connection attempts util current client leaves.");
+		console.log("Player connection exists denying new connection attempts util current client leaves.");
 	}
 });
+
 
 function watchForSkip(socket){
 	if(skip && playing){

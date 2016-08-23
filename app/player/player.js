@@ -9,7 +9,7 @@ angular.module('doc.player', ['ngRoute'])
   });
 }])
 
-.controller('PlayerCtrl', ["$scope", "socket", function($scope, socket) {
+.controller('PlayerCtrl', ["$scope", "playerSocket", function($scope, socket) {
 	$scope.song = null
 	$scope.stale = false;
 	socket.on("song", function(song){

@@ -30,6 +30,12 @@
     <div>
       <h3>Controls</h3>
       <p>
+        <span ng-if="!muted">Volume: {{ volume }}</span> 
+        <span ng-if="muted"> Volume: *MUTED*</span>
+        <button ng-click="volumeUp()">Up</button>
+        <button ng-click="volumeDown()">Down</button>
+      </p>
+      <p>
         <button ng-click="easterEgg()" class="fa fa-backward fa-2x" title="Symetry"></button>
         <button ng-click="playbackStateButtonClicked()" class="{{ playbackStateIcon }}" title="{{ playbackStateMessage }}"></button>
         <button ng-click="skipSong()" class="fa fa-forward fa-2x" title="Skip Current Song"></button>

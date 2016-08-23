@@ -18,9 +18,14 @@ config(['$routeProvider', "$sceDelegateProvider", function($routeProvider, $sceD
     "http://www.youtube.com/**",
     "https://www.youtube.com/**"
     ])
-}]).
-factory('socket', function (socketFactory) {
+}])
+.factory('playerSocket', function (socketFactory) {
   return socketFactory({
-    ioSocket: io.connect('localhost:8000')
+      ioSocket: io.connect('localhost:80/player')
+  });
+})
+.factory('controllerSocket', function (socketFactory) {
+  return socketFactory({
+      ioSocket: io.connect('localhost:80/controller')
   });
 });

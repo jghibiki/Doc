@@ -13,12 +13,14 @@ angular.module('doc.client', ['ngRoute'])
   });
 }])
 
-.controller('ClientCtrl', ["$scope", "queue", "search", "playback", function($scope, queue, search, playback) {
+.controller('ClientCtrl', ["$scope", "playback", "controllerSocket", function($scope, playback, socket) {
 
 
 	/* Definitions */ 
 
 	$scope.queue = [];
+    $scope.volume = 0;
+    $scope.mute = false;
 	$scope.currentlyPlaying = null;
 	$scope.chk = {
 		recent: false,
@@ -32,17 +34,6 @@ angular.module('doc.client', ['ngRoute'])
 	$scope.playbackStateMessage = "Resume Playback";
 	$scope.playbackMaxLengthState = true;
 	$scope.magicModeState = false;
-
-
-	/* Queue */
-
-	$scope.updateQueue = function (){
-		queue.get(function(response){
-			$scope.queue = response.queue;
-			$scope.currentlyPlaying = response.current;
-		});
-	}
-
 
 	/* Skip Current Song */
 	$scope.skipSong = function(){
@@ -138,31 +129,39 @@ angular.module('doc.client', ['ngRoute'])
 	/* Search Song */
 
 	$scope.searchSong = function(){
-		search($scope.url, function(results){
-			$scope.searchResults = results;
-		})
-	};
+		socket.emit("search", $scope.url);
+    };
 
-	$scope.requestSong = function(ytid){
-		for(var i=0; i < $scope.searchResults.length; i++){
-			if($scope.searchResults[i].yt === ytid){
-				var song = $scope.searchResults[i];
-				queue.add({
-					url: song.url,
-					yt: song.yt,
-					title: song.title,
-					uploader: song.uploader,
-					description: song.description,
-					thumbnail: song.thumbnail
-				}, function(res){
-					updateQueue();
-				});
-				alert("Song Requested\n" + song.title);
-				break;
-			}
-		}
-	};
+    socket.on("search::response", function(results){
+        $scope.searchResults = results;
+    });
 
+    $scope.requestSong = function(ytid){
+
+        for(var i=0; i < $scope.searchResults.length; i++){
+            if($scope.searchResults[i].yt === ytid){
+                var song = $scope.searchResults[i];
+                socket.emit("queue:add", {
+                    url: song.url,
+                    yt: song.yt,
+                    title: song.title,
+                    uploader: song.uploader,
+                    description: song.description,
+                    thumbnail: song.thumbnail
+                });
+                break;
+            }
+        }
+    }
+
+    socket.on("queue:add::response", function(song){
+        alert("Song Requested\n" + song.title);
+    });
+
+
+    socket.on("queue:get::response", function(queue){
+        $scope.queue = queue.queue;
+    });
 
 	/* Hide/Show Controls */
 
@@ -202,12 +201,26 @@ angular.module('doc.client', ['ngRoute'])
 		});
 	};
 
+    /* Volume Control */
+    socket.on("volume:get::response", function(vol){
+        $scope.volume = vol;
+    });
+    
+    $scope.volumeUp = function(){
+        socket.emit("volume:set", $scope.volume + 5);
+        socket.emit("volume:get");
+    }
+
+    $scope.volumeDown = function(){
+        socket.emit("volume:set", $scope.volume - 5);
+    }
+
+
 
 
 	/* UI REST Data Update Timer */
 
 	$scope.restUpdate = function(){
-		$scope.updateQueue();
 		$scope.updateRelatedCheckbox();
 		$scope.updateRelatedToRecentCheckbox();
 		$scope.updateRecentCheckbox();
@@ -219,5 +232,8 @@ angular.module('doc.client', ['ngRoute'])
 	$scope.restUpdate();
 	$scope.updateTimer = setInterval($scope.restUpdate, 5000);
 
+    socket.emit("queue:get");
+    socket.emit("volume:get");
+    socket.emit("volume:mute:get");
 
 }]);
