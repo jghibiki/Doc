@@ -30,7 +30,7 @@ angular.module('doc.client', ['ngRoute'])
 	$scope.showControls = false;
 	$scope.playbackState = false;
 	$scope.magicModeState = false;
-	$scope.playbackStateIcon = "fa fa-play fa-2x";
+	$scope.playbackStateIcon = "play";
 	$scope.playbackStateMessage = "Resume Playback";
 	$scope.playbackMaxLengthState = true;
 	$scope.magicModeState = false;
@@ -100,11 +100,11 @@ angular.module('doc.client', ['ngRoute'])
 			$scope.playbackState = resp.state;
 
 			if($scope.playbackState){
-				$scope.playbackStateIcon = "fa fa-pause fa-2x";
+				$scope.playbackStateIcon = "pause";
 				$scope.playbackStateMessage = "Pause Playback";
 			}
 			else{
-				$scope.playbackStateIcon = "fa fa-play fa-2x";
+				$scope.playbackStateIcon = "play";
 				$scope.playbackStateMessage = "Resume Playback";
 			}
 		});
@@ -115,11 +115,11 @@ angular.module('doc.client', ['ngRoute'])
 			$scope.playbackState = resp.state;
 
 			if($scope.playbackState){
-				$scope.playbackStateIcon = "fa fa-pause fa-2x";
-				$scope.playbackStateMessage = "Pause Playback fa-2x";
+				$scope.playbackStateIcon = "pause";
+				$scope.playbackStateMessage = "Pause Playback";
 			}
 			else{
-				$scope.playbackStateIcon = "fa fa-play";
+				$scope.playbackStateIcon = "play";
 				$scope.playbackStateMessage = "Resume Playback";
 			}
 		})
@@ -206,14 +206,10 @@ angular.module('doc.client', ['ngRoute'])
         $scope.volume = vol;
     });
     
-    $scope.volumeUp = function(){
-        socket.emit("volume:set", $scope.volume + 5);
-        socket.emit("volume:get");
+    $scope.volumeUpdate = function(){
+        socket.emit("volume:set", $scope.volume);
     }
 
-    $scope.volumeDown = function(){
-        socket.emit("volume:set", $scope.volume - 5);
-    }
 
 
 
