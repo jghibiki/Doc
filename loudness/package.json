@@ -1,0 +1,67 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "loudness",
+        "scope": null,
+        "escapedName": "loudness",
+        "name": "loudness",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/home/jghibiki/Git/Doc"
+    ]
+  ],
+  "_from": "loudness@latest",
+  "_id": "loudness@0.2.2",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/loudness",
+  "_nodeVersion": "0.10.33",
+  "_npmUser": {
+    "name": "linusu",
+    "email": "linus@folkdatorn.se"
+  },
+  "_npmVersion": "2.1.6",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "loudness",
+    "scope": null,
+    "escapedName": "loudness",
+    "name": "loudness",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/loudness/-/loudness-0.2.2.tgz",
+  "_shasum": "8642bfb66aa03f02ae07c52f11c61022979e0ef8",
+  "_shrinkwrap": null,
+  "_spec": "loudness",
+  "_where": "/home/jghibiki/Git/Doc",
+  "dependencies": {},
+  "description": "A node.js library to control the systems output volume",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "8642bfb66aa03f02ae07c52f11c61022979e0ef8",
+    "tarball": "https://registry.npmjs.org/loudness/-/loudness-0.2.2.tgz"
+  },
+  "gitHead": "7c0ef3eddcd8b51893b6c3ac86c740842e80cc3e",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "linusu",
+      "email": "linus@folkdatorn.se"
+    }
+  ],
+  "name": "loudness",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "scripts": {},
+  "version": "0.2.2"
+}

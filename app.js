@@ -3,8 +3,9 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var YouTube = require("youtube-node");
 var moment = require("moment");
-var loudness = require('loudness');
+var loudness = require('./loudness');
 var lev = require("./levenshtein.js")
+var spawn = require('child_process').spawn;
 
 var app = express();
 var server = require('http').Server(app);
