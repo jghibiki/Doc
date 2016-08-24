@@ -333,6 +333,7 @@ function newSong(socket){
 		if(playRecent === true 
 			&& (Date() - recentSong.lastPlayed) > 60*60*1000){
 			console.log("Sending Recent Song: " + recentSong.song.url);
+            socket.emit("song", song);
 			controllerSocket.emit("queue:add", recentSong.song);
 		}
 		else if(playRelated){
@@ -380,6 +381,7 @@ function newSong(socket){
 										recent.push({song:song, lastPlayed:Date()});
 									}
 									currentlyPlaying = song.title;
+                                    socket.emit("song", song);
 									controllerSocket.emit("queue:add", song);
 								}
 								else{
