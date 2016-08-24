@@ -334,7 +334,7 @@ function newSong(socket){
 			&& (Date() - recentSong.lastPlayed) > 60*60*1000){
 			console.log("Sending Recent Song: " + recentSong.song.url);
             socket.emit("song", song);
-			controllerSocket.emit("queue:add", recentSong.song);
+            controllerSocket.emit("queue:get::response", {queue:queue, current:currentlyPlaying});
 		}
 		else if(playRelated){
 			console.log("Attempting to play a related song.");
@@ -382,7 +382,7 @@ function newSong(socket){
 									}
 									currentlyPlaying = song.title;
                                     socket.emit("song", song);
-									controllerSocket.emit("queue:add", song);
+									controllerSocket.emit("queue:get::response", {queue:queue, current:currentlyPlaying});
 								}
 								else{
 									console.log("Song " + song.title + " too long.");
