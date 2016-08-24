@@ -154,6 +154,10 @@ angular.module('doc.client', ['ngRoute'])
         }
     }
 
+    $scope.clearSearch = function(){
+        $scope.searchResults = [];
+    }
+
     socket.on("queue:add::response", function(song){
         alert("Song Requested\n" + song.title);
     });
@@ -161,6 +165,7 @@ angular.module('doc.client', ['ngRoute'])
 
     socket.on("queue:get::response", function(queue){
         $scope.queue = queue.queue;
+        $scope.currentlyPlaying = queue.current;
     });
 
 	/* Hide/Show Controls */
