@@ -326,6 +326,7 @@ function newSong(socket){
 		currentlyPlaying = song.title;
 		console.log("Sending Song url: " + song.url);
 		socket.emit("song", song);
+        controllerSocket.emit("queue:get::response", { queue: queue, current: currentlyPlaying });
 	}
 	else if((playRecent || playRelated) && recent.length > 0){
 		var recentSong = recent[Math.floor(Math.random()*recent.length)];
