@@ -94,11 +94,13 @@
                     </md-card-header-text>
                 </md-card-header>
                 <md-card-content>
-                    <md-input-container flex>
-                    <label>Query</label>
-                    <input ng-model="url">
-                    </md-input-container>
-                    <md-button class="md-primary md-raised md-icon-button" ng-click="searchSong()"><md-icon>search</md-icon></md-button>
+                    <form ng-submit="searchSong()">
+                        <md-input-container flex>
+                        <label>Query</label>
+                        <input ng-model="url">
+                        </md-input-container>
+                        <md-button class="md-primary md-raised md-icon-button" ng-click="searchSong()"><md-icon>search</md-icon></md-button>
+                    </form>
                 </md-card-content>
             </md-card>
 
