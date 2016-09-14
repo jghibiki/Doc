@@ -12,7 +12,7 @@
                 </md-card-header>
                 <md-card-content>
                     <span ng-if="!currentlyPlaying"><em>Nothing is currently playing.</em></span>
-                    <span>{{currentlyPlaying}}</span>
+                    <span>{{currentlyPlaying}}</span><span ng-if="currentlyPlayingAuto"><md-icon ng-class="{'fa-spin':magicModeState}">stars</md-icon></span>
                 </md-card-content>
             </md-card>
 

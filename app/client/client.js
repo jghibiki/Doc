@@ -22,6 +22,7 @@ angular.module('doc.client', ['ngRoute'])
     $scope.volume = 0;
     $scope.mute = false;
 	$scope.currentlyPlaying = null;
+    $scope.currentlyPlayingAuto = false;
 	$scope.chk = {
 		recent: false,
 		related: false,
@@ -166,6 +167,7 @@ angular.module('doc.client', ['ngRoute'])
     socket.on("queue:get::response", function(queue){
         $scope.queue = queue.queue;
         $scope.currentlyPlaying = queue.current;
+        $scope.currentlyPlayingAuto = queue.auto;
     });
 
 	/* Hide/Show Controls */

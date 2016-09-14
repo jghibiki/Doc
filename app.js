@@ -226,7 +226,7 @@ controllerSocket.on('connection', function(socket){
                     controllerSocket.emit("queue:get::response", { queue:queue, current:currentlyPlaying });
                 }
                 else{
-                    console.log("Song " + req.body.title + " too long.")
+                    console.log("Song " + song.title + " too long.")
                 }
             }
         });
@@ -326,7 +326,7 @@ function newSong(socket){
 		currentlyPlaying = song.title;
 		console.log("Sending Song url: " + song.url);
 		socket.emit("song", song);
-        controllerSocket.emit("queue:get::response", { queue: queue, current: currentlyPlaying });
+        controllerSocket.emit("queue:get::response", { queue: queue, current: currentlyPlaying, auto: false });
 	}
 	else if((playRecent || playRelated) && recent.length > 0){
 		var recentSong = recent[Math.floor(Math.random()*recent.length)];
@@ -334,7 +334,7 @@ function newSong(socket){
 			&& (Date() - recentSong.lastPlayed) > 60*60*1000){
 			console.log("Sending Recent Song: " + recentSong.song.url);
             socket.emit("song", song);
-            controllerSocket.emit("queue:get::response", {queue:queue, current:currentlyPlaying});
+            controllerSocket.emit("queue:get::response", {queue:queue, current:currentlyPlaying, auto: true});
 		}
 		else if(playRelated){
 			console.log("Attempting to play a related song.");
@@ -382,7 +382,7 @@ function newSong(socket){
 									}
 									currentlyPlaying = song.title;
                                     socket.emit("song", song);
-									controllerSocket.emit("queue:get::response", {queue:queue, current:currentlyPlaying});
+									controllerSocket.emit("queue:get::response", {queue:queue, current:currentlyPlaying, auto: true});
 								}
 								else{
 									console.log("Song " + song.title + " too long.");
