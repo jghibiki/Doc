@@ -214,6 +214,9 @@ angular.module('doc.client', ['ngRoute'])
     });
     
     $scope.volumeUpdate = function(){
+        if($scope.volume > 100) $scope.volume = 100;
+        if($scope.volume < 0) $scope.volume = 0;
+
         socket.emit("volume:set", $scope.volume);
     }
 

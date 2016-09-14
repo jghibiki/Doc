@@ -47,14 +47,26 @@
                     </md-card-header>
                     <md-card-content>
 
-                        <md-slider-container flex layout="row">
-                            <md-slider flex min="0" max="100" ng-model="volume" md-vertical></md-slider>
-                            <md-input-container>
-                                <input type="number" ng-model="volume">
-                            </md-input-container> 
-                            <md-button class="md-primary md-raised" ng-click="volumeUpdate()">Set</md-button>
-                        </md-slider-container>
-
+                        <div layout="row">
+                            <span flex></span>
+                            <span>{{volume}}</span><span>%</span>
+                            <span flex></span>
+                        </div>
+                        <div layout="column">
+                            <div flex layout="row">
+                                <md-button class="md-primary md-raised md-hue-3" flex ng-click="volume = volume+1; volumeUpdate()">+1</md-button>
+                                <md-button class="md-primary md-raised md-hue-3" flex ng-click="volume = volume-1; volumeUpdate() ">-1</md-button>
+                            </div>
+                            <div flex layout="row">
+                                <md-button class="md-primary md-raised md-hue-2" flex ng-click="volume = volume+5; volumeUpdate()">+5</md-button>
+                                <md-button class="md-primary md-raised md-hue-2" flex ng-click="volume = volume-5; volumeUpdate() ">-5</md-button>
+                            </div>
+                            <div flex layout="row">
+                                <md-button class="md-primary md-raised md-hue-3" flex ng-click="volume = 0; volumeUpdate()">0%</md-button>
+                                <md-button class="md-primary md-raised" flex ng-click="volume = 50; volumeUpdate()">50%</md-button>
+                                <md-button class="md-primary md-raised md-hue-2" flex ng-click="volume = 100; volumeUpdate() ">100%</md-button>
+                            </div>
+                        </div>
                         <md-actions>
                         </md-actions>
                     </md-card-content>

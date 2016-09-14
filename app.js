@@ -255,6 +255,17 @@ controllerSocket.on('connection', function(socket){
         loudness.setVolume(vol, function(err){
             if(err !== null){
                 console.log(err);
+                
+                // send correct volume
+                loudness.getVolume(function(err, vol){
+                    if(err !== null){
+                        console.log(err);
+                    }
+                    else{
+                        console.log("volume: " + vol);
+                        socket.emit("volume:get::response", vol);
+                    }
+                });
             }
             else{
                 console.log("Volume set to " + vol + "%");
