@@ -225,7 +225,7 @@ controllerSocket.on('connection', function(socket){
                     queue.push(obj);
                     auto = false;
                     socket.emit("queue:add::response", obj);
-                    controllerSocket.emit("queue:get::response", { queue:queue, current:currentlyPlaying, auto: auto});
+                    controllerSocket.emit("queue:get::response", { queue:queue, current:currentlyPlaying, auto: false});
                 }
                 else{
                     console.log("Song " + song.title + " too long.")
@@ -235,7 +235,7 @@ controllerSocket.on('connection', function(socket){
     });
 
     socket.on("queue:get", function(req){
-        socket.emit("queue:get::response", { queue:queue, current:currentlyPlaying });
+        socket.emit("queue:get::response", { queue:queue, current:currentlyPlaying, auto: auto});
     });
 
     /* Volume */
