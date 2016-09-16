@@ -41,6 +41,7 @@ Date.prototype.addHours = function(h) {
 Queue Setup
 ***********/
 var currentlyPlaying = null;
+var auto = false;
 var queue = [];
 var recent = [];
 var username = "abc";
@@ -222,8 +223,9 @@ controllerSocket.on('connection', function(socket){
                     };
 
                     queue.push(obj);
+                    auto = false;
                     socket.emit("queue:add::response", obj);
-                    controllerSocket.emit("queue:get::response", { queue:queue, current:currentlyPlaying });
+                    controllerSocket.emit("queue:get::response", { queue:queue, current:currentlyPlaying, auto: auto});
                 }
                 else{
                     console.log("Song " + song.title + " too long.")
@@ -337,6 +339,7 @@ function newSong(socket){
 		currentlyPlaying = song.title;
 		console.log("Sending Song url: " + song.url);
 		socket.emit("song", song);
+        auto = true;
         controllerSocket.emit("queue:get::response", { queue: queue, current: currentlyPlaying, auto: false });
 	}
 	else if((playRecent || playRelated) && recent.length > 0){
@@ -345,6 +348,7 @@ function newSong(socket){
 			&& (Date() - recentSong.lastPlayed) > 60*60*1000){
 			console.log("Sending Recent Song: " + recentSong.song.url);
             socket.emit("song", song);
+            auto = true
             controllerSocket.emit("queue:get::response", {queue:queue, current:currentlyPlaying, auto: true});
 		}
 		else if(playRelated){
