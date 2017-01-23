@@ -160,9 +160,76 @@ router.post('/playback/max-length', function(req, res){
 	res.json({state: maxLengthLimit});
 });
 
+router.post("/queue/:id", function(req, res){
+    id = req.params["id"];
+    youtube.getById(id, function(error, result){
+        if(error){
+            console.log("Error: " + error)
+        }
+        else{
+            var duration = result.items[0].contentDetails.duration;
+            if( (moment.duration(duration) < moment.duration(maxLength, "minutes")) || !maxLengthLimit){
+                var obj = {
+                    id: guid(),
+                    yt: song.yt,
+                    url: song.url,
+                    title: song.title,
+                    uploader: song.uploader,
+                    description: result.items[0].snippet.description,
+                    thumbnail: song.thumbnail,
+                    date: new Date(),
+                    duration: result.items[0].contentDetails.duration,
+
+                };
+
+                queue.push(obj);
+                auto = false;
+                socket.emit("queue:add::response", obj);
+                controllerSocket.emit("queue:get::response", { queue:queue, current:currentlyPlaying, auto: false});
+            }
+            else{
+                console.log("Song " + song.title + " too long.")
+            }
+        }
+})
 
 
 app.use("/api", router)
+
+function queueAdd(song){
+        console.log("Recived request for song: " + song.url);
+        youtube.getById(song.yt, function(error, result){
+            if(error){
+                console.log("Error: " + error)
+            }
+            else{
+                var duration = result.items[0].contentDetails.duration;
+                if( (moment.duration(duration) < moment.duration(maxLength, "minutes")) || !maxLengthLimit){
+                    var obj = {
+                        id: guid(),
+                        yt: song.yt,
+                        url: song.url,
+                        title: song.title,
+                        uploader: song.uploader,
+                        description: result.items[0].snippet.description,
+                        thumbnail: song.thumbnail,
+                        date: new Date(),
+                        duration: result.items[0].contentDetails.duration,
+
+                    };
+
+                    queue.push(obj);
+                    auto = false;
+                    socket.emit("queue:add::response", obj);
+                    controllerSocket.emit("queue:get::response", { queue:queue, current:currentlyPlaying, auto: false});
+                }
+                else{
+                    console.log("Song " + song.title + " too long.")
+                }
+            }
+        });
+    }
+
 
 
 var controllerSocket = io.of('/controller')
