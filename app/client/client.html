@@ -12,7 +12,10 @@
                 </md-card-header>
                 <md-card-content>
                     <span ng-if="!currentlyPlaying"><em>Nothing is currently playing.</em></span>
+                    <img ng-if="currentUrl" ng-src="{{currentUrl}}" style="width: 50%"/>
+                    <br ng-if="currentUrl">
                     <span>{{currentlyPlaying}}</span><span ng-if="currentlyPlayingAuto"><md-icon ng-class="{'fa-spin':magicModeState}">stars</md-icon></span>
+		    <span>{{request.title}}</span>
                 </md-card-content>
             </md-card>
 
@@ -85,7 +88,8 @@
                   <span ng-if="queue.length === 0"><em>No reqests in queue.</em></span>
                   <md-list class="md-dense">
                     <md-list-item ng-repeat="request in queue">
-                        {{ $index + 1 + ". " }}{{request.title}}
+			<img style="width: 10%;" ng-src="{{request.thumbnail.url}}"/>
+			<span>{{request.title}}</span>
                       <!--
                       <ul>
                         <li>
@@ -134,6 +138,7 @@
                             <li ng-repeat="result in searchResults | filter:filterResult" >
                                 <div>
                                     <md-button class="md-primary md-raised" ng-click="requestSong(result.yt)">Request</md-button>
+				    <img style="width: 10%;" ng-src="{{result.thumbnail.url}}"/>
                                     <span>{{result.title}}</span>
                                 </div>
                             </li>

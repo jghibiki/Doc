@@ -167,6 +167,7 @@ angular.module('doc.client', ['ngRoute'])
     socket.on("queue:get::response", function(queue){
         $scope.queue = queue.queue;
         $scope.currentlyPlaying = queue.current;
+	$scope.currentUrl = queue.thumbnail;
         $scope.currentlyPlayingAuto = queue.auto;
     });
 
