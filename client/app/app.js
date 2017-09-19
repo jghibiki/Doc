@@ -6,11 +6,10 @@ angular.module('doc', [
   'ngMaterial',
   'ngAnimate',
   'ngResource',
-  'btford.socket-io',
+  'ngWebSocket',
   'doc.client',
   'doc.player',
   'doc.version',
-  'docServices'
 ]).
 config(['$routeProvider', "$sceDelegateProvider", function($routeProvider, $sceDelegateProvider) {
   $routeProvider.otherwise({redirectTo: '/'});
@@ -20,14 +19,11 @@ config(['$routeProvider', "$sceDelegateProvider", function($routeProvider, $sceD
     "http://www.youtube.com/**",
     "https://www.youtube.com/**"
     ])
-}])
-.factory('playerSocket', function (socketFactory) {
-  return socketFactory({
-      ioSocket: io.connect('/player')
-  });
-})
-.factory('controllerSocket', function (socketFactory) {
-  return socketFactory({
-      ioSocket: io.connect('/controller')
-  });
-});
+}]).
+factory("ngSocket", function($websocket){
+    client.init($websocket, "127.0.0.1", "8081");
+    return {};
+}).
+run(["ngSocket", function(ws){
+
+}]);

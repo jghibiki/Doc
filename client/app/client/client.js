@@ -13,7 +13,7 @@ angular.module('doc.client', ['ngRoute'])
   });
 }])
 
-.controller('ClientCtrl', ["$scope", "playback", "controllerSocket", function($scope, playback, socket) {
+.controller('ClientCtrl', ["$scope", function($scope ) {
 
 
 	/* Definitions */ 
@@ -130,26 +130,32 @@ angular.module('doc.client', ['ngRoute'])
 	/* Search Song */
 
 	$scope.searchSong = function(){
-		socket.emit("search", $scope.url);
+        client.send({
+            type: "command",
+            key: "get.search",
+            details: {
+                query: $scope.url
+            }
+        })
     };
 
-    socket.on("search::response", function(results){
-        $scope.searchResults = results;
+    client.subscribe("get.search", function(results){
+        $scope.searchResults = results.payload;
+        $scope.$apply();
     });
 
     $scope.requestSong = function(ytid){
 
         for(var i=0; i < $scope.searchResults.length; i++){
-            if($scope.searchResults[i].yt === ytid){
+            if($scope.searchResults[i].id === ytid){
                 var song = $scope.searchResults[i];
-                socket.emit("queue:add", {
-                    url: song.url,
-                    yt: song.yt,
-                    title: song.title,
-                    uploader: song.uploader,
-                    description: song.description,
-                    thumbnail: song.thumbnail
-                });
+                client.send({
+                    type: "command",
+                    key: "add.queue", 
+                    details: {
+                        id: song.id,
+                    }
+                }, true);
                 break;
             }
         }
@@ -159,15 +165,22 @@ angular.module('doc.client', ['ngRoute'])
         $scope.searchResults = [];
     }
 
-    socket.on("queue:add::response", function(song){
+    /* TODO REPLACE
+    client.subscribe("add.queue", function(song){
         alert("Song Requested\n" + song.title);
     });
+    */
 
 
-    socket.on("queue:get::response", function(queue){
-        $scope.queue = queue.queue;
+    client.subscribe("get.queue", function(data){
+        $scope.queue = data.payload;
+        $scope.$apply();
+        /*
+         * TODO UPDATE TO get current and autoqueue status
         $scope.currentlyPlaying = queue.current;
         $scope.currentlyPlayingAuto = queue.auto;
+
+        */
     });
 
 	/* Hide/Show Controls */
@@ -209,23 +222,28 @@ angular.module('doc.client', ['ngRoute'])
 	};
 
     /* Volume Control */
-    socket.on("volume:get::response", function(vol){
-        $scope.volume = vol;
+    client.subscribe("get.volume", function(resp){
+        $scope.volume = resp.payload.value;
     });
     
     $scope.volumeUpdate = function(){
         if($scope.volume > 100) $scope.volume = 100;
         if($scope.volume < 0) $scope.volume = 0;
 
-        socket.emit("volume:set", $scope.volume);
+        client.send({
+            type: "command",
+            key: "set.volume",
+            details: {
+                value: $scope.volume
+            }
+        });
     }
-
-
 
 
 
 	/* UI REST Data Update Timer */
 
+    /* TODO Replace timer
 	$scope.restUpdate = function(){
 		$scope.updateRelatedCheckbox();
 		$scope.updateRelatedToRecentCheckbox();
@@ -237,9 +255,18 @@ angular.module('doc.client', ['ngRoute'])
 
 	$scope.restUpdate();
 	$scope.updateTimer = setInterval($scope.restUpdate, 5000);
+    */
 
+    /* TODO replace mechanisms
     socket.emit("queue:get");
     socket.emit("volume:get");
     socket.emit("volume:mute:get");
+    */
+
+
+   client.registerInitHook(()=>{
+        client.send({type:"command", key:"get.queue"});
+    });
+
 
 }]);

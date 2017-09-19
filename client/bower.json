@@ -15,6 +15,7 @@
     "angular-socket-io": "0.7.x",
     "socket-io": "1.x.x",
     "moment": "~2.11.0",
-    "material-icons": "^0.1.0"
+    "material-icons": "^0.1.0",
+    "angular-websocket": "^2.0.0"
   }
 }

@@ -133,7 +133,7 @@
                         <ol flex>
                             <li ng-repeat="result in searchResults | filter:filterResult" >
                                 <div>
-                                    <md-button class="md-primary md-raised" ng-click="requestSong(result.yt)">Request</md-button>
+                                    <md-button class="md-primary md-raised" ng-click="requestSong(result.id)">Request</md-button>
                                     <span>{{result.title}}</span>
                                 </div>
                             </li>
