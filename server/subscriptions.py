@@ -24,8 +24,6 @@ def toggle_play_pause(client, req):
     else:
         print("Paused playback")
 
-    client.sendTarget(req["id"], type="acknowledge", key="get.search", payload={})
-
     return True
 
 
@@ -85,6 +83,29 @@ def set_skip(client, req):
 
     return True
 
+def toggle_magic_mode(client, req):
+    client.setState("magic_mode", not client.getState("magic_mode"))
+
+    if client.getState("magic_mode"):
+        print("Enabled Magic Mode")
+    else:
+        print("Disabled Magic Mode")
+
+    return True
+
+
+def get_magic_mode(client, req):
+    client.sendTarget(req["id"], key="get.magic_mode", payload={
+        "payload": {"magic_mode": client.getState("magic_mode") }
+    })
+
+    return True
+
+def remove_history(client, req):
+
+    client.setState("history", [])
+
+    print("Clearing History")
 
 
 ## Helpers
@@ -116,5 +137,10 @@ handlers = {
 
     "get.current_song": [get_current_song],
 
-    "set.skip": [set_skip]
+    "set.skip": [set_skip],
+
+    "toggle.magic_mode": [toggle_magic_mode],
+    "get.magic_mode": [get_magic_mode],
+
+    "remove.history": [remove_history]
 }

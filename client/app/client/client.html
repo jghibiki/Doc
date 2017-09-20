@@ -14,9 +14,11 @@
                     <div ng-if="!currentlyPlaying">
                         <span><em>Nothing is currently playing.</em></span>
                     </div>
-                    <div ng-if="currentlyPlaying">
-                        <img style="width:30%" ng-src="{{currentlyPlaying.thumbnail.url}}"/>
-                        <span>{{currentlyPlaying.title}}</span><span ng-if="currentlyPlayingAuto"><md-icon ng-class="{'fa-spin':magicModeState}">stars</md-icon></span>
+                    <div ng-if="currentlyPlaying" style="text-align: center">
+                        <span>{{currentlyPlaying.title}}</span><span ng-if="currentlyPlaying.auto_queued"><md-icon class="fa-spin">stars</md-icon></span>
+                        <br>
+                        <br>
+                        <img style="width:50%" ng-src="{{currentlyPlaying.thumbnail.url}}"/>
                     </div>
                 </md-card-content>
             </md-card>
@@ -30,11 +32,11 @@
                     </md-card-header>
                     <md-card-content layout="column" layout-align="center center">
                         <div layout="row" layout-align="center center">
-                            <span fleX></span>
+                            <span flex></span>
                             <md-button class="md-primary md-raised md-icon-button" ng-click="easterEgg()"><md-icon >skip_previous</md-icon></md-button>
                             <md-button class="md-primary md-raised md-icon-button" ng-click="playbackStateButtonClicked()" title="{{ playbackStateMessage }}"><md-icon>{{ playbackStateIcon }}</md-icon></md-button>
                             <md-button class="md-primary md-raised md-icon-button" ng-click="skipSong()" title="Skip Current Song"><md-icon>skip_next</md-icon></md-button>
-                            <span fleX></span>
+                            <span flex></span>
                         </div>
 
                         <br>
@@ -150,19 +152,8 @@
             </md-card-header-text>
         </md-card-header>
         <md-card-content>
-            <div layout="row">
-                <div flex>
-                </div>
-                <div flex>
-                </div>
-            </div>
-
             <div ng-if="showControls">
                 <div>
-                    <md-checkbox ng-model="chk.recent" ng-click="recentCheckboxClicked()"> Allow recent songs to be replayed (Once per hour) automatically.</md-checkbox>
-                    <md-checkbox ng-model="chk.related"  ng-click="relatedCheckboxClicked()"> Allow songs related to songs that have already been played to be queued automatically.</md-checkbox>
-                    <md-checkbox ng-model="chk.relatedToRecent" ng-click="relatedToRecentCheckboxClicked()"> Allow a related song to be added to the list of recently played songs. <em>Note: this will allow the player to play a related song to a related song and so forth, eventually resulting in a large drift from the original song that was played.</em></md-checkbox>
-
                     <h3>Select Theme:</h3>
                     <md-input-container>
                         <md-select ng-model="$parent.theme">
@@ -172,7 +163,11 @@
                     <md-checkbox ng-model="$parent.darkTheme"> Dark Theme?</md-checkbox>
                     <md-button class="md-primary md-raised" ng-click="changeTheme()">Change Theme</md-button>
                 </div>
-                <div ng-if="!playbackMaxLengthState" ><md-icon>music_video</md-icon></div>
+
+                <div ng-if="!playbackMaxLengthState" >
+                    <md-icon>music_video</md-icon>
+                </div>
+
                 <div>
                     <md-button class="md-primary md-raised" ng-click="toggleControls()"><md-icon class="fa-spin">settings</md-icon> Hide Settings</md-button>
                 </div>

@@ -43,11 +43,10 @@ angular.module('doc.client', ['ngRoute'])
 	}
 	$scope.showControls = false;
 	$scope.playbackState = false;
-	$scope.magicModeState = false;
+	$scope.magicModeState = true;
 	$scope.playbackStateIcon = "play_arrow";
 	$scope.playbackStateMessage = "Resume Playback";
 	$scope.playbackMaxLengthState = true;
-	$scope.magicModeState = false;
 
     $scope.themeColors = [
         "red",
@@ -81,55 +80,13 @@ angular.module('doc.client', ['ngRoute'])
     }
 
 
-	/* Related */
-
-	$scope.relatedCheckboxClicked = function(){
-		playback.setRelated($scope.chk.related, function(resp){
-			$scope.chk.related = resp.state;
-			$scope.updateMagicModeState();
-		});
-	}
-	
-	$scope.updateRelatedCheckbox = function(){
-		playback.getRelated(function(resp){
-			$scope.chk.related = resp.state;
-		})
-	}
 
 	$scope.clearRecent = function(){
-		playback.clearRecentList();
+        client.send({
+            type: "command",
+            key: "remove.history"
+        });
 	}
-
-
-	/* Related To Recent */
-
-	$scope.relatedToRecentCheckboxClicked = function(){
-		playback.setRelatedToRecent($scope.chk.relatedToRecent, function(resp){
-			$scope.chk.relatedToRecent = resp.state;
-			$scope.updateMagicModeState();
-		});
-	}
-
-	$scope.updateRelatedToRecentCheckbox = function(){
-		playback.getRelatedToRecent(function(resp){
-			$scope.chk.relatedToRecent = resp.state;
-		});
-	};
-
-
-	/* Recent */
-
-	$scope.recentCheckboxClicked = function(){
-		playback.setRecent($scope.chk.recent, function(resp){
-			$scope.recentCheckbox = resp.state;
-		});
-	};
-
-	$scope.updateRecentCheckbox = function(){
-		playback.getRecent(function(resp){
-			$scope.chk.recent = resp.state;
-		});
-	};
 
 
 	/* Playback State */
@@ -270,16 +227,19 @@ angular.module('doc.client', ['ngRoute'])
 
 	/* Magic Mode */
 	$scope.toggleMagicMode = function(){
-		$scope.chk.related = !$scope.chk.related;
-		$scope.chk.relatedToRecent = !$scope.chk.relatedToRecent;
-		$scope.relatedCheckboxClicked();
-		$scope.relatedToRecentCheckboxClicked();
-		$scope.magicModeState = !$scope.magicModeState;		
+        client.send({
+            type: "command",
+            key: "toggle.magic_mode"
+        }, true);
 	}
 
-	$scope.updateMagicModeState = function(){
-		$scope.magicModeState =($scope.chk.related && $scope.chk.relatedToRecent);
-	}
+    client.subscribe("toggle.magic_mode", function(data){
+		$scope.magicModeState = !$scope.magicModeState;		
+    });
+
+    client.subscribe("get.magic_mode", function(data){
+		$scope.magicModeState = data.payload.magic_mode;
+    });
 
 
 	/* Easter Eggs */
@@ -351,6 +311,7 @@ angular.module('doc.client', ['ngRoute'])
         client.send({type:"command", key:"get.queue"});
         client.send({type:"command", key:"get.current_song"});
         client.send({type:"command", key:"get.play_pause"});
+        client.send({type:"command", key:"get.magic_mode"});
     });
 
 }]).
