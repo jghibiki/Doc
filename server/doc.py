@@ -9,7 +9,7 @@
 from broadcast_server import start_server
 
 def main():
-    start_server("127.0.0.1", 8081)
+    start_server("0.0.0.0", 8081)
 
 
 if __name__ == "__main__":
