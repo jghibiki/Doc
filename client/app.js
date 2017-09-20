@@ -22,11 +22,11 @@ resetParts();
 
 
 function resetParts(){
-	console.log("Clear Parts");
-	youtube = new YouTube();
-	youtube.clearParts();
-	youtube.setKey("AIzaSyAPLpQrMuQj6EO4R1XwjwS2g47dqpFXW3Y");
-	youtube.addParam("order", "relevance")
+    console.log("Clear Parts");
+    youtube = new YouTube();
+    youtube.clearParts();
+    youtube.setKey("AIzaSyAPLpQrMuQj6EO4R1XwjwS2g47dqpFXW3Y");
+    youtube.addParam("order", "relevance")
 }
 
 /*********************
@@ -41,6 +41,7 @@ Date.prototype.addHours = function(h) {
 Queue Setup
 ***********/
 var currentlyPlaying = null;
+var currentUrl = null;
 var auto = false;
 var queue = [];
 var recent = [];
@@ -66,117 +67,128 @@ var router = express.Router();
 
 /* Authenticatiom */
 router.post('/authenticate', function(req, res){
-	var data = req.body;
-	if(data["username"] === username && data["password"] === password){
+    var data = req.body;
+    if(data["username"] === username && data["password"] === password){
 
-		var token = guid();
-		var expiration = new Date();
-		expiration.setHours(expiration.getHours() + 1);
-		var payload = { 
-			token: token, 
-			expiration: expiration
-		};
+        var token = guid();
+        var expiration = new Date();
+        expiration.setHours(expiration.getHours() + 1);
+        var payload = { 
+            token: token, 
+            expiration: expiration
+        };
 
-		tokens.push(payload) ;
-		res.json(payload)
-	}
+        tokens.push(payload) ;
+        res.json(payload)
+    }
 });
 
 /* Playback */
 router.get('/playback/related', function(req, res){
-	res.json({"state": playRelated});
+    res.json({"state": playRelated});
 });
 
 router.post('/playback/related', function(req, res){
-	playRelated = req.body.state;
-	console.log(playRelated?"Enabling related":"Disabling related");
-	var obj = {"state": playRelated}
-	res.json(obj);
+    playRelated = req.body.state;
+    console.log(playRelated?"Enabling related":"Disabling related");
+    var obj = {"state": playRelated}
+    res.json(obj);
 });
 
 router.get('/playback/relatedToRecent', function(req, res){
-	res.json({state:relatedToRecent});
+    res.json({state:relatedToRecent});
 })
 
 router.post('/playback/relatedToRecent', function(req, resp){
-	relatedToRecent = req.body.state;
-	console.log(relatedToRecent?"Enabling related to recent":"Disabling related to recent");
-	var obj = {state: relatedToRecent};
-	resp.json(obj);
+    relatedToRecent = req.body.state;
+    console.log(relatedToRecent?"Enabling related to recent":"Disabling related to recent");
+    var obj = {state: relatedToRecent};
+    resp.json(obj);
 })
 
 router.get('/playback/recent', function(req, res){
-	res.json({"state": playRecent});
+    res.json({"state": playRecent});
 });
 
 router.post('/playback/recent', function(req, res){
-	playRecent = req.body.state
-	console.log(playRecent?"Enabling recent":"Disabling recent");
-	var obj = {"state": playRecent}
-	res.json(obj);
+    playRecent = req.body.state
+    console.log(playRecent?"Enabling recent":"Disabling recent");
+    var obj = {"state": playRecent}
+    res.json(obj);
 });
 
 router.delete('/playback/recent', function(req, res){
-	recent = [];
-	console.log("Clearing recent list");
-	res.json({"result": "success"});
+    recent = [];
+    console.log("Clearing recent list");
+    res.json({"result": "success"});
 });
 
 router.post('/playback/skip', function(req, res){
-	if(skip !== true){
-		console.log("Skipping current song");
-		skip = true;
-	}
-	res.json({"result": "success"});
+    if(skip !== true){
+        console.log("Skipping current song");
+        skip = true;
+    }
+    res.json({"result": "success"});
 })
 
 router.get('/playback/state', function(req, res){
-	res.json({state: playing});
+    res.json({state: playing});
 });
 
 router.post('/playback/state', function(req, res){
-	playing = req.body.state;
-	if(playing){
-		console.log("Starting Playback.");
-	}
-	else{
-		console.log("Pausing Playback.");
-	}
-	res.json({state: playing});
+    console.log(req.body);
+    playing = req.body.state;
+    console.log(playing)
+    if(playing == true){
+        console.log("Starting Playback.");
+    }
+    else{
+        console.log("Pausing Playback.");
+    }
+    res.json({state: playing});
 });
 
 router.get('/playback/max-length', function(req, res){
-	res.json({state: maxLengthLimit});
+    res.json({state: maxLengthLimit});
 });
 
 router.post('/playback/max-length', function(req, res){
-	maxLengthLimit = !maxLengthLimit;
-	if(maxLengthLimit){
-		console.log("Enabling Max Length Limit.");
-	}	
-	else{
-		console.log("Disabling Max Length Limit.");
-	}
-	res.json({state: maxLengthLimit});
+    maxLengthLimit = !maxLengthLimit;
+    if(maxLengthLimit){
+        console.log("Enabling Max Length Limit.");
+    }    
+    else{
+        console.log("Disabling Max Length Limit.");
+    }
+    res.json({state: maxLengthLimit});
 });
 
-router.post("/queue/:id", function(req, res){
-    id = req.params["id"];
+router.get("/queue/", function(req, res){
+    res.json({ 
+	queue:queue, 
+	current:currentlyPlaying, 
+	thumbnail: currentUrl,
+	auto: auto});
+})
+
+router.post("/queue/:id/", function(req, res){
+    var id = req.params["id"];
     youtube.getById(id, function(error, result){
         if(error){
             console.log("Error: " + error)
         }
         else{
+            var item = result.items[0];
             var duration = result.items[0].contentDetails.duration;
             if( (moment.duration(duration) < moment.duration(maxLength, "minutes")) || !maxLengthLimit){
                 var obj = {
                     id: guid(),
-                    yt: song.yt,
-                    url: song.url,
-                    title: song.title,
-                    uploader: song.uploader,
-                    description: result.items[0].snippet.description,
-                    thumbnail: song.thumbnail,
+		    url: "https://www.youtube.com/embed/" + id + "?autoplay=1",
+		    yt: item.id.videoId,
+		    title: item.snippet.title,
+		    uploader: item.snippet.channelTittle,
+		    description: item.snippet.description,
+		    thumbnail: item.snippet.thumbnails.high,
                     date: new Date(),
                     duration: result.items[0].contentDetails.duration,
 
@@ -184,51 +196,62 @@ router.post("/queue/:id", function(req, res){
 
                 queue.push(obj);
                 auto = false;
-                socket.emit("queue:add::response", obj);
-                controllerSocket.emit("queue:get::response", { queue:queue, current:currentlyPlaying, auto: false});
             }
             else{
                 console.log("Song " + song.title + " too long.")
             }
         }
+    });
+
+    res.json({"result": "success"});
+});
+
+
+var search_results = []
+router.get("/search/:q", function(req,res, next){
+     var query = req.params["q"];
+
+     console.log("Clear Parts");
+     youtube = new YouTube();
+     youtube.clearParts();
+     youtube.params = {}
+     youtube.setKey("AIzaSyAPLpQrMuQj6EO4R1XwjwS2g47dqpFXW3Y");
+     youtube.addParam("order", "relevance")
+     
+     youtube.search(query, 10, function(error, result){
+         if(error){
+              console.log(error);
+         }
+         else{
+             var payload = [];
+             for(var i=0; i<result.items.length; i++){
+                 if(result.items[i].id.kind === "youtube#video"){
+                 var item = result.items[i];
+			 if(item.snippet.title != undefined){
+				 payload.push({
+				     url: "https://www.youtube.com/embed/" + item.id.videoId + "?autoplay=1",
+				     yt: item.id.videoId,
+				     title: item.snippet.title,
+				     uploader: item.snippet.channelTittle,
+				     description: item.snippet.description,
+				     thumbnail: item.snippet.thumbnails.high
+				 });
+			 }
+                 }
+             }    
+	     search_results[query] = payload;
+         }
+	 res.end()
+     })    
+
+});
+
+router.get("/search/:q/results/", function(req, res){
+	res.json({"results": search_results[req.params["q"]]})
 })
 
 
 app.use("/api", router)
-
-function queueAdd(song){
-        console.log("Recived request for song: " + song.url);
-        youtube.getById(song.yt, function(error, result){
-            if(error){
-                console.log("Error: " + error)
-            }
-            else{
-                var duration = result.items[0].contentDetails.duration;
-                if( (moment.duration(duration) < moment.duration(maxLength, "minutes")) || !maxLengthLimit){
-                    var obj = {
-                        id: guid(),
-                        yt: song.yt,
-                        url: song.url,
-                        title: song.title,
-                        uploader: song.uploader,
-                        description: result.items[0].snippet.description,
-                        thumbnail: song.thumbnail,
-                        date: new Date(),
-                        duration: result.items[0].contentDetails.duration,
-
-                    };
-
-                    queue.push(obj);
-                    auto = false;
-                    socket.emit("queue:add::response", obj);
-                    controllerSocket.emit("queue:get::response", { queue:queue, current:currentlyPlaying, auto: false});
-                }
-                else{
-                    console.log("Song " + song.title + " too long.")
-                }
-            }
-        });
-    }
 
 
 
@@ -259,10 +282,10 @@ controllerSocket.on('connection', function(socket){
                             thumbnail: item.snippet.thumbnails.high
                         });
                     }
-                }	
+                }    
                 socket.emit('search::response', payload);
             }
-        })	
+        })    
     });
 
 
@@ -279,7 +302,7 @@ controllerSocket.on('connection', function(socket){
                     var obj = {
                         id: guid(),
                         yt: song.yt,
-                        url: song.url,
+			url: song.url,
                         title: song.title,
                         uploader: song.uploader,
                         description: result.items[0].snippet.description,
@@ -292,7 +315,7 @@ controllerSocket.on('connection', function(socket){
                     queue.push(obj);
                     auto = false;
                     socket.emit("queue:add::response", obj);
-                    controllerSocket.emit("queue:get::response", { queue:queue, current:currentlyPlaying, auto: false});
+                    controllerSocket.emit("queue:get::response", { queue:queue, current:currentlyPlaying, auto: false, thumbnail: currentUrl});
                 }
                 else{
                     console.log("Song " + song.title + " too long.")
@@ -302,7 +325,7 @@ controllerSocket.on('connection', function(socket){
     });
 
     socket.on("queue:get", function(req){
-        socket.emit("queue:get::response", { queue:queue, current:currentlyPlaying, auto: auto});
+        socket.emit("queue:get::response", { queue:queue, current:currentlyPlaying, auto: auto,  thumbnail: currentUrl});
     });
 
     /* Volume */
@@ -350,141 +373,144 @@ Player Web Sockets
 ******************/
 var playerSocket = io.of('/player')
 playerSocket.on('connection', function (socket) {
-	if(!hasConnection){
-		console.log("Client Connected")
-		hasConnection = true;
-		socket.on("newSong", function(){
-				console.log("A new song was requested.");
-				currentlyPlaying = null;
-				newSongTimer = setTimeout(newSong, 1000, socket);
-				watchForSkipTimer = setTimeout(watchForSkip, 1000, socket);
-		});
+    if(!hasConnection){
+        console.log("Client Connected")
+        hasConnection = true;
+        socket.on("newSong", function(){
+                console.log("A new song was requested.");
+                currentlyPlaying = null;
+		currentUrl = null;
+                newSongTimer = setTimeout(newSong, 1000, socket);
+                watchForSkipTimer = setTimeout(watchForSkip, 1000, socket);
+        });
 
-		socket.on("disconnect", function(){
-			clearTimeout(newSongTimer);
-			newSongTimer = null;
-			clearTimeout(watchForSkipTimer);
-			watchForSkipTimer = null;
-			hasConnection = false;
-			console.log("Client Disconnected");
-		});
+        socket.on("disconnect", function(){
+            clearTimeout(newSongTimer);
+            newSongTimer = null;
+            clearTimeout(watchForSkipTimer);
+            watchForSkipTimer = null;
+            hasConnection = false;
+            console.log("Client Disconnected");
+        });
 
-		socket.on("fixCurrent", function(current){
-			currentlyPlaying = current.title;
-			recent.push({song: current, lastPlayed:Date()});
-		})
+        socket.on("fixCurrent", function(current){
+            currentlyPlaying = current.title;
+            recent.push({song: current, lastPlayed:Date()});
+        })
 
-		socket.emit("ready");
-	}
-	else{
-		console.log("Player connection exists denying new connection attempts util current client leaves.");
-	}
+        socket.emit("ready");
+    }
+    else{
+        console.log("Player connection exists denying new connection attempts util current client leaves.");
+    }
 });
 
 
 function watchForSkip(socket){
-	if(skip && playing){
-		console.log("Song Skipped.");
-		skip = false;
-		clearTimeout(newSongTimer);
-		socket.emit("skip");
-	}
-	setTimeout(watchForSkip, 1000, socket);
+    if(skip && playing){
+        console.log("Song Skipped.");
+        skip = false;
+        clearTimeout(newSongTimer);
+        socket.emit("skip");
+    }
+    setTimeout(watchForSkip, 1000, socket);
 }
 
 function newSong(socket){
-	console.log("There are " + queue.length + " items in the queue and " + recent.length + " items played recently.");
-	resetParts();
-	if(!playing){
-		console.log("Playback is paused waiting.");
-		newSongTimer = setTimeout(newSong, 1000, socket);
-		return;
-	}
-	if(queue.length > 0){
-		var song = queue.shift();
-		recent.push({ song:song, lastPlayed:Date() });
-		currentlyPlaying = song.title;
-		console.log("Sending Song url: " + song.url);
-		socket.emit("song", song);
+    console.log("There are " + queue.length + " items in the queue and " + recent.length + " items played recently.");
+    resetParts();
+    if(!playing){
+        console.log("Playback is paused waiting.");
+        newSongTimer = setTimeout(newSong, 1000, socket);
+        return;
+    }
+    if(queue.length > 0){
+        var song = queue.shift();
+        recent.push({ song:song, lastPlayed:Date() });
+        currentlyPlaying = song.title;
+	currentUrl = song.thumbnail.url;
+        console.log("Sending Song url: " + song.url);
+        socket.emit("song", song);
         auto = true;
-        controllerSocket.emit("queue:get::response", { queue: queue, current: currentlyPlaying, auto: false });
-	}
-	else if((playRecent || playRelated) && recent.length > 0){
-		var recentSong = recent[Math.floor(Math.random()*recent.length)];
-		if(playRecent === true 
-			&& (Date() - recentSong.lastPlayed) > 60*60*1000){
-			console.log("Sending Recent Song: " + recentSong.song.url);
+        controllerSocket.emit("queue:get::response", { queue: queue, current: currentlyPlaying, auto: false, thumbnail:currentUrl});
+    }
+    else if((playRecent || playRelated) && recent.length > 0){
+        var recentSong = recent[Math.floor(Math.random()*recent.length)];
+        if(playRecent === true 
+            && (Date() - recentSong.lastPlayed) > 60*60*1000){
+            console.log("Sending Recent Song: " + recentSong.song.url);
             socket.emit("song", song);
             auto = true
-            controllerSocket.emit("queue:get::response", {queue:queue, current:currentlyPlaying, auto: true});
-		}
-		else if(playRelated){
-			console.log("Attempting to play a related song.");
-			youtube.related(recentSong.song.yt, 20, function(error, result){
-				if(error){
-					console.log(error);
-					newSongTimer = setTimeout(newSong, 1000, socket);
-				}
-				else{
-					for(var i=0; i<result.items.length; i++){
-						for(var j=0; j<recent.length; j++){
-							if(recent[j].yt === result.items[i].id.videoId ){ //|| diff(result.items[i].snippet.title, recentSong.song.title) < 0.90){
-								console.log("Removed: " + result.items[i].snippet.title);
-								result.items.pop(i);
-							}
-						}
-					}
-					if(result.items.length > 0){
-						var item = result.items[Math.floor(Math.random()*result.items.length)];
+            controllerSocket.emit("queue:get::response", {queue:queue, current:currentlyPlaying, auto: true, thumbnail:currentUrl});
+        }
+        else if(playRelated){
+            console.log("Attempting to play a related song.");
+            youtube.related(recentSong.song.yt, 20, function(error, result){
+                if(error){
+                    console.log(error);
+                    newSongTimer = setTimeout(newSong, 1000, socket);
+                }
+                else{
+                    for(var i=0; i<result.items.length; i++){
+                        for(var j=0; j<recent.length; j++){
+                            if(recent[j].yt === result.items[i].id.videoId ){ //|| diff(result.items[i].snippet.title, recentSong.song.title) < 0.90){
+                                console.log("Removed: " + result.items[i].snippet.title);
+                                result.items.pop(i);
+                            }
+                        }
+                    }
+                    if(result.items.length > 0){
+                        var item = result.items[Math.floor(Math.random()*result.items.length)];
 
-						var song = {
-							url: "https://www.youtube.com/embed/" + item.id.videoId + "?autoplay=1",
-							yt: item.id.videoId,
-							title: item.snippet.title,
-							uploader: item.snippet.channelTittle,
-							description: item.snippet.description,
-							thumbnail: item.snippet.thumbnails.high
-						}
+                        var song = {
+                            url: "https://www.youtube.com/embed/" + item.id.videoId + "?autoplay=1",
+                            yt: item.id.videoId,
+                            title: item.snippet.title,
+                            uploader: item.snippet.channelTittle,
+                            description: item.snippet.description,
+                            thumbnail: item.snippet.thumbnails.high
+                        }
 
-						resetParts();
-						youtube.getById(song.yt, function(error, result){
-							if(error){
-								console.log("Error: " + error)
-								newSongTimer = setTimeout(newSong, 1000, socket);
-							}
-							else{
-								var duration = result.items[0].contentDetails.duration;
-								console.log("Duration " + moment.duration(duration));
-								if( (moment.duration(duration) < moment.duration(maxLength, 'minutes') ) || !maxLengthLimit){
-									song.duration = duration;
-									song.description = result.items[0].snippet.description;
-									console.log("Sending related song: " + song.url);
-									if(relatedToRecent){
-										recent.push({song:song, lastPlayed:Date()});
-									}
-									currentlyPlaying = song.title;
+                        resetParts();
+                        youtube.getById(song.yt, function(error, result){
+                            if(error){
+                                console.log("Error: " + error)
+                                newSongTimer = setTimeout(newSong, 1000, socket);
+                            }
+                            else{
+                                var duration = result.items[0].contentDetails.duration;
+                                console.log("Duration " + moment.duration(duration));
+                                if( (moment.duration(duration) < moment.duration(maxLength, 'minutes') ) || !maxLengthLimit){
+                                    song.duration = duration;
+                                    song.description = result.items[0].snippet.description;
+                                    console.log("Sending related song: " + song.url);
+                                    if(relatedToRecent){
+                                        recent.push({song:song, lastPlayed:Date()});
+                                    }
+                                    currentlyPlaying = song.title;
+				    currentUrl = song.thumbnail.url;
                                     socket.emit("song", song);
-									controllerSocket.emit("queue:get::response", {queue:queue, current:currentlyPlaying, auto: true});
-								}
-								else{
-									console.log("Song " + song.title + " too long.");
-									newSongTimer = setTimeout(newSong, 1000, socket);
-								}
-							}
+                                    controllerSocket.emit("queue:get::response", {queue:queue, current:currentlyPlaying, auto: true, thumbnail:currentUrl});
+                                }
+                                else{
+                                    console.log("Song " + song.title + " too long.");
+                                    newSongTimer = setTimeout(newSong, 1000, socket);
+                                }
+                            }
 
-						});
-					}
-					else{
-						newSongTimer = setTimeout(newSong, 1000, socket);
-					}
-				}
-			});
-		}
-	}
-	else{
-		console.log("No songs yet...")	
-		newSongTimer = setTimeout(newSong, 1000, socket);
-	}
+                        });
+                    }
+                    else{
+                        newSongTimer = setTimeout(newSong, 1000, socket);
+                    }
+                }
+            });
+        }
+    }
+    else{
+        console.log("No songs yet...")    
+        newSongTimer = setTimeout(newSong, 1000, socket);
+    }
 }
 
 
@@ -504,6 +530,6 @@ function guid() {
 }
 
 function diff(a, b){
-	var max = Math.max(a.length, b.length);
-	return (max - lev.getEditDistance(a, b))/max;
+    var max = Math.max(a.length, b.length);
+    return (max - lev.getEditDistance(a, b))/max;
 }
