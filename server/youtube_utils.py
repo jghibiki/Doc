@@ -46,7 +46,7 @@ def get_video(yt_id):
     developerKey=DEVELOPER_KEY)
 
     response = youtube.videos().list(
-        part="id,snippet",
+        part="id,snippet,contentDetails",
         id=yt_id
     ).execute()
 
@@ -64,7 +64,8 @@ def get_video(yt_id):
         "description": response["snippet"]["description"],
         "thumbnail": response["snippet"]["thumbnails"]["high"],
         "url": "https://www.youtube.com/embed/" + response["id"],
-        "autoplay_url": "https://www.youtube.com/embed/" + response["id"] + "?autoplay=1"
+        "autoplay_url": "https://www.youtube.com/embed/" + response["id"] + "?autoplay=1",
+        "duration": response["contentDetails"]["duration"]
     }
 
     #print(video)

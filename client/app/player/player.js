@@ -25,7 +25,7 @@ angular.module('doc.player', ['ngRoute'])
 		}, moment.duration($scope.song.duration).asMilliseconds()+ 5000);
 	});
 
-	client.subscribe("skip.queue", function(){
+	client.subscribe("set.skip", function(){
 		clearTimeout($scope.songTimeout);
 		$scope.song = null;
 	})

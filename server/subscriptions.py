@@ -49,15 +49,16 @@ def add_queue(client, req):
     q.append(video)
     client.setState("queue", q)
 
-    client.send(key="get.queue", type="broadcast", payload={"payload": q})
+    #client.send(key="get.queue", type="broadcast", payload={"payload": q})
 
     return True
 
 def get_queue(client, req):
-    client.sendTarget(req["id"], payload={
-        "key": "get.queue",
-        "payload": client.getState("queue")
-    })
+    client.sendTarget(req["id"], key="get.queue", payload={"payload": client.getState("queue")})
+
+
+def get_current_song(client, req):
+    client.sendTarget(req["id"], key="get.current_song", payload={"payload": client.getState("current_song")})
 
 
 ## Helpers
@@ -85,6 +86,7 @@ handlers = {
     "get.play_pause": [get_play_pause],
 
     "add.queue": [add_queue],
-    "get.queue": [get_queue]
+    "get.queue": [get_queue],
 
+    "get.current_song": [get_current_song]
 }

@@ -5,4 +5,4 @@ angular.module('doc.version', [
   'doc.version.version-directive'
 ])
 
-.value('version', '0.5');
+.value('version', '2.0');

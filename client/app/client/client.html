@@ -11,8 +11,13 @@
                     </md-card-header-text>
                 </md-card-header>
                 <md-card-content>
-                    <span ng-if="!currentlyPlaying"><em>Nothing is currently playing.</em></span>
-                    <span>{{currentlyPlaying}}</span><span ng-if="currentlyPlayingAuto"><md-icon ng-class="{'fa-spin':magicModeState}">stars</md-icon></span>
+                    <div ng-if="!currentlyPlaying">
+                        <span><em>Nothing is currently playing.</em></span>
+                    </div>
+                    <div ng-if="currentlyPlaying">
+                        <img style="width:30%" ng-src="{{currentlyPlaying.thumbnail.url}}"/>
+                        <span>{{currentlyPlaying.title}}</span><span ng-if="currentlyPlayingAuto"><md-icon ng-class="{'fa-spin':magicModeState}">stars</md-icon></span>
+                    </div>
                 </md-card-content>
             </md-card>
 
@@ -36,7 +41,7 @@
                         <md-button class="md-primary md-raised" ng-click="toggleMagicMode()" ><md-icon ng-class="{'fa-spin':magicModeState}">stars</md-icon> Magic Mode</md-button>
                         <md-button class="md-primary md-raised" ng-click="clearRecent()" title="Clear History" ><md-icon>close</md-icon> Clear History</button> 
 
-                    </md-card-content>
+ song                    </md-card-content>
                 </md-card>
 
                 <md-card flex>
@@ -85,15 +90,9 @@
                   <span ng-if="queue.length === 0"><em>No reqests in queue.</em></span>
                   <md-list class="md-dense">
                     <md-list-item ng-repeat="request in queue">
-                        {{ $index + 1 + ". " }}{{request.title}}
-                      <!--
-                      <ul>
-                        <li>
-                          <span>Description {{request.description}}</span>
-                          <span><burron ng-click="requestSong(request.id)"></burron></span>
-                        </li>
-                      </ul>
-                      -->
+                        <span>{{ $index + 1 + ". " }}<span>
+                        <img style="width:10%" ng-src="{{request.thumbnail.url}}"/>
+                        <span>{{request.title}}</span>
                     </md-list-item>
                   </md-list>
                 </md-card-content>
@@ -133,6 +132,7 @@
                         <ol flex>
                             <li ng-repeat="result in searchResults | filter:filterResult" >
                                 <div>
+                                    <img style="width:10%" ng-src="{{result.thumbnail.url}}"/>
                                     <md-button class="md-primary md-raised" ng-click="requestSong(result.id)">Request</md-button>
                                     <span>{{result.title}}</span>
                                 </div>
@@ -158,17 +158,26 @@
             </div>
 
             <div ng-if="showControls">
-            <div>
-                <md-checkbox ng-model="chk.recent" ng-click="recentCheckboxClicked()"> Allow recent songs to be replayed (Once per hour) automatically.</md-checkbox>
-                <md-checkbox ng-model="chk.related"  ng-click="relatedCheckboxClicked()"> Allow songs related to songs that have already been played to be queued automatically.</md-checkbox>
-                <md-checkbox ng-model="chk.relatedToRecent" ng-click="relatedToRecentCheckboxClicked()"> Allow a related song to be added to the list of recently played songs. <em>Note: this will allow the player to play a related song to a related song and so forth, eventually resulting in a large drift from the original song that was played.</em></md-checkbox>
-            </div>
+                <div>
+                    <md-checkbox ng-model="chk.recent" ng-click="recentCheckboxClicked()"> Allow recent songs to be replayed (Once per hour) automatically.</md-checkbox>
+                    <md-checkbox ng-model="chk.related"  ng-click="relatedCheckboxClicked()"> Allow songs related to songs that have already been played to be queued automatically.</md-checkbox>
+                    <md-checkbox ng-model="chk.relatedToRecent" ng-click="relatedToRecentCheckboxClicked()"> Allow a related song to be added to the list of recently played songs. <em>Note: this will allow the player to play a related song to a related song and so forth, eventually resulting in a large drift from the original song that was played.</em></md-checkbox>
 
-            <div ng-if="!playbackMaxLengthState" ><md-icon>music_video</md-icon></div>
+                    <h3>Select Theme:</h3>
+                    <md-input-container>
+                        <md-select ng-model="$parent.theme">
+                            <md-option ng-value="themeName" ng-repeat="themeName in themeColors">{{ themeName | capitalizeThemeName }}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-checkbox ng-model="$parent.darkTheme"> Dark Theme?</md-checkbox>
+                    <md-button class="md-primary md-raised" ng-click="changeTheme()">Change Theme</md-button>
+                </div>
+                <div ng-if="!playbackMaxLengthState" ><md-icon>music_video</md-icon></div>
+                <div>
+                    <md-button class="md-primary md-raised" ng-click="toggleControls()"><md-icon class="fa-spin">settings</md-icon> Hide Settings</md-button>
+                </div>
+            </div>
             <div>
-                <md-button class="md-primary md-raised" ng-click="toggleControls()"><md-icon class="fa-spin">settings</md-icon> Hide Settings</md-button>
-            </div>
-            </div>
                 <md-button class="md-primary md-raised" ng-if="!showControls" ng-click="toggleControls()"><md-icon class="fa-spin">settings</md-icon> Show Settings</md-button>
             </div>
         </md-card-content>

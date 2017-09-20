@@ -24,6 +24,36 @@ factory("ngSocket", function($websocket){
     client.init($websocket, "127.0.0.1", "8081");
     return {};
 }).
+config(function($mdThemingProvider) {
+
+
+    var theme = localStorage.getItem("theme_color"); 
+    if(theme === null || theme === undefined){
+        theme = "yellow"; 
+    }
+
+    var darkTheme = localStorage.getItem("darkTheme"); 
+    if(darkTheme === null || darkTheme === undefined){
+        darkTheme = true; 
+    }
+    if(darkTheme !== null && darkTheme !== undefined){
+        darkTheme = ( darkTheme == 'true' );
+    }
+
+    if(darkTheme){
+        $mdThemingProvider.theme('default')
+            .primaryPalette(theme)
+            .accentPalette('orange')
+            .dark();
+    }
+    else {
+        $mdThemingProvider.theme('default')
+            .primaryPalette(theme)
+            .accentPalette('orange')
+    }
+
+    $mdThemingProvider.alwaysWatchTheme(true);
+}).
 run(["ngSocket", function(ws){
 
 }]);

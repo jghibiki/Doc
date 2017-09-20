@@ -13,10 +13,23 @@ angular.module('doc.client', ['ngRoute'])
   });
 }])
 
-.controller('ClientCtrl', ["$scope", function($scope ) {
+.controller('ClientCtrl', ["$scope", function($scope, $mdThemingProvider) {
 
 
 	/* Definitions */ 
+    $scope.theme = localStorage.getItem("theme_color"); 
+    if($scope.theme === null || $scope.theme === undefined){
+        $scope.theme = 'yellow';
+    }
+
+    $scope.darkTheme = localStorage.getItem("darkTheme"); 
+    if($scope.darkTheme === null || $scope.darkTheme === undefined){
+        $scope.darkTheme = true;
+    }
+    if($scope.darkTheme !== null && $scope.darkTheme !== undefined){
+        $scope.darkTheme = ( $scope.darkTheme == 'true' );
+    }
+
 
 	$scope.queue = [];
     $scope.volume = 0;
@@ -35,6 +48,28 @@ angular.module('doc.client', ['ngRoute'])
 	$scope.playbackStateMessage = "Resume Playback";
 	$scope.playbackMaxLengthState = true;
 	$scope.magicModeState = false;
+
+    $scope.themeColors = [
+        "red",
+        "pink",
+        "purple",
+        "deep-purple",
+        "indigo",
+        "blue",
+        "light-blue",
+        "cyan",
+        "teal",
+        "green",
+        "light-green",
+        "lime",
+        "yellow",
+        "amber",
+        "orange",
+        "deep-orange",
+        "brown",
+        "grey",
+        "blue-grey",
+    ];
 
 	/* Skip Current Song */
 	$scope.skipSong = function(){
@@ -152,14 +187,25 @@ angular.module('doc.client', ['ngRoute'])
                 client.send({
                     type: "command",
                     key: "add.queue", 
-                    details: {
-                        id: song.id,
-                    }
+                    details: song 
                 }, true);
                 break;
             }
         }
     }
+
+    client.subscribe("set.current_song", function(data){
+        $scope.currentlyPlaying = data.payload.song;
+    });
+
+    client.subscribe("get.current_song", function(data){
+        $scope.currentlyPlaying = data.payload;
+    });
+
+    client.subscribe("set.skip", function(){
+        $scope.currentlyPlaying = null;
+    });
+
 
     $scope.clearSearch = function(){
         $scope.searchResults = [];
@@ -181,6 +227,11 @@ angular.module('doc.client', ['ngRoute'])
         $scope.currentlyPlayingAuto = queue.auto;
 
         */
+    });
+
+    client.subscribe("add.queue", function(data){
+        $scope.queue.push(data.details);
+
     });
 
 	/* Hide/Show Controls */
@@ -263,10 +314,24 @@ angular.module('doc.client', ['ngRoute'])
     socket.emit("volume:mute:get");
     */
 
+   $scope.changeTheme = function(){
+        localStorage.setItem("theme_color", $scope.theme); 
+        localStorage.setItem("darkTheme", $scope.darkTheme); 
+        location.reload();
+    }
 
    client.registerInitHook(()=>{
         client.send({type:"command", key:"get.queue"});
+        client.send({type:"command", key:"get.current_song"});
     });
 
-
-}]);
+}]).
+filter('capitalizeThemeName', function(){
+    return function(input){
+        var output = "";
+        for(var i of input.split("-")){
+            output += i.charAt(0).toUpperCase() + i.substring(1) + " ";
+        }
+        return output
+    };
+});
