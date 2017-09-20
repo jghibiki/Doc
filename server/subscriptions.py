@@ -18,6 +18,12 @@ def search(client, req):
 
 def toggle_play_pause(client, req):
     client.setState("playing", not client.getState("playing"))
+
+    if client.getState("playing"):
+        print("Resumed playback")
+    else:
+        print("Paused playback")
+
     client.sendTarget(req["id"], type="acknowledge", key="get.search", payload={})
 
     return True
@@ -25,7 +31,7 @@ def toggle_play_pause(client, req):
 
 def get_play_pause(client, req):
     client.sendTarget(req["id"], key="get.play_pause", payload={
-        "playing": client.getState("playing")
+        "payload": {"playing": client.getState("playing") }
     })
 
     return True
@@ -39,13 +45,22 @@ def add_queue(client, req):
     if not valid_params(params, req, client):
         return False
 
+    # validate we don't already have this video
+    q = client.getState("queue")
+
+    for v in q:
+        if req["details"]["id"] == v["id"]:
+            return False
+
     # get full video details
     video = yt.get_video(req["details"]["id"])
 
     if not video:
         pass # TODO implement exception
 
-    q = client.getState("queue")
+    # flag video as not autoqueued
+    video["auto_queued"] = False
+
     q.append(video)
     client.setState("queue", q)
 
@@ -56,9 +71,20 @@ def add_queue(client, req):
 def get_queue(client, req):
     client.sendTarget(req["id"], key="get.queue", payload={"payload": client.getState("queue")})
 
+    return True
 
 def get_current_song(client, req):
     client.sendTarget(req["id"], key="get.current_song", payload={"payload": client.getState("current_song")})
+
+    return True
+
+def set_skip(client, req):
+    print("Skipping Song")
+    client.setState("current_song", None)
+    client.setState("playback_timer", None)
+
+    return True
+
 
 
 ## Helpers
@@ -88,5 +114,7 @@ handlers = {
     "add.queue": [add_queue],
     "get.queue": [get_queue],
 
-    "get.current_song": [get_current_song]
+    "get.current_song": [get_current_song],
+
+    "set.skip": [set_skip]
 }

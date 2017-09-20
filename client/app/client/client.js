@@ -44,7 +44,7 @@ angular.module('doc.client', ['ngRoute'])
 	$scope.showControls = false;
 	$scope.playbackState = false;
 	$scope.magicModeState = false;
-	$scope.playbackStateIcon = "play";
+	$scope.playbackStateIcon = "play_arrow";
 	$scope.playbackStateMessage = "Resume Playback";
 	$scope.playbackMaxLengthState = true;
 	$scope.magicModeState = false;
@@ -73,8 +73,12 @@ angular.module('doc.client', ['ngRoute'])
 
 	/* Skip Current Song */
 	$scope.skipSong = function(){
-		playback.skip();
-	}
+        client.send({
+            type: "command",
+            key: "set.skip", 
+            details: {}
+        }, true);
+    }
 
 
 	/* Related */
@@ -131,35 +135,41 @@ angular.module('doc.client', ['ngRoute'])
 	/* Playback State */
 
 	$scope.playbackStateButtonClicked = function(){
-		$scope.playbackState = !$scope.playbackState
-		playback.setState($scope.playbackState, function(resp){
-			$scope.playbackState = resp.state;
+        // send toggle command
+        client.send({
+            type: "command",
+            key: "toggle.play_pause"
+        }, true);
 
-			if($scope.playbackState){
-				$scope.playbackStateIcon = "pause";
-				$scope.playbackStateMessage = "Pause Playback";
-			}
-			else{
-				$scope.playbackStateIcon = "play";
-				$scope.playbackStateMessage = "Resume Playback";
-			}
-		});
 	};
 
-	$scope.updatePlaybackState = function(){
-		playback.getState(function(resp){
-			$scope.playbackState = resp.state;
+    client.subscribe("toggle.play_pause", function(data){
+        // update playback state
+		$scope.playbackState = !$scope.playbackState;
 
-			if($scope.playbackState){
-				$scope.playbackStateIcon = "pause";
-				$scope.playbackStateMessage = "Pause Playback";
-			}
-			else{
-				$scope.playbackStateIcon = "play";
-				$scope.playbackStateMessage = "Resume Playback";
-			}
-		})
-	};
+        if($scope.playbackState){
+            $scope.playbackStateIcon = "pause";
+            $scope.playbackStateMessage = "Pause Playback";
+        }
+        else{
+            $scope.playbackStateIcon = "play_arrow";
+            $scope.playbackStateMessage = "Resume Playback";
+        }
+    });
+
+    client.subscribe("get.play_pause", function(data){
+        $scope.playbackState = data.payload.playing;
+
+        if($scope.playbackState){
+            $scope.playbackStateIcon = "pause";
+            $scope.playbackStateMessage = "Pause Playback";
+        }
+        else{
+            $scope.playbackStateIcon = "play_arrow";
+            $scope.playbackStateMessage = "Resume Playback";
+        }
+    });
+
 
 
 	/* Search Song */
@@ -184,6 +194,14 @@ angular.module('doc.client', ['ngRoute'])
         for(var i=0; i < $scope.searchResults.length; i++){
             if($scope.searchResults[i].id === ytid){
                 var song = $scope.searchResults[i];
+
+                //validate the song isnt already in the queue
+                for(var v of $scope.queue){
+                    if( song.id === v.id ){
+                        return;
+                    }
+                }
+
                 client.send({
                     type: "command",
                     key: "add.queue", 
@@ -227,6 +245,15 @@ angular.module('doc.client', ['ngRoute'])
         $scope.currentlyPlayingAuto = queue.auto;
 
         */
+    });
+
+    client.subscribe("remove.queue", function(data){
+        var id = data.payload.id;
+        for(var i=0; i < $scope.queue.length; i++){
+            if( id === $scope.queue[i].id ){
+                $scope.queue.splice(i, 1);
+            }
+        }
     });
 
     client.subscribe("add.queue", function(data){
@@ -323,6 +350,7 @@ angular.module('doc.client', ['ngRoute'])
    client.registerInitHook(()=>{
         client.send({type:"command", key:"get.queue"});
         client.send({type:"command", key:"get.current_song"});
+        client.send({type:"command", key:"get.play_pause"});
     });
 
 }]).

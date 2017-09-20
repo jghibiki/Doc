@@ -40,6 +40,42 @@ def search(query):
 
     return videos
 
+
+def search_related_videos(video_id):
+    youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
+    developerKey=DEVELOPER_KEY)
+
+
+    search_response = youtube.search().list(
+        part="id,snippet",
+        relatedToVideoId=video_id,
+        maxResults=50,
+        type="video"
+    ).execute()
+
+    videos = []
+    channels = []
+    playlists = []
+
+    # Add each result to the appropriate list, and then display the lists of
+    # matching videos, channels, and playlists.
+    for search_result in search_response.get("items", []):
+        if search_result["id"]["kind"] == "youtube#video":
+            videos.append({
+                "title": search_result["snippet"]["title"],
+                "id": search_result["id"]["videoId"],
+                "uploader": search_result["snippet"]["channelTitle"],
+                "description": search_result["snippet"]["description"],
+                "thumbnail": search_result["snippet"]["thumbnails"]["high"],
+                "url": "https://www.youtube.com/embed/" + search_result["id"]["videoId"],
+                "autoplay_url": "https://www.youtube.com/embed/" + search_result["id"]["videoId"] + "?autoplay=1"
+
+            })
+
+    return videos
+
+
+
 def get_video(yt_id):
 
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
@@ -71,4 +107,5 @@ def get_video(yt_id):
     #print(video)
 
     return video
+
 
