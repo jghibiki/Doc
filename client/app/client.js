@@ -1,7 +1,20 @@
+function resetConnection(client){
+    if (client._.reset_timer === null){
+        client._.reset_timer = setInterval(() => {
+            console.log("Attempting to reconnect...");
+            console.log(client._.reset_timer);
+            client.init(client._.factory, client._.ip, client._.port);
+        }, 5000);
+    }
+}
 
 var client = {
     _: {
         id: Math.random().toString(36).substring(7),
+        ip: null,
+        port: null,
+        factory: null,
+        reset_timer: null,
         subs: {},
         ack: {},
         ack_once: {},
@@ -11,16 +24,55 @@ var client = {
         debug: false 
     },
     init: function($socketFactory, ip, port){
-        client.inited = true;
+        client._.port = port;
+        client._.ip = ip;
+        client._.factory = $socketFactory;
         client.ws = $socketFactory("ws://" + ip + ":" + port )
-        client.ws.onopen = function(event){
+        client.ws.onOpen(function(event){
+            console.log("Server Connection Established.");
             client.send({"type": "ping"});
             client.send({"type": "register"});
+
+
+            client.ws.onCloseCallbacks = [];
+            client.ws.onClose(function(event){
+                console.log("Server Connection Closed. Reconnecting...");
+                resetConnection(client);
+            });
+
+            client.ws.onErrorCallbacks = [];
+            client.ws.onError(function(event){
+                console.log("Server Connection Errored. Reconnecting...");
+                resetConnection(client);
+            });
+
+            // clear reset timer on conenct
+            if(client._.reset_timer !== null){
+                console.log("Cleared Reconnect Timer");
+                clearTimeout(client._.reset_timer);
+                client._.reset_timer = null;
+            }
 
             for(var callback of client._.init_hooks){
                 callback();
             }
-        };
+        });
+
+        if(!client._.inited){
+            
+            client.ws.onCloseCallbacks = [];
+            client.ws.onClose(function(event){
+                console.log("Server Connection Closed. Reconnecting...");
+                resetConnection(client);
+            });
+
+            client.ws.onErrorCallbacks = [];
+            client.ws.onError(function(event){
+                console.log("Server Connection Errored. Reconnecting...");
+                resetConnection(client);
+            });
+        }
+
         client.ws.onMessage(function(event){
             var data = JSON.parse(event.data);
             if(client._.debug){
@@ -88,6 +140,9 @@ var client = {
                 console.log(data)
             }
         });
+
+
+        client._.inited = true;
     },
     subscribe: function(key, callback){
         if(!client._.subs.hasOwnProperty(key)){
@@ -122,7 +177,7 @@ var client = {
         client._.ack_once[key].push(callback);
     },
     registerInitHook(callback){
-        if(!client.inited){
+        if(!client._.inited){
             client._.init_hooks.push(callback);
         }
         else{

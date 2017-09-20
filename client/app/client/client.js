@@ -36,6 +36,8 @@ angular.module('doc.client', ['ngRoute'])
     $scope.mute = false;
 	$scope.currentlyPlaying = null;
     $scope.currentlyPlayingAuto = false;
+    $scope.showFullQueue = false;
+    $scope.fullQueueLimit = 3;
 	$scope.chk = {
 		recent: false,
 		related: false,
@@ -300,6 +302,11 @@ angular.module('doc.client', ['ngRoute'])
     socket.emit("volume:get");
     socket.emit("volume:mute:get");
     */
+
+   $scope.toggleShowFullQueue = function(){ 
+        $scope.showFullQueue = ! $scope.showFullQueue 
+        $scope.fullQueueLimit = $scope.fullQueueLimit === 3? 1000 : 3;
+   }
 
    $scope.changeTheme = function(){
         localStorage.setItem("theme_color", $scope.theme); 

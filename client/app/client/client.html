@@ -88,16 +88,23 @@
                       <h3 class="md-title">Queue</h3>
                     </md-card-header-text>
                 </md-card-header>
-                <md-card-content>
+                <md-card-content ng-style="!showFullQueue && {'height':'200px'}">
                   <span ng-if="queue.length === 0"><em>No reqests in queue.</em></span>
                   <md-list class="md-dense">
-                    <md-list-item ng-repeat="request in queue">
+                      <md-list-item ng-repeat="request in queue | limitTo: fullQueueLimit">
                         <span>{{ $index + 1 + ". " }}<span>
                         <img style="width:10%" ng-src="{{request.thumbnail.url}}"/>
                         <span>{{request.title}}</span>
                     </md-list-item>
                   </md-list>
                 </md-card-content>
+                <md-card-actions>
+                  <md-button ng-if="!showFullQueue" ng-click="toggleShowFullQueue()">
+                      <span ng-if="queue.length > 3">Show full queue ({{queue.length}} in queue)</span>
+                      <span ng-if="queue.length <= 3">Show full queue</span>
+                  </md-button>
+                  <md-button ng-if="showFullQueue" ng-click="toggleShowFullQueue()">Hide full queue</md-button>
+                </md-card-actions>
             </md-card>
 
             <md-card>

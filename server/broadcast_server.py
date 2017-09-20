@@ -129,8 +129,12 @@ class BroadcastServerFactory(WebSocketServerFactory):
     def __init__(self):
         WebSocketServerFactory.__init__(self)
 
-        self.state = {}
-        self.state["queue"] = []
+        self.state = {
+            "current_song": None,
+            "queue": [],
+            "playing": True,
+            "magic_mode": True
+        }
 
         self.clients = []
 
