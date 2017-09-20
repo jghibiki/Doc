@@ -88,7 +88,7 @@
                       <h3 class="md-title">Queue</h3>
                     </md-card-header-text>
                 </md-card-header>
-                <md-card-content ng-style="!showFullQueue && {'height':'200px'}">
+                <md-card-content ng-style="!showFullQueue && {'max-height':'200px'}">
                   <span ng-if="queue.length === 0"><em>No reqests in queue.</em></span>
                   <md-list class="md-dense">
                       <md-list-item ng-repeat="request in queue | limitTo: fullQueueLimit">
