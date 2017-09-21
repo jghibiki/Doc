@@ -5,7 +5,7 @@ import re
 import math
 
 
-volume_scale = 0.8
+volume_scale = 0.6
 
 
 def set_volume(value):
