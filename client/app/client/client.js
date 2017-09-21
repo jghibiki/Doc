@@ -250,20 +250,24 @@ angular.module('doc.client', ['ngRoute'])
 	}
 
 	var egg = new Egg("up,up,down,down,left,right,left,right,b,a", function() {
-		playback.toggleMaxLengthState(function(resp){
-			$scope.playbackMaxLengthState = resp.state;
-		});
+        client.send({
+            type: "command",
+            key: "toggle.duration_limit"
+        }, true);
 	}).listen();
 
-	$scope.updateMaxLength = function(){
-		playback.getMaxLengthState(function(resp){
-			$scope.playbackMaxLengthState = resp.state;
-		});
-	};
+    client.subscribe("toggle.duration_limit", function(){
+        $scope.playbackMaxLengthState = ! $scope.playbackMaxLengthState;
+    })
+
+    client.subscribe("get.duration_limit", function(data){
+        $scope.playbackMaxLengthState = data.payload.duration_limit;
+    });
+
 
     /* Volume Control */
     client.subscribe("get.volume", function(resp){
-        $scope.volume = resp.payload.value;
+        $scope.volume = resp.payload.volume;
     });
     
     $scope.volumeUpdate = function(){
@@ -274,7 +278,7 @@ angular.module('doc.client', ['ngRoute'])
             type: "command",
             key: "set.volume",
             details: {
-                value: $scope.volume
+                volume: $scope.volume
             }
         });
     }
@@ -319,6 +323,8 @@ angular.module('doc.client', ['ngRoute'])
         client.send({type:"command", key:"get.current_song"});
         client.send({type:"command", key:"get.play_pause"});
         client.send({type:"command", key:"get.magic_mode"});
+        client.send({type:"command", key:"get.duration_limit"});
+        client.send({type:"command", key:"get.volume"});
     });
 
 }]).

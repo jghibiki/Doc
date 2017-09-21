@@ -21,7 +21,8 @@ filter_list = [
     "letz play",
     "lest play",
     "let play"
-    "letsplay"
+    "letsplay",
+    "reaction"
 ]
 
 filter_list = [ i.upper() for i in filter_list ]

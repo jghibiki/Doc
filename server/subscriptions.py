@@ -2,6 +2,7 @@ import os
 import json
 
 import youtube_utils as yt
+import amixer_control as mixer
 
 
 def search(client, req):
@@ -107,6 +108,40 @@ def remove_history(client, req):
 
     print("Clearing History")
 
+def get_duration_limit(client, req):
+    client.sendTarget(req["id"], key="get.duration_limit", payload={
+        "payload": {"duration_limit": client.getState("duration_limit") }
+    })
+
+    return True
+
+def toggle_duration_limit(client, req):
+    client.setState("duration_limit", not client.getState("duration_limit"))
+
+    if client.getState("duration_limit"):
+        print("Enabled Duration Limit")
+    else:
+        print("Disabled Duration Limit")
+
+    return True
+
+def get_volume(client, req):
+    volume = mixer.get_volume()
+    client.sendTarget(req["id"], key="get.volume", payload={
+        "payload": {"volume": volume }
+    })
+
+    return True
+
+def set_volume(client, req):
+    params = [ "volume" ]
+    if not valid_params(params, req, client):
+        return False
+
+    mixer.set_volume(req["details"]["volume"])
+
+    return True
+
 
 ## Helpers
 
@@ -142,5 +177,12 @@ handlers = {
     "toggle.magic_mode": [toggle_magic_mode],
     "get.magic_mode": [get_magic_mode],
 
-    "remove.history": [remove_history]
+    "remove.history": [remove_history],
+
+    "get.duration_limit": [get_duration_limit],
+    "toggle.duration_limit": [toggle_duration_limit],
+
+    "set.volume": [set_volume],
+    "get.volume": [get_volume]
+
 }

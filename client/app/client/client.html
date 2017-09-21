@@ -99,9 +99,8 @@
                   </md-list>
                 </md-card-content>
                 <md-card-actions>
-                  <md-button ng-if="!showFullQueue" ng-click="toggleShowFullQueue()">
+                    <md-button ng-if="!showFullQueue && queue.length > 3" ng-click="toggleShowFullQueue()">
                       <span ng-if="queue.length > 3">Show full queue ({{queue.length}} in queue)</span>
-                      <span ng-if="queue.length <= 3">Show full queue</span>
                   </md-button>
                   <md-button ng-if="showFullQueue" ng-click="toggleShowFullQueue()">Hide full queue</md-button>
                 </md-card-actions>
