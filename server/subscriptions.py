@@ -142,6 +142,12 @@ def set_volume(client, req):
 
     return True
 
+def get_history(client,req):
+    client.sendTarget(req["id"], key="get.history", payload={
+        "payload": client.getState("history")
+    })
+
+
 
 ## Helpers
 
@@ -183,6 +189,8 @@ handlers = {
     "toggle.duration_limit": [toggle_duration_limit],
 
     "set.volume": [set_volume],
-    "get.volume": [get_volume]
+    "get.volume": [get_volume],
+
+    "get.history": [get_history]
 
 }

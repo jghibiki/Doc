@@ -30,14 +30,28 @@ angular.module('doc.client', ['ngRoute'])
         $scope.darkTheme = ( $scope.darkTheme == 'true' );
     }
 
+    $scope.favorites = localStorage.getItem("favorites");
+    if($scope.favorites !== null && $scope.favorites !== undefined){
+        $scope.favorites = JSON.parse($scope.favorites);
+    }
+    else {
+        $scope.favorites = [];
+    }
 
 	$scope.queue = [];
+    $scope.history = [];
     $scope.volume = 0;
     $scope.mute = false;
 	$scope.currentlyPlaying = null;
     $scope.currentlyPlayingAuto = false;
     $scope.showFullQueue = false;
-    $scope.fullQueueLimit = 3;
+    $scope.showFullHistory= false;
+    $scope.showFullFavorites = false;
+    $scope.showFullSearch = false;
+    $scope.historyHeight = "200px";
+    $scope.queueHeight = "200px";
+    $scope.favoritesHeight = "200px";
+    $scope.searchHeight = "200px";
 	$scope.chk = {
 		recent: false,
 		related: false,
@@ -87,7 +101,8 @@ angular.module('doc.client', ['ngRoute'])
         client.send({
             type: "command",
             key: "remove.history"
-        });
+        }, true);
+        $scope.history = [];
 	}
 
 
@@ -148,27 +163,20 @@ angular.module('doc.client', ['ngRoute'])
         $scope.$apply();
     });
 
-    $scope.requestSong = function(ytid){
+    $scope.requestSong = function(song){
 
-        for(var i=0; i < $scope.searchResults.length; i++){
-            if($scope.searchResults[i].id === ytid){
-                var song = $scope.searchResults[i];
-
-                //validate the song isnt already in the queue
-                for(var v of $scope.queue){
-                    if( song.id === v.id ){
-                        return;
-                    }
-                }
-
-                client.send({
-                    type: "command",
-                    key: "add.queue", 
-                    details: song 
-                }, true);
-                break;
+        //validate the song isnt already in the queue
+        for(var v of $scope.queue){
+            if( song.id === v.id ){
+                return;
             }
         }
+
+        client.send({
+            type: "command",
+            key: "add.queue", 
+            details: song 
+        }, true);
     }
 
     client.subscribe("set.current_song", function(data){
@@ -284,32 +292,57 @@ angular.module('doc.client', ['ngRoute'])
     }
 
 
+    client.subscribe("get.history", function(data){
+        $scope.history = data.payload;
+    });
 
-	/* UI REST Data Update Timer */
+    client.subscribe("add.history", function(data){
+        $scope.history.push(data.payload);
+    })
 
-    /* TODO Replace timer
-	$scope.restUpdate = function(){
-		$scope.updateRelatedCheckbox();
-		$scope.updateRelatedToRecentCheckbox();
-		$scope.updateRecentCheckbox();
-		$scope.updatePlaybackState();
-		$scope.updateMaxLength();
-		$scope.updateMagicModeState();
-	};
+    client.subscribe("remove.history", function(){
+        $scope.history = [];
+    });
 
-	$scope.restUpdate();
-	$scope.updateTimer = setInterval($scope.restUpdate, 5000);
-    */
 
-    /* TODO replace mechanisms
-    socket.emit("queue:get");
-    socket.emit("volume:get");
-    socket.emit("volume:mute:get");
-    */
+    $scope.addFavorite = function(song){
+        /* check to see if already in favs*/
+        for(var s of $scope.favorites){
+            if(s.id === song.id){
+                return;
+            }
+        }
+        $scope.favorites.push(song)
+        localStorage.setItem("favorites", JSON.stringify($scope.favorites));
+    }
+
+    $scope.rmFavorite = function(song){
+        for(var i=0; i < $scope.favorites.length; i++){
+            if(song.id === $scope.favorites[i].id){
+                $scope.favorites.splice(i, 1);
+                localStorage.setItem("favorites", JSON.stringify($scope.favorites));
+            }
+        }
+    }
+
+   $scope.toggleShowFullFavorites= function(){ 
+        $scope.showFullFavorites = ! $scope.showFullFavorites
+        $scope.favoritesHeight = $scope.favoritesHeight === "200px" ? "500px" : "200px"
+   }
 
    $scope.toggleShowFullQueue = function(){ 
         $scope.showFullQueue = ! $scope.showFullQueue 
-        $scope.fullQueueLimit = $scope.fullQueueLimit === 3? 1000 : 3;
+        $scope.queueHeight = $scope.queueHeight === "200px" ? "500px" : "200px"
+   }
+
+   $scope.toggleShowFullHistory = function(){ 
+        $scope.showFullHistory = ! $scope.showFullHistory
+        $scope.historyHeight = $scope.historyHeight === "200px" ? "500px" : "200px"
+   }
+
+   $scope.toggleShowFullSearch = function(){ 
+        $scope.showFullSearch = ! $scope.showFullSearch
+        $scope.searchHeight = $scope.searchHeight === "200px" ? "500px" : "200px"
    }
 
    $scope.changeTheme = function(){
@@ -325,6 +358,7 @@ angular.module('doc.client', ['ngRoute'])
         client.send({type:"command", key:"get.magic_mode"});
         client.send({type:"command", key:"get.duration_limit"});
         client.send({type:"command", key:"get.volume"});
+        client.send({type:"command", key:"get.history"});
     });
 
 }]).

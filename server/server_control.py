@@ -107,6 +107,8 @@ def server_loop(loop, client):
 
                     # add song to history
                     client.state["history"].append(song)
+
+                    client.sendAll(key="add.history", payload={"payload": song})
             else:
                 print("Skipping - Invalid Video")
 

@@ -27,6 +27,10 @@ class BroadcastServerProtocol(WebSocketServerProtocol):
         print("Client connecting: {}".format(client.peer))
         self.clients.append(client)
 
+    def onClose(self, wasClean, code, reason):
+        print("Client connection closed: {}".format(reason))
+        self.factory.unregister(self)
+
 
     def onMessage(self, payload, isBinary):
 
