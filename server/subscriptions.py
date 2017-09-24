@@ -12,7 +12,7 @@ def search(client, req):
 
     yt_response = yt.search(req["details"]["query"])
 
-    client.sendTarget(req["id"], key="get.search", payload={"payload": yt_response})
+    client.sendTarget(req["id"], {"key":"get.search", "payload": yt_response})
 
     return True
 
@@ -29,7 +29,8 @@ def toggle_play_pause(client, req):
 
 
 def get_play_pause(client, req):
-    client.sendTarget(req["id"], key="get.play_pause", payload={
+    client.sendTarget(req["id"], payload={
+        "key": "get.play_pause",
         "payload": {"playing": client.getState("playing") }
     })
 
@@ -68,12 +69,12 @@ def add_queue(client, req):
     return True
 
 def get_queue(client, req):
-    client.sendTarget(req["id"], key="get.queue", payload={"payload": client.getState("queue")})
+    client.sendTarget(req["id"], {"key":"get.queue", "payload": client.getState("queue")})
 
     return True
 
 def get_current_song(client, req):
-    client.sendTarget(req["id"], key="get.current_song", payload={"payload": client.getState("current_song")})
+    client.sendTarget(req["id"], {"key": "get.current_song", "payload": client.getState("current_song")})
 
     return True
 
@@ -96,7 +97,8 @@ def toggle_magic_mode(client, req):
 
 
 def get_magic_mode(client, req):
-    client.sendTarget(req["id"], key="get.magic_mode", payload={
+    client.sendTarget(req["id"],  payload={
+        "key": "get.magic_mode",
         "payload": {"magic_mode": client.getState("magic_mode") }
     })
 
@@ -109,7 +111,8 @@ def remove_history(client, req):
     print("Clearing History")
 
 def get_duration_limit(client, req):
-    client.sendTarget(req["id"], key="get.duration_limit", payload={
+    client.sendTarget(req["id"], payload={
+        "key": "get.duration_limit",
         "payload": {"duration_limit": client.getState("duration_limit") }
     })
 
@@ -127,7 +130,8 @@ def toggle_duration_limit(client, req):
 
 def get_volume(client, req):
     volume = mixer.get_volume()
-    client.sendTarget(req["id"], key="get.volume", payload={
+    client.sendTarget(req["id"], payload={
+        "key": "get.volume",
         "payload": {"volume": volume }
     })
 
@@ -143,7 +147,8 @@ def set_volume(client, req):
     return True
 
 def get_history(client,req):
-    client.sendTarget(req["id"], key="get.history", payload={
+    client.sendTarget(req["id"],  payload={
+        "key": "get.history",
         "payload": client.getState("history")
     })
 
@@ -156,9 +161,7 @@ def valid_params(params, req, client):
         if p not in req["details"]:
             client.sendTarget(
                 req["id"],
-                type="error",
-                key=req["key"],
-                payload={"msg": "Request details missing \"%s\"" % p})
+                {"key": req["key"], "msg": "Request details missing \"%s\"" % p})
             return False
     return True
 

@@ -66,10 +66,9 @@ class BroadcastServerProtocol(WebSocketServerProtocol):
                             handler(self, frame)
             else:
                 client.sendTarget(
-                        req["id"],
-                        type="error",
-                        key="modify.map.fow",
-                        payload={"msg": "Request details missing \"x\""})
+                        req["id"], {
+                            "key":"modify.map.fow",
+                            "msg": "Request details missing \"x\""})
 
         # if broadcast == true broadcast to all
         if("broadcast" in obj
@@ -85,37 +84,23 @@ class BroadcastServerProtocol(WebSocketServerProtocol):
         self.clients.append(id)
 
     def broadcast(self, payload):
-        self.send(payload, type="broadcast")
+        payload["type"] = "broadcast"
+        self.send(payload)
 
-    def sendTarget(self, target, type="broadcast_target", key="", payload={}):
+    def sendTarget(self, target, payload):
+        payload["type"] = "broadcast_target"
         payload["targets"] = [target]
-        self.send(payload, type, key=key, isResponse=True)
+        payload["response"] = True
+        self.send(payload)
 
-    def send(self, payload, type=None, key=None, isResponse=False):
-        if type is not None:
-            payload["type"] = type
+    def send(self, payload):
 
-        if key is not None:
-            payload["key"] = key
+        _payload = json.dumps(payload, ensure_ascii=False).encode("utf8")
 
-        payload["is_response"] = isResponse
-
-        if("BROADCAST_DEBUG" in os.environ
-            and os.environ["BROADCAST_DEBUG"]):
-            if payload["type"] == "error":
-                print(payload["type"], payload["msg"])
-            else:
-                print(payload["type"], payload["key"] if "key" in payload else None)
-
-        payload = json.dumps(payload, ensure_ascii=False).encode("utf8")
-
-        if type == "broadcast":
-            if("BROADCAST_DEBUG" in os.environ
-                and os.environ["BROADCAST_DEBUG"]):
-                print("broadcasting")
-            self.factory.broadcast(payload)
+        if payload["type"] == "broadcast":
+            self.factory.broadcast(_payload)
         else:
-            self.sendMessage(payload)
+            self.sendMessage(_payload)
 
     def getState(self, key):
         return self.factory.state[key]
@@ -151,9 +136,9 @@ class BroadcastServerFactory(WebSocketServerFactory):
         if client in self.clients:
             self.clients.remove(client)
 
-    def sendAll(self, payload, type="broadcast", key=None, isResponse=False):
-        for c in self.clients:
-            c.send(payload, type, key, isResponse)
+    def sendAll(self, payload):
+        if len(self.clients) > 0:
+            self.clients[0].broadcast(payload)
 
     def broadcast(self, payload):
         for c in self.clients:

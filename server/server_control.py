@@ -65,14 +65,14 @@ def server_loop(loop, client):
 
         if client.state["playback_timer"] < datetime.now():
 
-            print("Playback of %s ended." % (client.state["current_song"]["title"][:20]))
+            print("Playback of %s ended." % (client.state["current_song"]["title"][:40].ljust(40)))
 
-            client.sendAll(key="set.skip", payload={});
+            client.sendAll({"key": "set.skip"})
 
             client.state["playback_timer"] = None
             client.state["current_song"] = None
         else:
-            print("Playing %s - remaining: %s" % ( client.state["current_song"]["title"][:20], (client.state["playback_timer"] - datetime.now()) ) )
+            print("Playing %s - remaining: %s" % ( client.state["current_song"]["title"][:40].ljust(40), (client.state["playback_timer"] - datetime.now()) ) )
 
     if client.state["current_song"] == None and client.state["playing"]:
 
@@ -81,7 +81,7 @@ def server_loop(loop, client):
             # get first in queue
             song = client.state["queue"].pop(0)
 
-            client.sendAll(key="remove.queue", payload={"payload": {"id": song["id"] }})
+            client.sendAll({"key":"remove.queue", "payload": {"id": song["id"] }})
 
             # verify video is valid
 
@@ -100,15 +100,15 @@ def server_loop(loop, client):
                     print("Playing until: %s" % client.state["playback_timer"])
 
                     # send to player/clients
-                    client.sendAll(key="set.current_song", payload={"payload": {"song": song}})
+                    client.sendAll({"key":"set.current_song", "payload": {"song": song}})
 
                     # send new queue
-                    client.sendAll(key="get.queue", payload={"payload": client.state["queue"]})
+                    client.sendAll({"key":"get.queue", "payload": client.state["queue"]})
 
                     # add song to history
                     client.state["history"].append(song)
 
-                    client.sendAll(key="add.history", payload={"payload": song})
+                    client.sendAll({"key":"add.history", "payload": song})
             else:
                 print("Skipping - Invalid Video")
 

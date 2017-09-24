@@ -21,7 +21,7 @@ config(['$routeProvider', "$sceDelegateProvider", function($routeProvider, $sceD
     ])
 }]).
 factory("ngSocket", function($websocket){
-    client.init($websocket, "music.ndacm.org", "8081");
+    client.init($websocket, window.host, "8081");
     return {};
 }).
 config(function($mdThemingProvider) {
