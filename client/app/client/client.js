@@ -288,8 +288,12 @@ angular.module('doc.client', ['ngRoute'])
             details: {
                 volume: $scope.volume
             }
-        });
+        }, true);
     }
+
+    client.subscribe("set.volume", function(resp){
+        $scope.volume = resp.details.volume;
+    });
 
 
     client.subscribe("get.history", function(data){

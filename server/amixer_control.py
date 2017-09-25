@@ -5,7 +5,7 @@ import re
 import math
 
 
-volume_scale = 0.30
+volume_scale = 0.40
 
 
 def set_volume(value):
@@ -13,6 +13,7 @@ def set_volume(value):
 
 
 def get_volume():
-    result = subprocess.run(["amixer", "get", "Master"], stdout=subprocess.PIPE)
+    result = subprocess.run(["amixer", "-M", "get", "Master"], stdout=subprocess.PIPE)
     matches = re.findall("[0-9]{1,3}%", str(result.stdout))
-    return math.floor(int(matches[0].replace("%","")) * volume_scale)
+    vol =  math.floor(int(matches[0].replace("%","")) / volume_scale)
+    return vol

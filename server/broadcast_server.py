@@ -122,7 +122,9 @@ class BroadcastServerFactory(WebSocketServerFactory):
             "current_song": None,
             "queue": [],
             "playing": True,
-            "magic_mode": True
+            "magic_mode": True,
+            "duration_limit": None,
+            "history": []
         }
 
         self.clients = []
