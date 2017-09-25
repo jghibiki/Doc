@@ -151,7 +151,7 @@
 
                             <md-content ng-if="favorites.length > 0"  ng-style="{'height': favoritesHeight}" layout-padding>
                                 <md-list class="md-dense">
-                                    <md-list-item ng-repeat="favorite in favorites">
+                                    <md-list-item ng-repeat="favorite in favorites track by $index">
                                         <div>
                                             <img style="width:10%" ng-src="{{favorite.thumbnail.url}}"/>
                                             <span>{{favorite.title}}</span>
