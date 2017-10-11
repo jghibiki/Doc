@@ -27,7 +27,8 @@ filter_list = [
     "porn",
     "5 best",
     "10 best",
-    "15 best"
+    "15 best",
+    "salvonic"
 ]
 
 filter_list = [ i.upper() for i in filter_list ]
