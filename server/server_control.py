@@ -22,7 +22,12 @@ filter_list = [
     "lest play",
     "let play"
     "letsplay",
-    "reaction"
+    "reaction",
+    "adult video",
+    "porn",
+    "5 best",
+    "10 best",
+    "15 best"
 ]
 
 filter_list = [ i.upper() for i in filter_list ]
