@@ -77,6 +77,7 @@ def start_server_logic(loop, client):
 
 def server_loop(loop, client):
 
+    print("a")
     if client.state["playback_timer"] != None:
 
         if client.state["playback_timer"] < datetime.now():
@@ -106,7 +107,7 @@ def server_loop(loop, client):
 
                 # parse out video duration and calculate video finish time
                 duration = isodate.parse_duration(song["duration"])
-                print("Parsed duration : {}".format(duration))
+                print("Parsed duration: {}".format(duration))
 
                 if  not client.state["duration_limit"] or duration < timedelta(minutes=10):
 
@@ -127,7 +128,8 @@ def server_loop(loop, client):
                     client.state["history"].append(song)
 
                     client.sendAll({"key":"add.history", "payload": song})
-                print("Skipping - Video too long")
+                else:
+                    print("Skipping - Video too long")
             else:
                 print("Skipping - Invalid Video")
 
@@ -145,7 +147,7 @@ def server_loop(loop, client):
             valid_videos = filter_videos(related_videos)
 
             # choose related video
-            new_video = random.choice(valid_videos)
+            new_video = random.choice(valid_videos[:10])
 
             # get video details
             video_details = yt.get_video(new_video["id"])
