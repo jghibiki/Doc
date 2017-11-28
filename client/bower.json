@@ -15,14 +15,7 @@
     "angular-socket-io": "0.7.x",
     "socket-io": "1.x.x",
     "moment": "~2.11.0",
-<<<<<<< HEAD:client/bower.json
     "material-icons": "^0.1.0",
     "angular-websocket": "^2.0.0"
-=======
-    "material-icons": "^0.1.0"
-  },
-  "resolutions": {
-    "angular": "^1.2.6"
->>>>>>> 44a6839316f300f34fe54b923b1ed4046b920f80:bower.json
   }
 }

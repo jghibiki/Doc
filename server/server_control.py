@@ -13,6 +13,13 @@ filter_list = [
     "top 25",
     "kids react",
     "youtubers react",
+    "teens react",
+    "life hack",
+    "react:",
+    "react to",
+    "youtubers",
+    "elders react",
+    "guess that song",
     "celebs react",
     "cats react"
     "s react",
@@ -28,7 +35,10 @@ filter_list = [
     "5 best",
     "10 best",
     "15 best",
-    "salvonic"
+    "salvonic",
+    "just dance",
+    "Look at my Horse, my Horse is Amazing",
+    "minutes or less"
 ]
 
 filter_list = [ i.upper() for i in filter_list ]
@@ -86,6 +96,7 @@ def server_loop(loop, client):
         if len(client.state["queue"]) > 0:
             # get first in queue
             song = client.state["queue"].pop(0)
+            print(client.state["queue"])
 
             client.sendAll({"key":"remove.queue", "payload": {"id": song["id"] }})
 
@@ -93,12 +104,13 @@ def server_loop(loop, client):
 
             if filter_videos(song):
 
-                client.state["current_song"] = song
-
                 # parse out video duration and calculate video finish time
                 duration = isodate.parse_duration(song["duration"])
+                print("Parsed duration : {}".format(duration))
 
                 if  not client.state["duration_limit"] or duration < timedelta(minutes=10):
+
+                    client.state["current_song"] = song
 
                     client.state["playback_timer"] = duration + datetime.now()
 
@@ -115,6 +127,7 @@ def server_loop(loop, client):
                     client.state["history"].append(song)
 
                     client.sendAll({"key":"add.history", "payload": song})
+                print("Skipping - Video too long")
             else:
                 print("Skipping - Invalid Video")
 
@@ -144,6 +157,5 @@ def server_loop(loop, client):
 
             # add video to queue
             client.state["queue"].append(video_details)
-
 
     loop.call_later(1, lambda: server_loop(loop, client))
