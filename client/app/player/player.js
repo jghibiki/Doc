@@ -30,6 +30,10 @@ angular.module('doc.player', ['ngRoute'])
 		$scope.song = null;
 	})
 
+    client.subscrine("trigger.reload", function(){
+        location.reload();
+    });
+
     /* Handles first pull of queue when the client starts */
     client.registerInitHook(()=>{
         client.send({
