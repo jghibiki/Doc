@@ -38,7 +38,10 @@ filter_list = [
     "salvonic",
     "just dance",
     "Look at my Horse, my Horse is Amazing",
-    "minutes or less"
+    "minutes or less",
+    "O Holy Night worst rendition ever FUNNIEST SONG ON EARTH",
+    "moana",
+    "dwane johnson"
 ]
 
 filter_list = [ i.upper() for i in filter_list ]
