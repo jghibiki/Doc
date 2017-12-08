@@ -42,6 +42,7 @@ filter_list = [
     "O Holy Night worst rendition ever FUNNIEST SONG ON EARTH",
     "moana",
     "dwane johnson"
+    "x factor"
 ]
 
 filter_list = [ i.upper() for i in filter_list ]
@@ -74,13 +75,13 @@ def start_server_logic(loop, client):
     client.state["magic_mode"] = True
     client.state["history"] = []
     client.state["duration_limit"] = True
+    client.state["last_refresh"] = datetime.now()
 
     loop.call_later(1, lambda: server_loop(loop, client))
 
 
 def server_loop(loop, client):
 
-    print("a")
     if client.state["playback_timer"] != None:
 
         if client.state["playback_timer"] < datetime.now():
@@ -93,6 +94,14 @@ def server_loop(loop, client):
             client.state["current_song"] = None
         else:
             print("Playing %s - remaining: %s" % ( client.state["current_song"]["title"][:40].ljust(40), (client.state["playback_timer"] - datetime.now()) ) )
+
+    # check the last time the player was refreshed, if over 60 min, refresh and  wait a few seconds to reconnect
+    if client.state["current_song"] == None and (client.state["last_refresh"] - datetime.now()) > timedelta(minutes=60):
+        print("Refreshing client")
+        client.state["last_refresh"] = datetime.now()
+        client.sendAll({"key": "trigger.refresh"})
+        loop.call_later(4, lambda: server_loop(loop, client))
+        return
 
     if client.state["current_song"] == None and client.state["playing"]:
 
