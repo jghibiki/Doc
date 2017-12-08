@@ -96,7 +96,7 @@ def server_loop(loop, client):
             print("Playing %s - remaining: %s" % ( client.state["current_song"]["title"][:40].ljust(40), (client.state["playback_timer"] - datetime.now()) ) )
 
     # check the last time the player was refreshed, if over 60 min, refresh and  wait a few seconds to reconnect
-    if client.state["current_song"] == None and (client.state["last_refresh"] - datetime.now()) > timedelta(minutes=60):
+    if client.state["current_song"] == None and ( datetime.now() - client.state["last_refresh"]) > timedelta(minutes=40):
         print("Refreshing client")
         client.state["last_refresh"] = datetime.now()
         client.sendAll({"key": "trigger.refresh"})

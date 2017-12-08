@@ -30,7 +30,7 @@ angular.module('doc.player', ['ngRoute'])
 		$scope.song = null;
 	})
 
-    client.subscrine("trigger.reload", function(){
+    client.subscribe("trigger.refresh", function(){
         location.reload();
     });
 
