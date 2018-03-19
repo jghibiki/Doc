@@ -10,6 +10,8 @@ filter_list = [
     "watch mojo",
     "top 5",
     "top 10",
+    "top 12",
+    "top 100",
     "top 25",
     "kids react",
     "youtubers react",
@@ -42,7 +44,13 @@ filter_list = [
     "O Holy Night worst rendition ever FUNNIEST SONG ON EARTH",
     "moana",
     "dwane johnson"
-    "x factor"
+    "x factor",
+    "videos",
+    "compilation",
+    "how to",
+    "tutorial",
+    "late night",
+    "TheFatRat"
 ]
 
 filter_list = [ i.upper() for i in filter_list ]
@@ -137,6 +145,7 @@ def server_loop(loop, client):
                     client.sendAll({"key":"get.queue", "payload": client.state["queue"]})
 
                     # add song to history
+                    song["played_at"] = datetime.now().strftime("%c")
                     client.state["history"].append(song)
 
                     client.sendAll({"key":"add.history", "payload": song})
@@ -161,15 +170,25 @@ def server_loop(loop, client):
             # choose related video
             new_video = random.choice(valid_videos[:10])
 
-            # get video details
-            video_details = yt.get_video(new_video["id"])
+            video_not_recent = True
+            for video in client.state["history"]:
+                date = datetime.strptime(video["played_at"], "%c")
+                if new_video["id"] == video["id"] and datetime.now() - date < timedelta(minutes=60):
+                    print("Auto queued video {} rejected, played too recently".format(video["title"]))
+                    video_not_recent = False
+                    break
 
-            # set auto_queued flag
-            video_details["auto_queued"] = True
+            if video_not_recent:
 
-            print("Auto queuing %s" % video_details["title"][:20])
+                # get video details
+                video_details = yt.get_video(new_video["id"])
 
-            # add video to queue
-            client.state["queue"].append(video_details)
+                # set auto_queued flag
+                video_details["auto_queued"] = True
+
+                print("Auto queuing %s" % video_details["title"][:20])
+
+                # add video to queue
+                client.state["queue"].append(video_details)
 
     loop.call_later(1, lambda: server_loop(loop, client))
