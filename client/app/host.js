@@ -1,1 +1,1 @@
-window.host = "music.ndacm.org";
+window.host = "localhost";

@@ -6,12 +6,12 @@
   "repository": "https://github.com/jghibiki/doc",
   "license": "MIT",
   "devDependencies": {
-    "bower": "^1.3.1",
-    "coveralls": "^2.11.6",
-    "express": "4.x.x",
-    "http-server": "^0.6.1",
+    "bower": "^1.8.4",
+    "coveralls": "^2.13.3",
+    "express": "^4.16.3",
+    "http-server": "^0.11.1",
     "istanbul": "^0.4.1",
-    "jasmine-core": "^2.3.4",
+    "jasmine-core": "^2.99.1",
     "karma": "^0.12.37",
     "karma-chrome-launcher": "^0.1.12",
     "karma-coverage": "^0.5.3",
@@ -24,10 +24,9 @@
     "shelljs": "^0.2.6"
   },
   "dependencies": {
-    "body-parser": "1.x.x",
-    "bower": "^1.7.2",
-    "moment": "2.11.0",
-    "socket.io": "^1.4.3",
+    "body-parser": "^1.18.3",
+    "moment": "^2.22.2",
+    "socket.io": "^1.7.4",
     "youtube-node": "1.3.x"
   },
   "scripts": {

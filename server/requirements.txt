@@ -1,2 +1,4 @@
 google-api-python-client
 isodate
+jsoncomment
+oauth2client
