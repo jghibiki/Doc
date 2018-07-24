@@ -2,7 +2,9 @@
 import React, { Component } from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
@@ -19,14 +21,16 @@ class CurrentlyPlaying extends Component {
 
     render(){
         return (
-            <Paper className="CurrentlyPlaying" elevation={1}>
-                <Typography variant="headline" component="h3">
-                  Currently Playing
-                </Typography>
-                <Typography component="p">
-                   todo 
-                </Typography>
-            </Paper>
+           <Card className="CurrentlyPlaying">
+                <CardContent>
+                    <Typography variant="headline" component="h2">
+                      Currently Playing
+                    </Typography>
+                    <Typography component="p">
+                       todo 
+                    </Typography>
+                </CardContent>
+            </Card>
         )
     }
 }

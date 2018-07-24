@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import WebSocketClient from './WebSocketClient.js';
 import Host from './Host.js';
 import CurrentlyPlaying from './CurrentlyPlaying.js';
+import PlaybackControls from './PlaybackControls.js';
 
 const styles = theme => ({
   root: {
@@ -41,7 +42,7 @@ class Content extends Component {
                     <CurrentlyPlaying />
                 </Grid>
                 <Grid item>
-                    <CurrentlyPlaying />
+                    <PlaybackControls />
                 </Grid>
             </Grid>
         </div>
