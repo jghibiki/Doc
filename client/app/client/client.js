@@ -211,7 +211,6 @@ angular.module('doc.client', ['ngRoute'])
         }
 
         document.title = "Doc: " + $scope.currentlyPlaying.title.substring($scope.tickerTapeCounter, $scope.currentlyPlaying.title.length);
-        console.log(document.title)
 
         $scope.tickerTapeCounter += 1
     }
