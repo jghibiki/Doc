@@ -63,6 +63,8 @@ angular.module('doc.client', ['ngRoute'])
 	$scope.playbackStateIcon = "play_arrow";
 	$scope.playbackStateMessage = "Resume Playback";
 	$scope.playbackMaxLengthState = true;
+    $scope.tickerTapeTimer = null;
+    $scope.tickerTapeCounter = 0;
 
     $scope.themeColors = [
         "red",
@@ -181,11 +183,38 @@ angular.module('doc.client', ['ngRoute'])
 
     client.subscribe("set.current_song", function(data){
         $scope.currentlyPlaying = data.payload.song;
+
+        if($scope.tickerTapeTimer !== null){
+            clearTimeout($scope.tickerTapeTimer);
+        }
+        $scope.tickerTapeTimer = setInterval(ticker_tape, 250)
     });
 
     client.subscribe("get.current_song", function(data){
         $scope.currentlyPlaying = data.payload;
+
+        if($scope.tickerTapeTimer !== null){
+            clearTimeout($scope.tickerTapeTimer);
+        }
+        $scope.tickerTapeTimer = setInterval(ticker_tape, 250)
     });
+
+    function ticker_tape(){
+        if ($scope.tickerTapeCounter >= $scope.currentlyPlaying.title.length){
+            $scope.tickerTapeCounter = -5;
+        }
+
+        if($scope.tickerTapeCounter < 0){
+            document.title = "Doc: " + $scope.currentlyPlaying.title;
+            $scope.tickerTapeCounter += 1
+            return
+        }
+
+        document.title = "Doc: " + $scope.currentlyPlaying.title.substring($scope.tickerTapeCounter, $scope.currentlyPlaying.title.length);
+        console.log(document.title)
+
+        $scope.tickerTapeCounter += 1
+    }
 
     client.subscribe("set.skip", function(){
         $scope.currentlyPlaying = null;
