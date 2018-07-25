@@ -9,6 +9,9 @@ import WebSocketClient from './WebSocketClient.js';
 import Host from './Host.js';
 import CurrentlyPlaying from './CurrentlyPlaying.js';
 import PlaybackControls from './PlaybackControls.js';
+import Queue from './Queue.js';
+import History from './History.js';
+import Favorites from './Favorites.js';
 
 const styles = theme => ({
   root: {
@@ -31,18 +34,47 @@ class Content extends Component {
     super(props);
     this.ws_client = new WebSocketClient();
     this.ws_client.init(Host, "8081");
+    this.props = props;
 
   }
 
   render(){
+    const { classes } = this.props
     return (
-        <div className="content">
-            <Grid container spacing={16}>
+        <div className={classes.control}>
+            <Grid container direction="column">
                 <Grid item>
-                    <CurrentlyPlaying />
-                </Grid>
-                <Grid item>
-                    <PlaybackControls />
+                    <Grid container spacing={16}>
+
+                        <Grid item xs={4} >
+                            <Grid container direction="column" spacing={16}>
+                                <Grid item >
+                                    <CurrentlyPlaying />
+                                </Grid>
+
+                                <Grid item >
+                                    <PlaybackControls />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+
+                        <Grid item xs={8}>
+                            <Grid container spacing={16}>
+                                <Grid item xs={4} >
+                                    <Queue />
+                                </Grid>
+
+                                <Grid item xs={4} >
+                                    <History />
+                                </Grid>
+
+                                <Grid item xs={4} >
+                                    <Favorites />
+                                </Grid>
+
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
         </div>

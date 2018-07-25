@@ -7,10 +7,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
-import MagicMode from './MagicMode.js';
-import PlayPause from './PlayPause.js';
-
-var styles = theme => ({
+const styles = theme => ({
   card: {
     alignItems: 'center',
   },
@@ -20,35 +17,18 @@ var styles = theme => ({
     alignItems: 'center',
   },
   content: {
-    display: 'flex',
+    flex: '1 0 auto',
     alignItems: 'center',
-  },
-  controls: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: theme.spacing.unit,
-    paddingBottom: theme.spacing.unit,
-  },
-  playIcon: {
-    height: 38,
-    width: 38,
-  },
-  magicMode: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: theme.spacing.unit,
-    paddingBottom: theme.spacing.unit,
-  },
-    button: {
-    margin: theme.spacing.unit,
   },
 });
 
-class PlaybackControls extends Component {
+
+class History extends Component {
     
     constructor(props){
         super(props);
-        this.ws = props.ws;
+        this.ws = props.ws
+        this.props = props;
     }
 
     render(){
@@ -58,22 +38,18 @@ class PlaybackControls extends Component {
                <div className={classes.details}>
                     <CardContent className={classes.content}>
                         <Typography variant="headline" component="h2">
-                          Playback Controls
+                            History
                         </Typography>
                     </CardContent>
-                    <PlayPause />
-                    <div >
-                        <MagicMode />
-                    </div>
                 </div>
             </Card>
         )
     }
 }
 
-PlaybackControls.propTypes = {
+History.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, {withTheme: true})(PlaybackControls);
+export default withStyles(styles)(History);

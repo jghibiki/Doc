@@ -23,7 +23,7 @@ const styles = theme => ({
 });
 
 
-class CurrentlyPlaying extends Component {
+class Settings extends Component {
     
     constructor(props){
         super(props);
@@ -34,22 +34,14 @@ class CurrentlyPlaying extends Component {
     render(){
         const { classes, theme } = this.props;
         return (
-           <Card className={classes.card}>
-               <div className={classes.details}>
-                    <CardContent className={classes.content}>
-                        <Typography variant="headline" component="h2">
-                          Currently Playing
-                        </Typography>
-                    </CardContent>
-                </div>
-            </Card>
+            <br />
         )
     }
 }
 
-CurrentlyPlaying.propTypes = {
+Settings.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(CurrentlyPlaying);
+export default withStyles(styles)(Settings);
