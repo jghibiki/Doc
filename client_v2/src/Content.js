@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
-import WebSocketClient from './WebSocketClient.js';
 import Host from './Host.js';
 import CurrentlyPlaying from './CurrentlyPlaying.js';
 import PlaybackControls from './PlaybackControls.js';
@@ -32,10 +31,7 @@ class Content extends Component {
 
   constructor(props){
     super(props);
-    this.ws_client = new WebSocketClient();
-    this.ws_client.init(Host, "8081");
     this.props = props;
-
   }
 
   render(){

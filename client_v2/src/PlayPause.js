@@ -8,6 +8,9 @@ import Button from '@material-ui/core/Button';
 import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
+import PauseIcon from '@material-ui/icons/Pause';
+
+import ws_client from './WebSocketClient.js';
 
 var styles = theme => ({
   magicMode: {
@@ -30,8 +33,8 @@ class PlayPause extends Component {
         this.props = props;
 
         this.state = {
-            magic_mode_enabled: false,
-        };
+            playing: true
+        }
     }
 
     handleToggle = () => event => {
@@ -46,7 +49,7 @@ class PlayPause extends Component {
                   {theme.direction === 'rtl' ? <SkipNextIcon /> : <SkipPreviousIcon />}
                 </IconButton>
                 <IconButton aria-label="Play/pause">
-                  <PlayArrowIcon className={classes.playIcon} />
+                 {this.state.playing ? <PauseIcon className={classes.playIcon} /> : <PlayArrowIcon className={classes.playIcon} /> }
                 </IconButton>
                 <IconButton aria-label="Next">
                   {theme.direction === 'rtl' ? <SkipPreviousIcon /> : <SkipNextIcon />}

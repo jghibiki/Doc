@@ -1,3 +1,6 @@
+import React, { Component } from 'react';
+
+import Host from './Host.js';
 
 
 class WebSocketClient {
@@ -226,4 +229,7 @@ class WebSocketClient {
     }
 }
 
-export default  WebSocketClient 
+const ws_client = new WebSocketClient();
+ws_client.init(Host, "8081");
+
+export default ws_client

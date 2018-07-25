@@ -48,7 +48,7 @@ class PlaybackControls extends Component {
     
     constructor(props){
         super(props);
-        this.ws = props.ws;
+
     }
 
     render(){
