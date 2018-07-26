@@ -31,6 +31,7 @@ class WebSocketClient {
         console.log(client.ws);
 
         client.ws.onopen = (event) =>{
+            client.state.inited = true;
             console.log("Server Connection Established.");
 
             client.send({"type": "ping"})
@@ -145,7 +146,6 @@ class WebSocketClient {
         };
 
 
-        client.state.inited = true;
         
     }
 

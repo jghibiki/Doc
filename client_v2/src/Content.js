@@ -11,9 +11,13 @@ import PlaybackControls from './PlaybackControls.js';
 import Queue from './Queue.js';
 import History from './History.js';
 import Favorites from './Favorites.js';
+import Search from './Search.js';
 
 const styles = theme => ({
   root: {
+    flexGrow: 1,
+  },
+  flex: {
     flexGrow: 1,
   },
   control: {
@@ -38,11 +42,11 @@ class Content extends Component {
     const { classes } = this.props
     return (
         <div className={classes.control}>
-            <Grid container direction="column">
-                <Grid item>
-                    <Grid container spacing={16}>
+            <Grid container spacing={16}>
 
-                        <Grid item xs={4} >
+                <Grid item xs={4} className={classes.flex}>
+                    <Grid container className={classes.flex}>
+                        <Grid item className={classes.flex}>
                             <Grid container direction="column" spacing={16}>
                                 <Grid item >
                                     <CurrentlyPlaying />
@@ -51,26 +55,27 @@ class Content extends Component {
                                 <Grid item >
                                     <PlaybackControls />
                                 </Grid>
-                            </Grid>
-                        </Grid>
-
-                        <Grid item xs={8}>
-                            <Grid container spacing={16}>
-                                <Grid item xs={4} >
-                                    <Queue />
+                                <Grid item>
+                                    <Search />
                                 </Grid>
-
-                                <Grid item xs={4} >
-                                    <History />
-                                </Grid>
-
-                                <Grid item xs={4} >
-                                    <Favorites />
-                                </Grid>
-
                             </Grid>
                         </Grid>
                     </Grid>
+                </Grid>
+
+                <Grid item  className={classes.flex}>
+                    <Grid container direction="column" spacing={16}>
+                        <Grid item >
+                            <Queue />
+                        </Grid>
+
+                        <Grid item >
+                            <History />
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item className={classes.flex}>
+                    <Favorites />
                 </Grid>
             </Grid>
         </div>

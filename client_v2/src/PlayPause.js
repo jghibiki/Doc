@@ -35,23 +35,49 @@ class PlayPause extends Component {
         this.state = {
             playing: true
         }
+
+        ws_client.subscribe("toggle.play_pause", data => {
+            // update playback state
+            this.setState({
+                playing: !this.state.playing
+
+            })
+        });
+
+
+       ws_client.registerInitHook(()=>{
+            ws_client.send({type:"command", key:"get.play_pause"});
+        });
     }
 
-    handleToggle = () => event => {
-        this.setState({ magic_mode_enabled: event.target.checked });
+    
+    sendSkipSong(){
+        ws_client.send({
+            type: "command",
+            key: "set.skip", 
+            details: {}
+        }, true);
     }
+
+    sendTogglePlayPause(){
+        ws_client.send({
+            type: "command",
+            key: "toggle.play_pause"
+        }, true);
+    }
+
 
     render(){
         const { classes, theme } = this.props;
         return (
             <div className={classes.controls}>
-                 <IconButton aria-label="Previous">
+                 <IconButton aria-label="Previous" onClick={()=>alert("Looked uneaven without a previous arrow... :)")} >
                   {theme.direction === 'rtl' ? <SkipNextIcon /> : <SkipPreviousIcon />}
                 </IconButton>
-                <IconButton aria-label="Play/pause">
+                <IconButton aria-label="Play/pause" onClick={this.sendTogglePlayPause}>
                  {this.state.playing ? <PauseIcon className={classes.playIcon} /> : <PlayArrowIcon className={classes.playIcon} /> }
                 </IconButton>
-                <IconButton aria-label="Next">
+                <IconButton aria-label="Next" onClick={this.sendSkipSong}>
                   {theme.direction === 'rtl' ? <SkipPreviousIcon /> : <SkipNextIcon />}
                 </IconButton>
             </div>
