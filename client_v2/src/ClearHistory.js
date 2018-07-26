@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import ws_client from './WebSocketClient.js';
 
@@ -22,62 +23,40 @@ var styles = theme => ({
 });
 
 
-class MagicMode extends Component {
+class ClearHistory extends Component {
     
     constructor(props){
         super(props);
         this.ws = props.ws
         this.props = props;
 
-        this.state = {
-            magic_mode_enabled: false,
-        };
-
-
-        ws_client.subscribe("toggle.magic_mode", data=>{
-            this.setState({
-                magic_mode_enabled: !this.state.magic_mode_enabled
-            })
-        });
-
-        ws_client.subscribe("get.magic_mode", data=>{
-            this.setState({
-                magic_mode_enabled: data.payload.magic_mode
-            })
-        });
-
-       ws_client.registerInitHook(()=>{
-            ws_client.send({type:"command", key:"get.magic_mode"});
-        });
     }
 
-	sendMagicModeToggle(){
+	sendClearHistory(){
         ws_client.send({
             type: "command",
-            key: "toggle.magic_mode"
+            key: "remove.history"
         }, true);
 	}
+
 
     render(){
         const { classes, theme } = this.props;
         return (
             <FormControlLabel control={
-                <Switch
-                  value="magic_mode_enabled"
-                  checked={this.state.magic_mode_enabled}
-                  onChange={this.sendMagicModeToggle}
-                  color="primary"
-                />
-              }
-              label="Magic Mode"
+                <IconButton className={classes.button} aria-label="Delete" color="primary">
+                  <DeleteIcon onClick={this.sendClearHistory} />
+                </IconButton>
+            }
+            label="Clear History"
             />
         )
     }
 }
 
-MagicMode.propTypes = {
+ClearHistory.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(MagicMode);
+export default withStyles(styles)(ClearHistory);

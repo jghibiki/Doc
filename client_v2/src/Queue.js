@@ -3,9 +3,15 @@ import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+
+import RequestButton from './RequestButton.js';
+import FavoriteButton from './FavoriteButton.js';
+import ws_client from './WebSocketClient.js';
 
 const styles = theme => ({
   card: {
@@ -20,6 +26,9 @@ const styles = theme => ({
     flex: '1 0 auto',
     alignItems: 'center',
   },
+  thumbnail: {
+      width: "5%"
+  },
 });
 
 
@@ -27,8 +36,30 @@ class Queue extends Component {
     
     constructor(props){
         super(props);
-        this.ws = props.ws
         this.props = props;
+
+        this.state = {
+            queue: []
+        }
+
+        ws_client.subscribe("get.queue", data=>{
+            this.setState({
+                queue: data.payload
+            });
+
+        });
+        
+        ws_client.subscribe("add.queue", data=>{
+            let queue = this.state.queue.slice();
+            queue.push(data.details);
+            this.setState({
+                queue: queue
+            });
+        })
+        
+       ws_client.registerInitHook(()=>{
+            ws_client.send({type:"command", key:"get.queue"});
+        });
     }
 
     render(){
@@ -40,6 +71,26 @@ class Queue extends Component {
                         <Typography variant="headline" component="h2">
                           Queue
                         </Typography>
+                        { this.state.queue.length === 0 &&
+                            <Typography component="p">
+                                Nothing in queue.
+                            </Typography>
+                        }
+
+                        <List>        
+                            {this.state.queue.slice(1, 10).map((el,idx)=>{
+                                return (
+                                    <ListItem spacing={5}>
+                                        <span><b>{String(idx+1) + ". "}</b></span>
+                                        <img src={el.thumbnail.url} className={classes.thumbnail}/>
+                                        <span>{"| "}</span>
+                                        <ListItemText primary={el.title} />
+                                        <RequestButton song={el}/>
+                                        <FavoriteButton song={el}/>
+                                    </ListItem>
+                                )
+                            })}
+                        </List>
                     </CardContent>
                 </div>
             </Card>

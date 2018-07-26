@@ -6,9 +6,13 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import IconButton from '@material-ui/core/IconButton';
 
 import MagicMode from './MagicMode.js';
 import PlayPause from './PlayPause.js';
+import ClearHistory from './ClearHistory.js';
 
 var styles = theme => ({
   card: {
@@ -63,7 +67,10 @@ class PlaybackControls extends Component {
                     </CardContent>
                     <PlayPause />
                     <div >
-                        <MagicMode />
+                        <FormGroup row className={classes.magicMode}>
+                            <MagicMode />
+                            <ClearHistory />
+                        </FormGroup>
                     </div>
                 </div>
             </Card>

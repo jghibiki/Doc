@@ -110,6 +110,8 @@ def remove_history(client, req):
 
     print("Clearing History")
 
+    return True
+
 def get_duration_limit(client, req):
     client.sendTarget(req["id"], payload={
         "key": "get.duration_limit",
