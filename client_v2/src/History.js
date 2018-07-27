@@ -85,7 +85,7 @@ class History extends Component {
                         }
 
                         <List>        
-                            {this.state.history.slice(this.state.history.length-11, this.state.history.length).map((el,idx)=>{
+                            {this.state.history.slice(Math.min(0, this.state.history.length-11), this.state.history.length).map((el,idx)=>{
                                 return (
                                     <ListItem spacing={5} key={el.id}>
                                         <span><b>{String(idx+1) + ". "}</b></span>
