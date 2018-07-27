@@ -85,7 +85,6 @@ class Queue extends Component {
                                         <img src={el.thumbnail.url} className={classes.thumbnail}/>
                                         <span>{"| "}</span>
                                         <ListItemText primary={el.title} />
-                                        <RequestButton song={el}/>
                                         <FavoriteButton song={el}/>
                                     </ListItem>
                                 )

@@ -132,9 +132,12 @@ def server_loop(loop, client):
 
                 if  not client.state["duration_limit"] or duration < timedelta(minutes=10):
 
+                    song["played_at"] = datetime.now().strftime("%c")
                     client.state["current_song"] = song
 
                     client.state["playback_timer"] = duration + datetime.now()
+
+                    client.state["current_song"]["ends_at"] = client.state["playback_timer"].strftime("%c")
 
                     print("Setting Current Song to : %s" % song["title"])
                     print("Playing until: %s" % client.state["playback_timer"])
@@ -146,7 +149,6 @@ def server_loop(loop, client):
                     client.sendAll({"key":"get.queue", "payload": client.state["queue"]})
 
                     # add song to history
-                    song["played_at"] = datetime.now().strftime("%c")
                     client.state["history"].append(song)
 
                     client.sendAll({"key":"add.history", "payload": song})

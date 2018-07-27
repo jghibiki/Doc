@@ -6,6 +6,8 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 
 import ws_client from './WebSocketClient.js';
 
@@ -36,23 +38,70 @@ class CurrentlyPlaying extends Component {
 
         this.state = {
             currentlyPlaying: null,
-            
+            progress: -1,
+            startDate: null,
+            duration: null,
         };
 
         ws_client.subscribe("set.current_song", (data)=>{
+            if(data.payload.song !== null && data.payload.song !== undefined){
+
+                var startDate = Date.parse(data.payload.song.played_at);
+                var endDate = Date.parse(data.payload.song.ends_at);
+                var duration = endDate - startDate;
+            }
+            else{
+                var startDate = null
+                var endDate = null
+                var duration: null
+            }
+
             this.setState({
-                currentlyPlaying: data.payload.song
+                currentlyPlaying: data.payload.song,
+                startDate: startDate,
+                duration: duration,
+                progress: -1
             });
 
-            if(this.tickerTapeTimer !== null){
-                this.tickerTapeCounter = 0;
+            if(this.progressTimer !== null){
+                clearTimeout(this.progressTimer);
+                this.progressTimer = null;
+            }
+            this.progressTimer = setInterval(this.updateProgressBar, 250)
+
+            if(this.tickerTapeTimer === null && this.state.currentlyPlaying !== null){
+                this.tickerTapeTimer = setInterval(this.ticker_tape, 250)
+            }
+            else{
+                this.state.tickerTapeCounter = 0;
             }
         });
 
         ws_client.subscribe("get.current_song", (data)=>{
+            if(data.payload !== null && data.payload !== undefined){
+
+                var startDate = Date.parse(data.payload.played_at);
+                var endDate = Date.parse(data.payload.ends_at);
+                var duration = endDate - startDate;
+            }
+            else{
+                var startDate = null
+                var endDate = null
+                var duration: null
+            }
+
             this.setState({
-                currentlyPlaying: data.payload
+                currentlyPlaying: data.payload,
+                startDate: startDate,
+                duration: duration,
+                progress: -1
             });
+
+            if(this.progressTimer !== null){
+                clearTimeout(this.progressTimer);
+                this.progressTimer = null;
+            }
+            this.progressTimer = setInterval(this.updateProgressBar, 250)
 
             if(this.tickerTapeTimer === null && this.state.currentlyPlaying !== null){
                 this.tickerTapeTimer = setInterval(this.ticker_tape, 250)
@@ -93,6 +142,22 @@ class CurrentlyPlaying extends Component {
         this.tickerTapeCounter += 1
     }
 
+    updateProgressBar = () => {
+        if(this.state.duration === null){
+            this.setState({
+                progress: -1
+            });
+            clearTimeout(this.progressTimer);
+            this.progressTimer = null;
+            return
+        }
+
+        this.setState({
+            progress: (( Date.now()-this.state.startDate )/this.state.duration)*100
+        })
+
+    }
+
     render(){
         const { classes, theme } = this.props;
         return (
@@ -113,7 +178,7 @@ class CurrentlyPlaying extends Component {
                             </Typography>
                             <img src={this.state.currentlyPlaying !== null && this.state.currentlyPlaying.thumbnail.url} />
                         </div>}
-                        
+                        { this.state.progress >= 0 &&  <LinearProgress variant="determinate" value={this.state.progress} /> }                        
                     </CardContent>
                 </div>
             </Card>
