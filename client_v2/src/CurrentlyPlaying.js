@@ -113,7 +113,9 @@ class CurrentlyPlaying extends Component {
 
         ws_client.subscribe("set.skip", () => {
             this.setState({
-                currentlyPlaying: null
+                currentlyPlaying: null,
+                duration: null,
+                startDate: null,
             });
             clearTimeout(this.tickerTapeTimer);
             this.tickerTapeTimer = null;
