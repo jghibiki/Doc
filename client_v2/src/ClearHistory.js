@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import ws_client from './WebSocketClient.js';
@@ -19,6 +20,15 @@ var styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit,
+  },
+  leftIcon: {
+    marginRight: theme.spacing.unit,
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
+  iconSmall: {
+    fontSize: 20,
   },
 });
 
@@ -43,13 +53,10 @@ class ClearHistory extends Component {
     render(){
         const { classes, theme } = this.props;
         return (
-            <FormControlLabel control={
-                <IconButton className={classes.button} aria-label="Delete" color="primary">
-                  <DeleteIcon onClick={this.sendClearHistory} />
-                </IconButton>
-            }
-            label="Clear History"
-            />
+            <Button className={classes.button} aria-label="Delete" color="primary">
+              <DeleteIcon onClick={this.sendClearHistory} className={classNames(classes.leftIcon, classes.iconSmall)}/>
+             Clear History
+            </Button>
         )
     }
 }

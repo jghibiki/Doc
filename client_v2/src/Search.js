@@ -74,7 +74,10 @@ class Search extends Component {
         });
     };
 
-    sendSearch = () => {
+    sendSearch = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+
         ws_client.send({
             type: "command",
             key: "get.search",
@@ -93,20 +96,22 @@ class Search extends Component {
                         <Typography variant="headline" component="h2">
                           Search
                         </Typography>
-                        <span>
-                            <TextField
-                                id="name"
-                                label="Search Query"
-                                className={classes.textField}
-                                value={this.state.query}
-                                onChange={this.handleChange}
-                                margin="normal"
-                            />
-                            <Button color="primary" className={classes.button} onClick={this.sendSearch}>
-                                <SearchIcon className={classNames(classes.leftIcon, classes.iconSmall)}/> 
-                                Search
-                            </Button>
-                        </span>
+                        <form onSubmit={this.sendSearch}>
+                            <span>
+                                <TextField
+                                    id="name"
+                                    label="Search Query"
+                                    className={classes.textField}
+                                    value={this.state.query}
+                                    onChange={this.handleChange}
+                                    margin="normal"
+                                />
+                                <Button type="submit" color="primary" className={classes.button} >
+                                    <SearchIcon className={classNames(classes.leftIcon, classes.iconSmall)}/> 
+                                    Search
+                                </Button>
+                            </span>
+                        </form>
                     </CardContent>
                     <SearchDialog open={this.state.openDialog} onClose={this.handleClose} searchResults={this.state.searchResults} searchQuery={this.state.query}/>
                 </div>
