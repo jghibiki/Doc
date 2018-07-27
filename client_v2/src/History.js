@@ -85,9 +85,9 @@ class History extends Component {
                         }
 
                         <List>        
-                            {this.state.history.slice(1, 10).map((el,idx)=>{
+                            {this.state.history.slice(this.state.history.length-11, this.state.history.length).map((el,idx)=>{
                                 return (
-                                    <ListItem spacing={5}>
+                                    <ListItem spacing={5} key={el.id}>
                                         <span><b>{String(idx+1) + ". "}</b></span>
                                         <img src={el.thumbnail.url} className={classes.thumbnail}/>
                                         <span>{"| "}</span>

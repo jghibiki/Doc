@@ -44,6 +44,15 @@ class PlayPause extends Component {
             })
         });
 
+        ws_client.subscribe("get.play_pause", data => {
+            // update playback state
+            this.setState({
+                playing: data.payload.playing
+
+            })
+        });
+
+
 
        ws_client.registerInitHook(()=>{
             ws_client.send({type:"command", key:"get.play_pause"});

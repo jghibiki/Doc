@@ -78,9 +78,9 @@ class Queue extends Component {
                         }
 
                         <List>        
-                            {this.state.queue.slice(1, 10).map((el,idx)=>{
+                            {this.state.queue.slice(0, 10).map((el,idx)=>{
                                 return (
-                                    <ListItem spacing={5}>
+                                    <ListItem spacing={5} key={el.id}>
                                         <span><b>{String(idx+1) + ". "}</b></span>
                                         <img src={el.thumbnail.url} className={classes.thumbnail}/>
                                         <span>{"| "}</span>
