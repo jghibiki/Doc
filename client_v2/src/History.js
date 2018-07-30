@@ -12,6 +12,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import RequestButton from './RequestButton.js';
 import FavoriteButton from './FavoriteButton.js';
 import ws_client from './WebSocketClient.js';
+import MagicModeMarker from './MagicModeMarker.js';
 
 const styles = theme => ({
   card: {
@@ -92,6 +93,7 @@ class History extends Component {
                                         <img src={el.thumbnail.url} className={classes.thumbnail}/>
                                         <span>{"| "}</span>
                                         <ListItemText primary={el.title} />
+                                        { el.auto_queued && <MagicModeMarker/>}
                                         <RequestButton song={el}/>
                                         <FavoriteButton song={el}/>
                                     </ListItem>

@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import Host from './Host.js';
 import ws_client from './WebSocketClient.js';
+import MagicModeMarker from './MagicModeMarker.js';
 
 const styles = theme => ({
   flex: {
@@ -75,6 +76,7 @@ class Player extends Component {
             textContent = (
                 <div style={{"text-align": "center"}}>
                     <span style={{"font-size": "1.5em"}}>{this.state.currentlyPlaying.title}</span>
+                    { this.state.currentlyPlaying.auto_queued && <div><br/><MagicModeMarker/></div> }
                 </div>
             )
         }

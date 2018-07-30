@@ -10,6 +10,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 
 
 import ws_client from './WebSocketClient.js';
+import MagicModeMarker from './MagicModeMarker.js';
 
 const styles = theme => ({
   card: {
@@ -181,6 +182,8 @@ class CurrentlyPlaying extends Component {
                             <img src={this.state.currentlyPlaying !== null && this.state.currentlyPlaying.thumbnail.url} />
                         </div>}
                         { this.state.progress >= 0 &&  <LinearProgress variant="determinate" value={this.state.progress} /> }                        
+                        <br/>
+                        { (this.state.currentlyPlaying !== null && this.state.currentlyPlaying.auto_queued) && <MagicModeMarker/> }
                     </CardContent>
                 </div>
             </Card>
