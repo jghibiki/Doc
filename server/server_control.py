@@ -7,6 +7,7 @@ import youtube_utils as yt
 
 # list of video titles to filter
 filter_list = [
+    "havana",
     "bts",
     "watch mojo",
     "top 5",

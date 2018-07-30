@@ -12,6 +12,7 @@ import Queue from './Queue.js';
 import History from './History.js';
 import Favorites from './Favorites.js';
 import Search from './Search.js';
+import Volume from './Volume.js';
 
 const styles = theme => ({
   root: {
@@ -54,6 +55,9 @@ class Content extends Component {
 
                                 <Grid item >
                                     <PlaybackControls />
+                                </Grid>
+                                <Grid item >
+                                    <Volume />
                                 </Grid>
                                 <Grid item>
                                     <Search />

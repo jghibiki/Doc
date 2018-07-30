@@ -185,18 +185,19 @@ angular.module('doc.client', ['ngRoute'])
         $scope.currentlyPlaying = data.payload.song;
 
         if($scope.tickerTapeTimer !== null){
-            clearTimeout($scope.tickerTapeTimer);
+            $scope.tickerTapeCounter = 0;
         }
-        $scope.tickerTapeTimer = setInterval(ticker_tape, 250)
     });
 
     client.subscribe("get.current_song", function(data){
         $scope.currentlyPlaying = data.payload;
 
-        if($scope.tickerTapeTimer !== null){
-            clearTimeout($scope.tickerTapeTimer);
+        if($scope.tickerTapeTimer === null){
+            $scope.tickerTapeTimer = setInterval(ticker_tape, 250)
         }
-        $scope.tickerTapeTimer = setInterval(ticker_tape, 250)
+        else{
+            $scope.tickerTapeCounter = 0;
+        }
     });
 
     function ticker_tape(){
