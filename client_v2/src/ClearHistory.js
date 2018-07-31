@@ -53,8 +53,8 @@ class ClearHistory extends Component {
     render(){
         const { classes, theme } = this.props;
         return (
-            <Button className={classes.button} aria-label="Delete" color="primary">
-              <DeleteIcon onClick={this.sendClearHistory} className={classNames(classes.leftIcon, classes.iconSmall)}/>
+            <Button className={classes.button} aria-label="Delete" color="primary" onClick={this.sendClearHistory}>
+              <DeleteIcon  className={classNames(classes.leftIcon, classes.iconSmall)}/>
              Clear History
             </Button>
         )

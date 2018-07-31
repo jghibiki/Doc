@@ -20,14 +20,42 @@ class RequestButton extends Component {
 
     }
 
-    addOrRemoveFavorite(){
-        //TODO toggle display of add/remove based on if the song is a favorite
+    addFavorite(){
+        var favs = JSON.parse(localStorage.getItem("favorites"));
+        if(favs === null || favs.length === 0) return
+
+        
+        var updated = false;
+        for(var i=0; i<favs.length; i++){
+            if(favs[i].name === "My Favorites"){
+                var valid = true;
+
+                for(var j=0; j<favs[i].children.length; j++){
+                    if(favs[i].children[j].id === this.song.id){
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if(valid){
+                    favs[i].children.push(this.song);
+                    updated = true;
+                    break;
+                }
+            }
+        }
+
+        if(updated){
+            localStorage.setItem("favorites", JSON.stringify(favs))
+            window.dirty_favorites = true;
+        }
+        
     }
 
     render(){
         const { classes, theme } = this.props;
         return (
-            <Button primary onClick={()=>this.addOrRemoveFavorite()}>
+            <Button primary onClick={()=>this.addFavorite()}>
                 Add Favorite 
             </Button>
         )

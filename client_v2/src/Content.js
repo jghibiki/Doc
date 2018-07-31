@@ -67,7 +67,7 @@ class Content extends Component {
                     </Grid>
                 </Grid>
 
-                <Grid item  className={classes.flex}>
+                <Grid item xs={4}>
                     <Grid container direction="column" spacing={16}>
                         <Grid item >
                             <Queue />
@@ -78,7 +78,7 @@ class Content extends Component {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item className={classes.flex}>
+                <Grid item  xs={4}>
                     <Favorites />
                 </Grid>
             </Grid>
