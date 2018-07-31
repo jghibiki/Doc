@@ -62,7 +62,7 @@ class Volume extends Component {
             });
         });
 
-        ws_client.subscribe("set.volume", function(resp){
+        ws_client.subscribe("set.volume", resp=>{
             this.setState({ volume: resp.details.volume });
         });
 
@@ -78,7 +78,7 @@ class Volume extends Component {
             vol = this.state.volume + value;
         }
         else {
-            vol = value;
+            vol = Math.floor(value * 100);
         }
 
         let clamped_vol
@@ -131,7 +131,7 @@ class Volume extends Component {
                         </Grid>
                         <Grid container spacing={16} >
                             <Grid item sm={3} >
-                                <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(0.0)}>0%</Button>
+                                <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(-0.1)}>0%</Button>
                             </Grid>
                             <Grid item sm={3} >
                                 <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(0.5)}>50%</Button>
@@ -140,7 +140,7 @@ class Volume extends Component {
                                 <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(0.8)}>80%</Button>
                             </Grid>
                             <Grid item sm={3} >
-                                <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(1.0)}>100%</Button>
+                                <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(1.1)}>100%</Button>
                             </Grid>
                         </Grid>
                     </CardContent>
