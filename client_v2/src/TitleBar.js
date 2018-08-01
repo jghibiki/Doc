@@ -7,7 +7,6 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications';
 import Settings from './Settings.js';
 
 const styles = {
@@ -28,9 +27,7 @@ function TitleBar(props) {
           <Typography variant="title" color="inherit" className={classes.flex}>
             Doc Music Player
           </Typography>
-          <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
-            <SettingsApplicationsIcon />
-          </IconButton>
+          <Settings/>
         </Toolbar>
       </AppBar>
     </div>
