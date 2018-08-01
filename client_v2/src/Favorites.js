@@ -25,6 +25,7 @@ import RequestButton from './RequestButton.js';
 import EditFavoriteDialog from './EditFavoriteDialog.js';
 import AddFavoritesCollectionDialog from './AddFavoritesCollectionDialog.js';
 import AlertDialog from './AlertDialog.js';
+import ws_client from './WebSocketClient.js';
 
 const styles = theme => ({
   thumbnail: {
@@ -190,6 +191,28 @@ class Favorites extends Component {
         this.saveFavorites(favs);
     }
 
+    handleQueuePlaylist = (collection_name) => () => {
+        var collection = null;
+        for(var i=0; i<this.state.favorites.length; i++){
+            if(this.state.favorites[i].name === collection_name){
+                collection = this.state.favorites[i];
+                break;
+            }
+        }
+
+        if(collection === null){
+            return;
+        }
+
+        for(var i=0; i<collection.children.length; i++){
+            ws_client.send({
+                type: "command",
+                key: "add.queue", 
+                details: collection.children[i]
+            }, true);
+        }
+    }
+
     render(){
         const { classes, theme } = this.props;
 
@@ -207,7 +230,7 @@ class Favorites extends Component {
                                         <ListItem  spacing={5} key={parent.key} >
                                             <ListItemText primary={parent.name} />
                                             {this.state.playlistMode && 
-                                                <Button >
+                                                <Button onClick={this.handleQueuePlaylist(parent.name)}>
                                                     <PlaylistPlay />
                                                 </Button>
                                             }
