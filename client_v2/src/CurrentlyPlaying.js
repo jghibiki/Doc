@@ -11,6 +11,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 
 import ws_client from './WebSocketClient.js';
 import MagicModeMarker from './MagicModeMarker.js';
+import notify from './NotificationService.js';
 
 const styles = theme => ({
   card: {
@@ -50,6 +51,8 @@ class CurrentlyPlaying extends Component {
                 var startDate = Date.parse(data.payload.song.played_at);
                 var endDate = Date.parse(data.payload.song.ends_at);
                 var duration = endDate - startDate;
+
+                notify.show("Now Playing: " + data.payload.song.title);
             }
             else{
                 var startDate = null
@@ -84,6 +87,8 @@ class CurrentlyPlaying extends Component {
                 var startDate = Date.parse(data.payload.played_at);
                 var endDate = Date.parse(data.payload.ends_at);
                 var duration = endDate - startDate;
+
+                notify.show("Now Playing: " + data.payload.title);
             }
             else{
                 var startDate = null
