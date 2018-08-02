@@ -260,7 +260,6 @@ class ColorTool extends React.Component {
 
 ColorTool.propTypes = {
   classes: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired,
   theme: PropTypes.object.isRequired,
 };
 

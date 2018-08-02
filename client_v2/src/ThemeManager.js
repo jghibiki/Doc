@@ -18,9 +18,10 @@ class ThemeManager {
         this.theme = createMuiTheme(this.rawTheme)
     }
 
-    updateTheme(newTheme){
+    updateTheme(newTheme, save){
+        save = save || true;
         this.rawTheme = newTheme;
-        this.saveTheme();
+        if (save) this.saveTheme();
         this.buildTheme();
         this.updateCallback();
     }

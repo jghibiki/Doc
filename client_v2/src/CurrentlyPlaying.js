@@ -115,7 +115,7 @@ class CurrentlyPlaying extends Component {
             else{
                 this.state.tickerTapeCounter = 0;
             }
-        });
+3       });
 
         ws_client.subscribe("set.skip", () => {
             this.setState({
@@ -126,6 +126,8 @@ class CurrentlyPlaying extends Component {
             clearTimeout(this.tickerTapeTimer);
             this.tickerTapeTimer = null;
             this.tickerTapeCounter = 0;
+            document.title = "Doc";
+
         });
 
        ws_client.registerInitHook(()=>{

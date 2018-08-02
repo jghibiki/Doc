@@ -20,6 +20,7 @@ import green from '@material-ui/core/colors/green';
 import Dialog from '@material-ui/core/Dialog';
 
 import ColorTool from './ColorPicker.js';
+import Fun from './Fun.js';
 
 const styles = theme => ({
   card: {
@@ -101,6 +102,9 @@ class Settings extends Component {
                             <ColorTool />
                         </ListItem>
                         <Divider />
+                        <ListItem button>
+                            <Fun />
+                        </ListItem>
                         <ListItem button>
                         </ListItem>
                     </List>

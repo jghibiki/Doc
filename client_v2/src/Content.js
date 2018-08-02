@@ -13,6 +13,7 @@ import History from './History.js';
 import Favorites from './Favorites.js';
 import Search from './Search.js';
 import Volume from './Volume.js';
+import Fun from './Fun.js';
 
 const styles = theme => ({
   root: {
@@ -82,6 +83,7 @@ class Content extends Component {
                     <Favorites />
                 </Grid>
             </Grid>
+            <Fun visibility="hidden" />
         </div>
     )
   }
