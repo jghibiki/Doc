@@ -8,6 +8,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography'; import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import ws_client from './WebSocketClient.js';
 
@@ -36,6 +37,17 @@ const styles = theme => ({
   },
   iconSmall: {
     fontSize: 20,
+  },
+  volumeMeter: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -40,
+    marginLeft: -40,
+  },
+  wrapper: {
+    margin: theme.spacing.unit,
+    position: 'relative',
   },
     center:{
         alignText: 'center',
@@ -110,9 +122,14 @@ class Volume extends Component {
                         <Typography variant="headline" component="h2" style={{"text-align": "center"}}>
                           Volume
                         </Typography>
+                        <br/>
                         <Typography variant="headline" component="h2" style={{"text-align": "center"}}>
-                            {this.state.volume}%
+                            <div className={classes.wrapper}>
+                                {this.state.volume}%
+                                <CircularProgress size={80} className={classes.volumeMeter} value={this.state.volume} variant="static" />
+                            </div>
                         </Typography>
+                        <br/>
                         <Grid container spacing={16}>
                             <Grid item sm={6} >
                                 <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(-1)}>-1</Button>
