@@ -38,7 +38,7 @@ const styles = theme => ({
 });
 
 
-class AddFavoriteCollectionDialog extends Component {
+class RemoveFavoriteCollectionDialog extends Component {
 
     constructor(props){
         super(props);
@@ -65,12 +65,11 @@ class AddFavoriteCollectionDialog extends Component {
 
         if(this.state.value !== ""){
 
-            favorites.push({
-                name: this.state.value,
-                key: favorites.length,
-                children: [],
-                open: false
-            })
+            for(var i=0; i<favorites.length; i++){
+                if(favorites[i].name === this.state.value){
+                    favorites.splice(i, 1);
+                }
+            }
 
             this.setState({value: ""})
         }
@@ -79,16 +78,27 @@ class AddFavoriteCollectionDialog extends Component {
     };
 
     render(){
-        const { classes, ...other } = this.props;
+        const { classes, favorites, ...other } = this.props;
 
         return (
-            <Dialog onClose={this.handleOnClose} {...other} maxWidth="md">
-                <DialogTitle id="simple-dialog-title">Add Collection:</DialogTitle>
+            <Dialog onClose={this.handleOnClose} {...other} maxWidth="md" onEntering={this.handleEntering}>
+                <DialogTitle id="simple-dialog-title">Move favorite:</DialogTitle>
                 <DialogContent>
-                    <FormControlLabel
-                        control={<TextField label="New Collection Name"  />} 
-                        onChange={this.handleChange}
-                    />
+                    <div className={classes.details}>
+                        <RadioGroup
+                             ref={ref => {
+                               this.radioGroupRef = ref;
+                             }}
+                             aria-label="Ringtone"
+                             name="ringtone"
+                             value={this.state.value}
+                             onChange={this.handleChange}
+                        >
+                        {favorites.map(option => (
+                            <FormControlLabel value={option.name} key={option.key} control={<Radio />} label={option.name} />
+                        ))}
+                      </RadioGroup>
+                    </div>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.handleCancel} color="primary">
@@ -103,9 +113,10 @@ class AddFavoriteCollectionDialog extends Component {
     }
 }
 
-AddFavoriteCollectionDialog.propTypes = {
+RemoveFavoriteCollectionDialog.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(AddFavoriteCollectionDialog);
+export default withStyles(styles)(RemoveFavoriteCollectionDialog);
+

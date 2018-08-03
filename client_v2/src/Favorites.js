@@ -16,6 +16,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import PlaylistPlay from '@material-ui/icons/PlaylistPlay';
 import AddCircle from '@material-ui/icons/AddCircle';
+import RemoveCircle from '@material-ui/icons/RemoveCircle';
 import Edit from '@material-ui/icons/Edit';
 import Cancel from '@material-ui/icons/Cancel';
 
@@ -24,6 +25,7 @@ import Egg from './egg.js'
 import RequestButton from './RequestButton.js';
 import EditFavoriteDialog from './EditFavoriteDialog.js';
 import AddFavoritesCollectionDialog from './AddFavoritesCollectionDialog.js';
+import RemoveFavoritesCollectionDialog from './RemoveFavoritesCollectionDialog.js';
 import AlertDialog from './AlertDialog.js';
 import ws_client from './WebSocketClient.js';
 
@@ -67,6 +69,7 @@ class Favorites extends Component {
             selectedParent: null,
 
             showAddCollectionDialog: false,
+            showRemoveCollectionDialog: false,
         };
 
 
@@ -170,6 +173,20 @@ class Favorites extends Component {
     handleCloseAddCollection = favorites => {
         this.setState({
             showAddCollectionDialog: false,
+            favorites: favorites
+        })
+        this.saveFavorites(favorites);
+    }
+
+    handleOpenRemoveCollection = () => {
+        this.setState({
+            showRemoveCollectionDialog: true 
+        })
+    }
+
+    handleCloseRemoveCollection = favorites => {
+        this.setState({
+            showRemoveCollectionDialog: false,
             favorites: favorites
         })
         this.saveFavorites(favorites);
@@ -286,10 +303,17 @@ class Favorites extends Component {
                         <AddFavoritesCollectionDialog favorites={this.state.favorites} 
                             open={this.state.showAddCollectionDialog}
                             onClose={this.handleCloseAddCollection}/>
+                        <RemoveFavoritesCollectionDialog favorites={this.state.favorites} 
+                            open={this.state.showRemoveCollectionDialog}
+                            onClose={this.handleCloseRemoveCollection}/>
                         <CardActions>
                             <Button onClick={this.handleOpenAddCollection}>
                                 <AddCircle className={classNames(classes.leftIcon, classes.iconSmall)}/>
                                 Add Collection
+                            </Button>
+                            <Button onClick={this.handleOpenRemoveCollection}>
+                                <RemoveCircle className={classNames(classes.leftIcon, classes.iconSmall)}/>
+                                Remove Collection
                             </Button>
                         </CardActions>
 
