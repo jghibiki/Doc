@@ -99,6 +99,12 @@ class Favorites extends Component {
     loadFavorites = (init)=>{
 
         var favorites = localStorage.getItem("favorites")
+        
+        if(favorites !== null && localStorage.getItem("_v2_favorites") === null){
+            favorites = null;
+
+            localStorage.setItem("_v2_favorites", "true")
+        }
 
         if(favorites === null){
             favorites = [
