@@ -12,14 +12,14 @@ mac_volumme_scale = 1.0
 
 
 def set_volume(value):
-    if os.name == "posix":
+    if sys.platform == "darwin":
         subprocess.check_output("osascript -e 'set volume output volume {}'".format(value), shell=True)
     else:
-        result = subprocess.run(["amixer", "-M", "set", "Master", "{}%".format(math.floor(value * volume_scale))], stdout=subprocess.PIPE)
+        result = subprocess.run(["amixer", "-M", "set", "Master", "{}%".format(math.floor(value * linux_volume_scale))], stdout=subprocess.PIPE)
 
 
 def get_volume():
-    if os.name == "posix":
+    if sys.platform == "darwin":
 
         result = subprocess.check_output("osascript -e 'output volume of (get volume settings)'", shell=True)
         print(result)
@@ -27,5 +27,5 @@ def get_volume():
     else:
         result = subprocess.run(["amixer", "-M", "get", "Master"], stdout=subprocess.PIPE)
         matches = re.findall("[0-9]{1,3}%", str(result.stdout))
-        vol =  math.floor(int(matches[0].replace("%","")) / volume_scale)
+        vol =  math.floor(int(matches[0].replace("%","")) / linux_volume_scale)
         return vol
