@@ -15,6 +15,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
+import withWidth from '@material-ui/core/withWidth';
 
 import RequestButton from './RequestButton.js';
 import FavoriteButton from './FavoriteButton.js';
@@ -55,25 +56,45 @@ class Search extends Component {
     };
 
 
+    detectSmallScreen = () => {
+        return this.props.width === "sm" || this.props.width === "xs"
+    }
+
     render(){
         const { classes, searchQuery, searchResults, onClose, selectedValue, ...other } = this.props;
 
         return (
-            <Dialog onClose={this.handleOnClose} {...other} maxWidth="md">
+            <Dialog onClose={this.handleOnClose} {...other} maxWidth="md" fullScreen={this.detectSmallScreen()}>
                 <DialogTitle id="simple-dialog-title">Search results for: {searchQuery}</DialogTitle>
                 <DialogContent>
                     <div className={classes.details}>
                         <List>
                             {searchResults !== undefined && searchResults.map((el,idx)=>{
                                 return (
-                                    <ListItem spacing={5} key={el.id}>
-                                        <span><b>{String(idx+1) + ". "}</b></span>
-                                        <img src={el.thumbnail.url} className={classes.thumbnail}/>
-                                        <span>{"| "}</span>
-                                        <ListItemText primary={el.title} />
-                                        <RequestButton song={el}/>
-                                        <FavoriteButton song={el}/>
-                                    </ListItem>
+                                    <div>
+                                        <ListItem spacing={5} key={el.id}>
+                                            <span><b>{String(idx+1) + ". "}</b></span>
+                                            { !this.detectSmallScreen() &&
+                                                <span>{"| "}</span>
+                                            }
+                                            { !this.detectSmallScreen() &&
+                                                <img src={el.thumbnail.url} className={classes.thumbnail}/>
+                                            }
+                                            <ListItemText primary={el.title} />
+                                            { !this.detectSmallScreen() &&
+                                                <RequestButton song={el}/>
+                                            }
+                                            { !this.detectSmallScreen() &&
+                                                <FavoriteButton song={el}/>
+                                            }
+                                        </ListItem>
+                                        { this.detectSmallScreen() &&
+                                            <div>
+                                                <RequestButton song={el}/>
+                                                <FavoriteButton song={el}/>
+                                            </div>
+                                        }
+                                    </div>
                                 )
                             })}
                         </List>
@@ -94,4 +115,4 @@ Search.propTypes = {
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Search);
+export default withWidth()(withStyles(styles)(Search));

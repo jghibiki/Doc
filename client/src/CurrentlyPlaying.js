@@ -186,7 +186,7 @@ class CurrentlyPlaying extends Component {
                             <Typography component="h2">
                                 { this.state.currentlyPlaying !== null && this.state.currentlyPlaying.title}
                             </Typography>
-                            <img src={this.state.currentlyPlaying !== null && this.state.currentlyPlaying.thumbnail.url} />
+                            <img src={this.state.currentlyPlaying !== null && this.state.currentlyPlaying.thumbnail.url} style={{"width": "80%"}}/>
                         </div>}
                         { this.state.progress >= 0 &&  <LinearProgress variant="determinate" value={this.state.progress} /> }                        
                         <br/>

@@ -19,6 +19,7 @@ import AddCircle from '@material-ui/icons/AddCircle';
 import RemoveCircle from '@material-ui/icons/RemoveCircle';
 import Edit from '@material-ui/icons/Edit';
 import Cancel from '@material-ui/icons/Cancel';
+import withWidth from '@material-ui/core/withWidth';
 
 import Egg from './egg.js'
 
@@ -236,6 +237,10 @@ class Favorites extends Component {
         }
     }
 
+    detectSmallScreen = () => {
+        return this.props.width === "sm" || this.props.width === "xs"
+    }
+
     render(){
         const { classes, theme } = this.props;
 
@@ -272,25 +277,56 @@ class Favorites extends Component {
                                                 }
                                                 {parent.children.map(child=>{
                                                     return (
-                                                        <ListItem>
-                                                            <img src={child.thumbnail.url} className={classes.thumbnail}/>
-                                                            <span>{"| "}</span>
-                                                            <ListItemText primary={child.title} />
-                                                            <RequestButton song={child} />
-                                                            <Button onClick={this.handleOpenEditFavorite(child, parent)}>
-                                                                <Edit />
-                                                            </Button>
-                                                            <AlertDialog 
-                                                                title="Confirm Delete"
-                                                                message="Are you sure you wish to delete this from your favorites?"
-                                                                onOk={this.handleDelete(child, parent)}
-                                                                control={
-                                                                    <Button>
-                                                                        <Cancel />
+                                                        <div>
+                                                            <ListItem>
+                                                                { !this.detectSmallScreen() &&
+                                                                    <img src={child.thumbnail.url} className={classes.thumbnail}/>
+                                                                }
+                                                                <ListItemText primary={child.title} />
+                                                                { !this.detectSmallScreen() &&
+                                                                    <RequestButton song={child} />
+                                                                }
+                                                                { !this.detectSmallScreen() &&
+                                                                    <Button onClick={this.handleOpenEditFavorite(child, parent)}>
+                                                                        <Edit />
                                                                     </Button>
                                                                 }
-                                                            />
-                                                        </ListItem>
+                                                                { !this.detectSmallScreen() &&
+                                                                    <AlertDialog 
+                                                                        title="Confirm Delete"
+                                                                        message="Are you sure you wish to delete this from your favorites?"
+                                                                        onOk={this.handleDelete(child, parent)}
+                                                                        control={
+                                                                            <Button>
+                                                                                <Cancel />
+                                                                            </Button>
+                                                                        }
+                                                                    />
+                                                                }
+                                                            </ListItem>
+                                                            { this.detectSmallScreen() &&
+                                                                <RequestButton song={child} />
+                                                            }
+                                                            { this.detectSmallScreen() &&
+                                                                <Button onClick={this.handleOpenEditFavorite(child, parent)}>
+                                                                    <Edit />
+                                                                </Button>
+                                                            }
+                                                            { this.detectSmallScreen() &&
+                                                                <div style={{"display": "inline-block"}}>
+                                                                    <AlertDialog 
+                                                                        title="Confirm Delete"
+                                                                        message="Are you sure you wish to delete this from your favorites?"
+                                                                        onOk={this.handleDelete(child, parent)}
+                                                                        control={
+                                                                            <Button>
+                                                                                <Cancel />
+                                                                            </Button>
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            }
+                                                        </div>
                                                     )
                                                 })}
                                             </List>
@@ -334,4 +370,4 @@ Favorites.propTypes = {
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Favorites);
+export default withWidth()(withStyles(styles)(Favorites));

@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import withWidth from '@material-ui/core/withWidth';
 
 import RequestButton from './RequestButton.js';
 import FavoriteButton from './FavoriteButton.js';
@@ -70,6 +71,10 @@ class History extends Component {
 
     }
 
+    detectSmallScreen = () => {
+        return this.props.width === "sm" || this.props.width === "xs"
+    }
+
     render(){
         const { classes, theme } = this.props;
         return (
@@ -88,15 +93,33 @@ class History extends Component {
                         <List>        
                             {this.state.history.map((el,idx)=>{
                                 return (
-                                    <ListItem spacing={5} key={el.id}>
-                                        <span><b>{String(idx+1) + ". "}</b></span>
-                                        <img src={el.thumbnail.url} className={classes.thumbnail}/>
-                                        <span>{"| "}</span>
-                                        <ListItemText primary={el.title} />
-                                        { el.auto_queued && <MagicModeMarker/>}
-                                        <RequestButton song={el}/>
-                                        <FavoriteButton song={el}/>
-                                    </ListItem>
+                                    <div>
+                                        <ListItem spacing={5} key={el.id}>
+                                            <span><b>{String(idx+1) + ". "}</b></span>
+                                            { !this.detectSmallScreen() &&
+                                                <span>{"| "}</span>
+                                            }
+                                            { !this.detectSmallScreen() &&
+                                                <img src={el.thumbnail.url} className={classes.thumbnail}/>
+                                            }
+                                            <ListItemText primary={el.title} />
+                                            { !this.detectSmallScreen() &&
+                                                <RequestButton song={el}/>
+                                            }
+                                            { !this.detectSmallScreen() &&
+                                                <FavoriteButton song={el}/>
+                                            }
+                                        </ListItem>
+                                        { this.detectSmallScreen() &&
+                                            <div>
+                                                { el.auto_queued && <MagicModeMarker/>}
+                                                <div>
+                                                    <RequestButton song={el}/>
+                                                    <FavoriteButton song={el}/>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
                                 )
                             }).slice(Math.max(0, this.state.history.length-11), this.state.history.length).reverse()}
                         </List>
@@ -112,4 +135,4 @@ History.propTypes = {
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(History);
+export default withWidth()(withStyles(styles)(History));
