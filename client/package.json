@@ -1,46 +1,21 @@
 {
-  "name": "Doc",
-  "private": false,
-  "version": "0.0.3",
-  "description": "A simple crowd controlled music request system.",
-  "repository": "https://github.com/jghibiki/doc",
-  "license": "MIT",
-  "devDependencies": {
-    "bower": "^1.8.4",
-    "coveralls": "^2.13.3",
-    "express": "^4.16.3",
-    "http-server": "^0.11.1",
-    "istanbul": "^0.4.1",
-    "jasmine-core": "^2.99.1",
-    "karma": "^0.12.37",
-    "karma-chrome-launcher": "^0.1.12",
-    "karma-coverage": "^0.5.3",
-    "karma-firefox-launcher": "^0.1.6",
-    "karma-jasmine": "^0.3.5",
-    "karma-junit-reporter": "^0.2.2",
-    "karma-phantomjs-launcher": "^0.2.3",
-    "phantomjs": "^1.9.19",
-    "protractor": "^2.1.0",
-    "shelljs": "^0.2.6"
-  },
+  "name": "doc",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "moment": "^2.22.2",
-    "socket.io": "^1.7.4",
-    "youtube-node": "1.3.x"
+    "@material-ui/core": "^1.4.1",
+    "@material-ui/icons": "^2.0.0",
+    "@material-ui/lab": "^1.0.0-alpha.8",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-iframe": "^1.2.0",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "1.1.4"
   },
   "scripts": {
-    "postinstall": "bower install",
-    "prestart": "npm install",
-    "start": "node app.js",
-    "pretest": "npm install",
-    "test": "karma start karma.conf.js",
-    "test-single-run": "karma start karma.conf.js  --single-run",
-    "coverage": "rm -rf coverge && npm run test-single-run && xdg-open ./coverage/lcov-report/index.html",
-    "preupdate-webdriver": "npm install",
-    "update-webdriver": "webdriver-manager update",
-    "preprotractor": "npm run update-webdriver",
-    "protractor": "protractor e2e-tests/protractor.conf.js",
-    "update-index-async": "node -e \"require('shelljs/global'); sed('-i', /\\/\\/@@NG_LOADER_START@@[\\s\\S]*\\/\\/@@NG_LOADER_END@@/, '//@@NG_LOADER_START@@\\n' + sed(/sourceMappingURL=angular-loader.min.js.map/,'sourceMappingURL=bower_components/angular-loader/angular-loader.min.js.map','app/bower_components/angular-loader/angular-loader.min.js') + '\\n//@@NG_LOADER_END@@', 'app/index-async.html');\""
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   }
 }
