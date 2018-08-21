@@ -36,11 +36,16 @@ class Fun extends Component {
             }, true);
         }).listen();
 
-        new Egg("o,x", ()=>{
+        new Egg("left,o,x", ()=>{
             setInterval(this.obnoxious, 500)
         }).listen();
 
-        
+        new Egg("left,s", ()=>{
+            alert("It's party time")
+            document.body.classList.add("shake");
+        }).listen();
+
+
 
         ws_client.subscribe("toggle.duration_limit", ()=>{
             this.setState({

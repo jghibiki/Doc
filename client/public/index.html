@@ -9,7 +9,7 @@
       homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <!--<link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">-->
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -19,7 +19,30 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <style>
+        @-webkit-keyframes shake {
+            0% { -webkit-transform: translate(2px, 1px) rotate(0deg); }
+            10% { -webkit-transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { -webkit-transform: translate(-3px, 0px) rotate(1deg); }
+            30% { -webkit-transform: translate(0px, 2px) rotate(0deg); }
+            40% { -webkit-transform: translate(1px, -1px) rotate(1deg); }
+            50% { -webkit-transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { -webkit-transform: translate(-3px, 1px) rotate(0deg); }
+            70% { -webkit-transform: translate(2px, 1px) rotate(-1deg); }
+            80% { -webkit-transform: translate(-1px, -1px) rotate(1deg); }
+            90% { -webkit-transform: translate(2px, 2px) rotate(0deg); }
+            100% { -webkit-transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .shake {
+            -webkit-animation-name: shake;
+            -webkit-animation-duration: 0.5s;
+            -webkit-transform-origin:50% 50%;
+            -webkit-animation-iteration-count: infinite;
+
+            display:inline-block
+        }
+    </style>
+    <title>Doc</title>
   </head>
   <body>
     <noscript>

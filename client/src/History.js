@@ -104,6 +104,11 @@ class History extends Component {
                                             }
                                             <ListItemText primary={el.title} />
                                             { !this.detectSmallScreen() &&
+                                                <div> 
+                                                    { el.auto_queued && <MagicModeMarker/>} 
+                                                </div>
+                                            }
+                                            { !this.detectSmallScreen() &&
                                                 <RequestButton song={el}/>
                                             }
                                             { !this.detectSmallScreen() &&

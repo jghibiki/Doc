@@ -71,7 +71,7 @@ class CurrentlyPlaying extends Component {
                 clearTimeout(this.progressTimer);
                 this.progressTimer = null;
             }
-            this.progressTimer = setInterval(this.updateProgressBar, 250)
+            this.progressTimer = setInterval(this.updateProgressBar.bind(this), 250)
 
             if(this.tickerTapeTimer === null && this.state.currentlyPlaying !== null){
                 this.tickerTapeTimer = setInterval(this.ticker_tape, 250)
@@ -107,7 +107,7 @@ class CurrentlyPlaying extends Component {
                 clearTimeout(this.progressTimer);
                 this.progressTimer = null;
             }
-            this.progressTimer = setInterval(this.updateProgressBar, 250)
+            this.progressTimer = setInterval(this.updateProgressBar.bind(this), 250)
 
             if(this.tickerTapeTimer === null && this.state.currentlyPlaying !== null){
                 this.tickerTapeTimer = setInterval(this.ticker_tape, 250)
