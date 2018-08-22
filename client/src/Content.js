@@ -53,15 +53,14 @@ class Content extends Component {
                                 <Grid item >
                                     <CurrentlyPlaying />
                                 </Grid>
-
                                 <Grid item >
                                     <PlaybackControls />
                                 </Grid>
-                                <Grid item >
-                                    <Volume />
-                                </Grid>
                                 <Grid item>
                                     <Search />
+                                </Grid>
+                                <Grid item >
+                                    <Volume />
                                 </Grid>
                             </Grid>
                         </Grid>

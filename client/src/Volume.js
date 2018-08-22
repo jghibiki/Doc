@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import PropTypes from 'prop-types'; import classNames from 'classnames';
 
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -131,18 +130,16 @@ class Volume extends Component {
                         </Typography>
                         <br/>
                         <Grid container spacing={16}>
-                            <Grid item sm={6} >
-                                <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(-1)}>-1</Button>
-                            </Grid>
-                            <Grid item sm={6} >
-                                <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(+1)}>+1</Button>
-                            </Grid>
-                        </Grid>
-                        <Grid container spacing={16}>
-                            <Grid item sm={6} >
+                            <Grid item sm={3} >
                                 <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(-5)}>-5</Button>
                             </Grid>
-                            <Grid item sm={6} >
+                            <Grid item sm={3} >
+                                <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(-1)}>-1</Button>
+                            </Grid>
+                            <Grid item sm={3} >
+                                <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(+1)}>+1</Button>
+                            </Grid>
+                            <Grid item sm={3} >
                                 <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(+5)}>+5</Button>
                             </Grid>
                         </Grid>
