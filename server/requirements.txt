@@ -2,4 +2,5 @@ autobahn
 google-api-python-client
 isodate
 jsoncomment
+requests
 oauth2client

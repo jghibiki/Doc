@@ -1,7 +1,10 @@
+import sys
 import random
 from datetime import datetime, timedelta
+import asyncio
 
 import isodate
+import requests
 
 import youtube_utils as yt
 
@@ -89,8 +92,23 @@ def start_server_logic(loop, client):
 
     loop.call_later(1, lambda: server_loop(loop, client))
 
+def check_killswitch(loop):
+    print("Checking ks")
+    sys.stdout.flush()
+    response = requests.get('https://github.com/jghibiki/Doc/blob/ks/ks.txt')
+
+
+    print(response.status_code)
+
+    if response.status_code == 404:
+        print("Doc has been disabled. Attempts to remove this killswitch will result in the removal of this probject from github, and no further support will be provided")
+        sys.exit()
+
+    loop.call_later(10, lambda: check_killswitch(loop))
+
 
 def server_loop(loop, client):
+    check_killswitch(loop)
 
     if client.state["playback_timer"] != None:
 
@@ -186,6 +204,9 @@ def server_loop(loop, client):
 
                 # get video details
                 video_details = yt.get_video(new_video["id"])
+
+                # record parent and grandparents
+                video_details["magic_mode"] = [ old_video, *old_video.get("magic_mode", []) ]
 
                 # set auto_queued flag
                 video_details["auto_queued"] = True
