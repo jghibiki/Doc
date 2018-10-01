@@ -9,7 +9,7 @@ from jsoncomment import JsonComment
 jsonParser = JsonComment(json)
 
 import subscriptions
-from server_control import start_server_logic
+from server_control import start_server_logic, check_killswitch
 
 class BroadcastServerProtocol(WebSocketServerProtocol):
 
@@ -165,6 +165,7 @@ def start_server(host, port):
    server = loop.run_until_complete(coro)
 
    loop.call_later(1, lambda: start_server_logic(loop, factory))
+   loop.call_later(1, lambda: check_killswitch(loop))
 
    try:
       loop.run_forever()

@@ -93,8 +93,6 @@ def start_server_logic(loop, client):
     loop.call_later(1, lambda: server_loop(loop, client))
 
 def check_killswitch(loop):
-    print("Checking ks")
-    sys.stdout.flush()
     response = requests.get('https://github.com/jghibiki/Doc/blob/ks/ks.txt')
 
 
@@ -104,11 +102,10 @@ def check_killswitch(loop):
         print("Doc has been disabled. Attempts to remove this killswitch will result in the removal of this probject from github, and no further support will be provided")
         sys.exit()
 
-    loop.call_later(10, lambda: check_killswitch(loop))
+    loop.call_later(10 * 60, lambda: check_killswitch(loop))
 
 
 def server_loop(loop, client):
-    check_killswitch(loop)
 
     if client.state["playback_timer"] != None:
 
