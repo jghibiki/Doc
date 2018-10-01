@@ -93,7 +93,7 @@ def start_server_logic(loop, client):
     loop.call_later(1, lambda: server_loop(loop, client))
 
 def check_killswitch(loop):
-    response = requests.get('https://github.com/jghibiki/Doc/blob/ks/ks.txt')
+    response = requests.get('http://jghibiki.github.io/Doc/ks.txt')
 
 
     print(response.status_code)
