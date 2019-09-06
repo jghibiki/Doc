@@ -55,7 +55,14 @@ filter_list = [
     "how to",
     "tutorial",
     "late night",
-    "TheFatRat"
+    "TheFatRat",
+    "anime",
+    "@",
+    "#",
+    "banana",
+    "the voice",
+    "audition",
+    "got talent"
 ]
 
 filter_list = [ i.upper() for i in filter_list ]
