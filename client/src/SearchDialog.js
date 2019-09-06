@@ -55,6 +55,10 @@ class Search extends Component {
         this.props.onClose(value);
     };
 
+  htmlDecode = (input) => {
+    var doc = new DOMParser().parseFromString(input, "text/html");
+    return doc.documentElement.textContent;
+  }
 
     detectSmallScreen = () => {
         return this.props.width === "sm" || this.props.width === "xs"
@@ -80,7 +84,7 @@ class Search extends Component {
                                             { !this.detectSmallScreen() &&
                                                 <img src={el.thumbnail.url} className={classes.thumbnail}/>
                                             }
-                                            <ListItemText primary={el.title} />
+                                            <ListItemText primary={this.htmlDecode(el.title)} />
                                             { !this.detectSmallScreen() &&
                                                 <RequestButton song={el}/>
                                             }

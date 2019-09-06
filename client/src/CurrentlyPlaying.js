@@ -96,6 +96,11 @@ class CurrentlyPlaying extends Component {
                 var duration: null
             }
 
+            // fix title
+            if(data.payload !== null){
+              data.payload.title = this.htmlDecode(data.payload.title)
+            }
+
             this.setState({
                 currentlyPlaying: data.payload,
                 startDate: startDate,
@@ -135,6 +140,11 @@ class CurrentlyPlaying extends Component {
         });
     }
 
+
+    htmlDecode = (input) => {
+        var doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
 
     ticker_tape = () => {
         if (this.tickerTapeCounter >= this.state.currentlyPlaying.title.length){

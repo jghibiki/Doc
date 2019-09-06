@@ -85,7 +85,7 @@ class Player extends Component {
         return (
             <div>
                 { this.state.currentlyPlaying !== null && 
-                        <Iframe  width="100%" height="800" url={this.state.currentlyPlaying.autoplay_url} frameborder="0" display="flex" position="relative" allowfullscreen/>
+                        <Iframe  width="100%" height="800" url={this.state.currentlyPlaying.autoplay_url} frameborder="0" display="flex" position="relative" allow="autoplay" allowfullscreen/>
                 }   
                 { textContent }
                 <br/>

@@ -67,6 +67,11 @@ class Queue extends Component {
         return this.props.width === "sm" || this.props.width === "xs"
     }
 
+    htmlDecode = (input) => {
+        var doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
     render(){
         const { classes, theme } = this.props;
         return (
@@ -94,7 +99,7 @@ class Queue extends Component {
                                             { !this.detectSmallScreen() &&
                                                 <span>{"| "}</span>
                                             }
-                                            <ListItemText primary={el.title} />
+                                            <ListItemText primary={this.htmlDecode(el.title)} />
                                             { !this.detectSmallScreen() &&
                                                 <FavoriteButton song={el}/>
                                             }
