@@ -9,6 +9,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import withWidth from '@material-ui/core/withWidth';
+import Button from '@material-ui/core/Button';
 
 import RequestButton from './RequestButton.js';
 import FavoriteButton from './FavoriteButton.js';
@@ -40,7 +41,8 @@ class Queue extends Component {
         this.props = props;
 
         this.state = {
-            queue: []
+            queue: [],
+            showFullQueue: false
         }
 
         ws_client.subscribe("get.queue", data=>{
@@ -72,12 +74,25 @@ class Queue extends Component {
         return doc.documentElement.textContent;
     }
 
+    toggleFullQueue = () => {
+      this.setState({
+        showFullQueue: !this.state.showFullQueue
+      })
+    }
+
+  getQueue = () => {
+    if (this.state.showFullQueue){
+      return this.state.queue
+    }
+    return this.state.queue.slice(0, 10)
+  }
+
     render(){
         const { classes, theme } = this.props;
         return (
            <Card className={classes.card}>
                <div className={classes.details}>
-                    <CardContent className={classes.content}>
+                    <CardContent className={classes.content}  >
                         <Typography variant="headline" component="h2">
                           Queue
                         </Typography>
@@ -87,8 +102,8 @@ class Queue extends Component {
                             </Typography>
                         }
 
-                        <List>        
-                            {this.state.queue.slice(0, 10).map((el,idx)=>{
+                        <List style={{maxHeight:"800px", overflowY: "auto"}}>        
+                            {this.getQueue().map((el,idx)=>{
                                 return (
                                     <div>
                                         <ListItem spacing={5} key={el.id}>
@@ -111,6 +126,12 @@ class Queue extends Component {
                                 )
                             })}
                         </List>
+                    { this.state.queue.length > 10 &&
+                      <div><br/><Button primary onClick={()=>this.toggleFullQueue()}>
+                        { !this.state.showFullQueue && <span>Show Full Queue ({this.state.queue.length-10} more)</span> }
+                        { this.state.showFullQueue && <span>Hide Full Queue </span> }
+                      </Button></div>
+                    }
                     </CardContent>
                 </div>
             </Card>
