@@ -44,12 +44,12 @@ class Content extends Component {
     const { classes } = this.props
     return (
         <div className={classes.control}>
-            <Grid container spacing={16}>
+            <Grid container spacing={2}>
 
                 <Grid item xs={12} md={3} className={classes.flex}>
                     <Grid container className={classes.flex}>
                         <Grid item className={classes.flex}>
-                            <Grid container direction="column" spacing={16}>
+                            <Grid container direction="column" spacing={2}>
                                 <Grid item >
                                     <CurrentlyPlaying />
                                 </Grid>
@@ -68,7 +68,7 @@ class Content extends Component {
                 </Grid>
 
                 <Grid item xs={12} md={5}>
-                    <Grid container direction="column" spacing={16}>
+                    <Grid container direction="column" spacing={2}>
                         <Grid item >
                             <Queue />
                         </Grid>

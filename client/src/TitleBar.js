@@ -25,7 +25,7 @@ function TitleBar(props) {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="title" color="inherit" className={classes.flex}>
+          <Typography variant="h5" color="inherit" className={classes.flex}>
             Doc Music Player
           </Typography>
           <ListenerCount/>

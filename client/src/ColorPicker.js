@@ -14,7 +14,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import CheckIcon from '@material-ui/icons/Check';
-import Slider from '@material-ui/lab/Slider';
+import Slider from '@material-ui/core/Slider';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
@@ -42,18 +42,19 @@ const styles = theme => ({
   },
   swatch: {
     width: 192,
+    padding: 0,
   },
   sliderContainer: {
     display: 'flex',
     alignItems: 'center',
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit,
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
   },
   slider: {
     width: 'calc(100% - 80px)',
   },
   colorBar: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing(2),
   },
   colorSquare: {
     width: 64,
@@ -61,6 +62,8 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: theme.spacing(2),
+    padding: 0,
   },
 });
 
@@ -142,8 +145,7 @@ class ColorTool extends React.Component {
     const { primaryShade, secondaryShade } = this.state;
 
     const colorBar = color => {
-      const background = { main: color };
-      theme.palette.augmentColor(background);
+      const background = theme.palette.augmentColor({ main: color });
 
       return (
         <Grid container className={classes.colorBar}>
@@ -197,7 +199,7 @@ class ColorTool extends React.Component {
             />
             <Typography>{shades[intentShade]}</Typography>
           </div>
-          <div className={classes.swatch}>
+          <div className={classes.swatch} style={{padding: 0}}>
             {hues.map(hue => {
               const shade = intent === 'primary' ? shades[primaryShade] : shades[secondaryShade];
               const backgroundColor = colors[hue][shade];
@@ -211,6 +213,7 @@ class ColorTool extends React.Component {
                     value={hue}
                     name={intent}
                     aria-labelledby={`tooltip-${intent}-${hue}`}
+                    style={{padding: 0}}
                     icon={<div className={classes.radio} style={{ backgroundColor }} />}
                     checkedIcon={
                       <div className={classes.radioSelected} style={{ backgroundColor }}>
@@ -229,7 +232,7 @@ class ColorTool extends React.Component {
 
     return (
         <div>
-      <Grid container spacing={40} className={classes.root}>
+      <Grid container spacing={0} className={classes.root}>
         {colorPicker('primary')}
         {colorPicker('secondary')}
         <Grid item xs={12} sm={6} md={4}>

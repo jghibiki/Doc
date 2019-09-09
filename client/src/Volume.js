@@ -129,7 +129,7 @@ class Volume extends Component {
                             </div>
                         </Typography>
                         <br/>
-                        <Grid container spacing={16}>
+                        <Grid container spacing={2}>
                             <Grid item sm={3} >
                                 <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(-5)}>-5</Button>
                             </Grid>
@@ -143,7 +143,7 @@ class Volume extends Component {
                                 <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(+5)}>+5</Button>
                             </Grid>
                         </Grid>
-                        <Grid container spacing={16} >
+                        <Grid container spacing={2} >
                             <Grid item sm={3} >
                                 <Button variant="contained" color="primary" fullWidth className={classes.button}  onClick={this.sendSetVolume(-0.1)}>0%</Button>
                             </Grid>

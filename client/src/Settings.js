@@ -63,17 +63,7 @@ class Settings extends Component {
 
 
 
-    changeTheme(){
 
-        var theme = {
-            palette: {
-              primary: { main: green[500] }, // Purple and green play nicely together.
-              secondary: { main: '#11cb5f' }, // This is just green.A700 as hex.
-              type: "dark",
-            },
-        }
-
-    }
 
     render(){
         const { classes, theme } = this.props;
@@ -96,9 +86,6 @@ class Settings extends Component {
                     </AppBar>
                     <List>
                         <ListItem>
-                            <Button onClick={this.changeTheme}>
-                                Update Theme
-                            </Button>
                             <ColorTool />
                         </ListItem>
                         <Divider />
