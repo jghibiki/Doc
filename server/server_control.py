@@ -38,7 +38,7 @@ def filter_videos(videos, magic_mode=False):
                 return False
         if magic_mode:
             for f in magic_mode_filters:
-                if f in vid["title"].upper():
+                if f in videos["title"].upper():
                     return False
         return True
 
