@@ -26,11 +26,17 @@ class BroadcastServerProtocol(WebSocketServerProtocol):
     def onConnect(self, client):
         print("Client connecting: {}".format(client.peer))
         self.clients.append(client)
+        num_clients = self.getState("clients")+1 
+        self.setState("clients", num_clients)
+
+        self.factory.sendAll({"key": "get.listener_count", "payload": num_clients})
 
     def onClose(self, wasClean, code, reason):
         print("Client connection closed: {}".format(reason))
         self.factory.unregister(self)
-
+        num_clients = max(self.getState("clients")-1, 0)
+        self.setState("clients", num_clients)
+        self.factory.sendAll({"key": "get.listener_count", "payload": num_clients})
 
     def onMessage(self, payload, isBinary):
 
@@ -124,7 +130,9 @@ class BroadcastServerFactory(WebSocketServerFactory):
             "playing": True,
             "magic_mode": True,
             "duration_limit": None,
-            "history": []
+            "history": [],
+            "magic_mode_history": [],
+            "clients": 0,
         }
 
         self.clients = []

@@ -8,6 +8,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Settings from './Settings.js';
+import ListenerCount from './ListenerCount.js';
 
 const styles = {
   root: {
@@ -27,6 +28,7 @@ function TitleBar(props) {
           <Typography variant="title" color="inherit" className={classes.flex}>
             Doc Music Player
           </Typography>
+          <ListenerCount/>
           <Settings/>
         </Toolbar>
       </AppBar>

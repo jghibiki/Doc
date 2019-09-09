@@ -155,6 +155,14 @@ def get_history(client,req):
     })
 
 
+def get_listener_count(client, req):
+    client.sendTarget(req["id"],  payload={
+        "key": "get.listener_count",
+        "payload": client.getState("clients")
+    })
+
+
+
 
 ## Helpers
 
@@ -196,6 +204,8 @@ handlers = {
     "set.volume": [set_volume],
     "get.volume": [get_volume],
 
-    "get.history": [get_history]
+    "get.history": [get_history],
+
+    "get.listener_count": [get_listener_count],
 
 }
