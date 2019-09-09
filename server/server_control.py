@@ -14,6 +14,8 @@ import filters
 manual_filters = [ i.upper() for i in filters.manual ]
 magic_mode_filters = [ i.upper() for i in filters.magic_mode ]
 
+today = datetime.now()
+
 def filter_videos(videos, magic_mode=False):
 
     if type(videos) == list:
@@ -31,7 +33,7 @@ def filter_videos(videos, magic_mode=False):
         return valid_videos
 
     else:
-        for f in filter_list:
+        for f in manual_filters:
             if f in videos["title"].upper():
                 return False
         if magic_mode:
@@ -69,7 +71,16 @@ def check_killswitch(loop):
     loop.call_later(10 * 60, lambda: check_killswitch(loop))
 
 
+def check_auto_pause(client):
+    if client.state["playing"] and (today - datetime.now()).days > 0:
+        client.state["playing"] = False
+        client.sendAll(payload={
+            "key": "get.play_pause",
+            "payload": {"playing": False }
+        })
+
 def server_loop(loop, client):
+
 
     if client.state["playback_timer"] != None:
 
