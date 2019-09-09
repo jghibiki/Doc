@@ -6,75 +6,27 @@ import asyncio
 import isodate
 import requests
 
+
 import youtube_utils as yt
+import filters
 
-# list of video titles to filter
-filter_list = [
-    "havana",
-    "bts",
-    "watch mojo",
-    "top 5",
-    "top 10",
-    "top 12",
-    "top 100",
-    "top 25",
-    "kids react",
-    "youtubers react",
-    "teens react",
-    "life hack",
-    "react:",
-    "react to",
-    "youtubers",
-    "elders react",
-    "guess that song",
-    "celebs react",
-    "cats react"
-    "s react",
-    "lets play",
-    "let's play",
-    "letz play",
-    "lest play",
-    "let play"
-    "letsplay",
-    "reaction",
-    "adult video",
-    "porn",
-    "5 best",
-    "10 best",
-    "15 best",
-    "salvonic",
-    "just dance",
-    "Look at my Horse, my Horse is Amazing",
-    "minutes or less",
-    "O Holy Night worst rendition ever FUNNIEST SONG ON EARTH",
-    "moana",
-    "dwane johnson"
-    "x factor",
-    "videos",
-    "compilation",
-    "how to",
-    "tutorial",
-    "late night",
-    "TheFatRat",
-    "anime",
-    "@",
-    "#",
-    "banana",
-    "the voice",
-    "audition",
-    "got talent"
-]
 
-filter_list = [ i.upper() for i in filter_list ]
+manual_filters = [ i.upper() for i in filters.manual ]
+magic_mode_filters = [ i.upper() for i in filters.magic_mode ]
 
-def filter_videos(videos):
+def filter_videos(videos, magic_mode=False):
 
     if type(videos) == list:
         valid_videos = []
         for vid in videos:
-            for f in filter_list:
+            for f in manual_filters:
                 if f in vid["title"].upper():
                     continue
+            if magic_mode:
+                for f in magic_mode_filters:
+                    if f in vid["title"].upper():
+                        continue
+
             valid_videos.append(vid)
         return valid_videos
 
@@ -82,6 +34,10 @@ def filter_videos(videos):
         for f in filter_list:
             if f in videos["title"].upper():
                 return False
+        if magic_mode:
+            for f in magic_mode_filters:
+                if f in vid["title"].upper():
+                    return False
         return True
 
 def start_server_logic(loop, client):
@@ -94,6 +50,7 @@ def start_server_logic(loop, client):
     client.state["playback_timer"] = None
     client.state["magic_mode"] = True
     client.state["history"] = []
+    client.state["magic_mode_history"] = []
     client.state["duration_limit"] = True
     client.state["last_refresh"] = datetime.now()
 
@@ -173,6 +130,8 @@ def server_loop(loop, client):
 
                     # add song to history
                     client.state["history"].append(song)
+                    if filter_song(song["title"], magic_mode=True):
+                        client.state["magic_mode_history"].append(song)
 
                     client.sendAll({"key":"add.history", "payload": song})
                 else:
@@ -185,13 +144,13 @@ def server_loop(loop, client):
             print("Seeking related video...")
 
             # get random video from history
-            old_video = random.choice(client.state["history"])
+            old_video = random.choice(client.state["magic_mode_history"])
 
             # get related videos
             related_videos = yt.search_related_videos(old_video["id"])
 
             # filter related videos
-            valid_videos = filter_videos(related_videos)
+            valid_videos = filter_videos(related_videos, magic_mode=True)
 
             # choose related video
             new_video = random.choice(valid_videos[:10])
