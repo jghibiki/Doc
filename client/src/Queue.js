@@ -60,6 +60,14 @@ class Queue extends Component {
                 queue: queue
             });
         })
+
+        ws_client.subscribe("remove.queue", ()=>{
+            this.setState({
+              queue: []
+            });
+        });
+        
+
         
        ws_client.registerInitHook(()=>{
             ws_client.send({type:"command", key:"get.queue"});

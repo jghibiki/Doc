@@ -80,3 +80,6 @@ bower_components
 test_out/
 
 __pycache__/
+client/build/
+ 
+*.pyc

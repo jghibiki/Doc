@@ -73,6 +73,11 @@ def get_queue(client, req):
 
     return True
 
+def remove_queue(client, req):
+    client.setState("queue", [])
+    print("Clearning Queue")
+    return True
+
 def get_current_song(client, req):
     client.sendTarget(req["id"], {"key": "get.current_song", "payload": client.getState("current_song")})
 
@@ -189,6 +194,7 @@ handlers = {
 
     "add.queue": [add_queue],
     "get.queue": [get_queue],
+    "remove.queue": [remove_queue],
 
     "get.current_song": [get_current_song],
 
