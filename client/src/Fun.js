@@ -29,20 +29,27 @@ class Fun extends Component {
             limitOn: true
         }
 
-        var egg = new Egg("up,up,down,down,left,right,left,right,b,a", function() {
+        var egg = new Egg(atob("dXAsdXAsZG93bixkb3duLGxlZnQscmlnaHQsbGVmdCxyaWdodCxiLGE="), function() {
             ws_client.send({
                 type: "command",
                 key: "toggle.duration_limit"
             }, true);
         }).listen();
 
-        new Egg("left,o,x", ()=>{
+        new Egg(atob("bGVmdCxvLHg="), ()=>{
             setInterval(this.obnoxious, 500)
         }).listen();
 
-        new Egg("left,s", ()=>{
+        new Egg(atob("bGVmdCxz"), ()=>{
             alert("It's party time")
             document.body.classList.add("shake");
+        }).listen();
+
+        var egg = new Egg(atob("bGVmdCxjLGwsZSxhLHIscQ=="), function() {
+            ws_client.send({
+                type: "command",
+                key: "remove.queue"
+            }, true);
         }).listen();
 
 
