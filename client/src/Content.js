@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 // Material referances
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
 
 import Host from './Host.js';
 import CurrentlyPlaying from './CurrentlyPlaying.js';
@@ -83,6 +84,15 @@ class Content extends Component {
                 </Grid>
             </Grid>
             <Fun visibility="hidden" />
+            <div style={{"textAlign":"center"}}>
+              <Link 
+                target="_blank"
+                rel="noopener"
+                href="https://github.com/jghibiki/Doc/issues/new"
+              >
+                Feature Request / Report a Bug
+              </Link>
+            </div>
         </div>
     )
   }
