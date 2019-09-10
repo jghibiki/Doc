@@ -83,5 +83,7 @@ magic_mode = [
     "20 hours",
     "24 hours",
     "full soundtrack",
-    "full ost"
+    "full ost",
+    "b t s"
+
 ]
