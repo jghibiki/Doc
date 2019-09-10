@@ -150,7 +150,7 @@ def server_loop(loop, client):
             else:
                 print("Skipping - Invalid Video")
 
-        elif client.state["magic_mode"] and len(client.state["queue"]) == 0 and len(client.state["history"]) > 0:
+        elif client.state["magic_mode"] and len(client.state["queue"]) == 0 and len(client.state["magic_mode_history"]) > 0:
 
             print("Seeking related video...")
 
