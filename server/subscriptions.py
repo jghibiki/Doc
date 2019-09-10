@@ -107,6 +107,7 @@ def get_magic_mode(client, req):
 def remove_history(client, req):
 
     client.setState("history", [])
+    client.setState("magic_mode_history", [])
 
     print("Clearing History")
 
