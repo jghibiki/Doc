@@ -1,5 +1,6 @@
 
-let Host = "localhost"
-//let Host = "music.ndacm.org"
+//let Host = "localhost"
+let Host = "music.ndacm.org"
+
 
 export default Host 
