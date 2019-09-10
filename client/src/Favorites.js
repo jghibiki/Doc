@@ -77,7 +77,7 @@ class Favorites extends Component {
         this.loadFavorites(true);
         window.dirty_favorites = false;
 
-        new Egg("left,m,u,s,i,c", ()=> {
+        new Egg(atob("bGVmdCxtLHUscyxpLGM="), ()=> {
             this.setState({
                 playlistMode: !this.state.playlistMode
             })
