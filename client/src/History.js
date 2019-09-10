@@ -16,6 +16,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/styles';
 import Link from '@material-ui/core/Link';
+import Divider from '@material-ui/core/Divider';
 
 
 import RequestButton from './RequestButton.js';
@@ -45,26 +46,31 @@ const useStyles = makeStyles({
 const History = ()=> {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [history, setHistory] = React.useState([]);
+    const [setupFlag, setSetupFlag] = React.useState(false);
     const classes = useStyles();
+
+
+    if (!setupFlag){
+        ws_client.subscribe("get.history", data=>{
+            setHistory(data.payload);
+        });
         
+        ws_client.subscribe("add.history", data=>{
+            let _history = history.slice();
+            _history.push(data.payload);
+            setHistory(_history)         
+        })
 
-    ws_client.subscribe("get.history", data=>{
-        setHistory(data.payload);
-    });
-    
-    ws_client.subscribe("add.history", data=>{
-        let _history = history.slice();
-        _history.push(data.payload);
-        setHistory(_history)         
-    })
+        ws_client.subscribe("remove.history", ()=>{
+          setHistory([])
+        });
+        
+       ws_client.registerInitHook(()=>{
+            ws_client.send({type:"command", key:"get.history"});
+        });
 
-    ws_client.subscribe("remove.history", ()=>{
-      setHistory([])
-    });
-    
-   ws_client.registerInitHook(()=>{
-        ws_client.send({type:"command", key:"get.history"});
-    });
+       setSetupFlag(true)
+    }
 
 
   const detectSmallScreen = () => {
@@ -98,13 +104,11 @@ const History = ()=> {
                           return (
                               <div>
                                   <ListItem spacing={5} key={el.id} >
-                                      <span><b>{String(idx+1) + ". "}</b></span>
-                                      { !detectSmallScreen() &&
-                                          <span>{"| "}</span>
-                                      }
+                                      <span><b>{String(idx+1) + ". "}&nbsp;</b></span>
                                       { !detectSmallScreen() &&
                                           <img src={el.thumbnail.url} className={classes.thumbnail}/>
                                       }
+                                      &nbsp;
                                       <ListItemText primary={el.title}  /> 
                                       
                                       { !detectSmallScreen() &&
@@ -134,6 +138,7 @@ const History = ()=> {
                                         </MenuItem>
                                       </Menu>
                                   </ListItem>
+                                  { idx !== history.length-11 && <Divider /> }
                               </div>
                           )
                       }).slice(Math.max(0, history.length-11), history.length).reverse()}
