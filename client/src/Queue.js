@@ -10,6 +10,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import withWidth from '@material-ui/core/withWidth';
 import Button from '@material-ui/core/Button';
+import Link from '@material-ui/core/Link';
 
 import RequestButton from './RequestButton.js';
 import FavoriteButton from './FavoriteButton.js';
@@ -106,7 +107,7 @@ class Queue extends Component {
                             {this.getQueue().map((el,idx)=>{
                                 return (
                                     <div>
-                                        <ListItem spacing={5} key={el.id}>
+                                        <ListItem spacing={5} key={el.id} button component="a" href={"https://youtube.com/watch?v="+el.id} target="_blank">
                                             <span><b>{String(idx+1) + ". "}</b></span>
                                             { !this.detectSmallScreen() &&
                                                 <img src={el.thumbnail.url} className={classes.thumbnail}/>

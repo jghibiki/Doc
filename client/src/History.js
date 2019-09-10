@@ -94,7 +94,7 @@ class History extends Component {
                             {this.state.history.map((el,idx)=>{
                                 return (
                                     <div>
-                                        <ListItem spacing={5} key={el.id}>
+                                        <ListItem spacing={5} key={el.id} button component="a" href={"https://youtube.com/watch?v="+el.id} target="_blank">
                                             <span><b>{String(idx+1) + ". "}</b></span>
                                             { !this.detectSmallScreen() &&
                                                 <span>{"| "}</span>
