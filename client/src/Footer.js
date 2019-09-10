@@ -17,6 +17,7 @@ function Footer(props){
     <div className={classes.root} style={{"textAlign":"center"}}>
     <Link 
       component="button"
+      target="_blank"
       href="https://github.com/jghibiki/Doc/issues"
     >
       Feature Request / Report a Bug
