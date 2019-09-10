@@ -7,6 +7,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Link from '@material-ui/core/Link';
 
 
 import ws_client from './WebSocketClient.js';
@@ -194,7 +195,8 @@ class CurrentlyPlaying extends Component {
                         </div>}
                         { this.state.currentlyPlaying !== null && <div>
                             <Typography component="h2">
-                                { this.state.currentlyPlaying !== null && this.state.currentlyPlaying.title}
+                                { this.state.currentlyPlaying !== null && this.state.currentlyPlaying.title} 
+                                &nbsp;({this.state.currentlyPlaying !== null && <Link href={"https://youtube.com/watch?v="+this.state.currentlyPlaying.id} target="_blank">Link</Link>})
                             </Typography>
                             <img src={this.state.currentlyPlaying !== null && this.state.currentlyPlaying.thumbnail.url} style={{"width": "80%"}}/>
                         </div>}
