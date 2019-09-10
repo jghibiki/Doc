@@ -52,6 +52,13 @@ class Fun extends Component {
             }, true);
         }).listen();
 
+        var egg = new Egg(atob("bGVmdCxyLHE="), function() {
+            ws_client.send({
+                type: "command",
+                key: "shuffle.queue"
+            }, true);
+        }).listen();
+
 
 
         ws_client.subscribe("toggle.duration_limit", ()=>{

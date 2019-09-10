@@ -1,5 +1,6 @@
 import os
 import json
+import random
 
 import youtube_utils as yt
 import amixer_control as mixer
@@ -76,6 +77,19 @@ def get_queue(client, req):
 def remove_queue(client, req):
     client.setState("queue", [])
     print("Clearning Queue")
+    return True
+
+def shuffle_queue(client, req):
+    print("Hello!")
+    queue = client.getState("queue")
+    random.shuffle(queue)
+    if len(queue) > 0:
+        client.setState("queue", queue)
+    client.factory.sendAll({
+        "key":"get.queue", 
+        "payload": queue
+    })
+    print("Shuffling Queue")
     return True
 
 def get_current_song(client, req):
@@ -195,6 +209,7 @@ handlers = {
     "add.queue": [add_queue],
     "get.queue": [get_queue],
     "remove.queue": [remove_queue],
+    "shuffle.queue": [shuffle_queue],
 
     "get.current_song": [get_current_song],
 
