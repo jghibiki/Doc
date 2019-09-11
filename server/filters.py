@@ -86,4 +86,5 @@ magic_mode = [
     "full ost",
     "b t s",
     "b.t.s",
+    "live",
 ]
