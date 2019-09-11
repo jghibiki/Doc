@@ -21,9 +21,10 @@ def filter_videos(videos, magic_mode=False):
     if type(videos) == list:
         valid_videos = []
         for vid in videos:
-            failed = not any([ f in vid["title"].upper() for f in manual_filters])
+            failed = any([ f in vid["title"].upper() for f in manual_filters])
+
             if magic_mode and not failed:
-                failed = failed and any([f in vid["title"].upper()
+                failed = any([f in vid["title"].upper()
                     for f in magic_mode_filters])
 
             if not failed:
