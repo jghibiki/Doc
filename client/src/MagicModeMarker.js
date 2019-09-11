@@ -8,7 +8,7 @@ import MagicModeMarkerDialog from './MagicModeMarkerDialog.js'
 
 const MagicModeMarker = (props) => {
     const [dialogOpen, setDialogOpen] = React.useState(false);
-    const [video, setVideo] = React.useState(props.video);
+    const [video, setVideo] = React.useState(props.video || null);
 
     const handleOpen = () => {
         setDialogOpen(true)
@@ -18,13 +18,22 @@ const MagicModeMarker = (props) => {
         setDialogOpen(false)
     }
 
+    if(video !== null){
+        return (
+            <div>
+                <Chip avatar={<Avatar><AllInclusiveIcon/></Avatar>} onClick={handleOpen} label="Magic Mode" />
+                <MagicModeMarkerDialog open={dialogOpen} onClose={handleClose} video={video}/>
+            </div>
+        )
+    }
+    else{
+        return (
+            <div>
+                <Chip avatar={<Avatar><AllInclusiveIcon/></Avatar>} label="Magic Mode" />
+            </div>
+        )
 
-    return (
-        <div>
-            <Chip avatar={<Avatar><AllInclusiveIcon/></Avatar>} onClick={handleOpen} label="Magic Mode" />
-            <MagicModeMarkerDialog open={dialogOpen} onClose={handleClose} video={video}/>
-        </div>
-    )
+    }
 }
 
 export default MagicModeMarker

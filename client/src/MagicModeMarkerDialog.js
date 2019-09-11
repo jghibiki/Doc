@@ -77,7 +77,7 @@ class MagicModeMarkerDialog extends Component {
 
                         { video.magic_mode !== undefined && video.magic_mode.map( (vid, idx) => {
                                 return (
-                                    <ListItem >
+                                    <ListItem key={vid.played_at+vid.id}>
                                         <Avatar>
                                             {video.magic_mode.length-idx}
                                         </Avatar>

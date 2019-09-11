@@ -44,33 +44,38 @@ const useStyles = makeStyles({
 
 
 const History = ()=> {
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [history, setHistory] = React.useState([]);
-    const [setupFlag, setSetupFlag] = React.useState(false);
+
     const classes = useStyles();
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    
+    const [playbackHistory, setPlaybackHistory] = React.useState([]);
+
+    const [setupFlag, setSetupFlag] = React.useState(false);
 
 
-    if (!setupFlag){
-        ws_client.subscribe("get.history", data=>{
-            setHistory(data.payload);
-        });
-        
-        ws_client.subscribe("add.history", data=>{
-            let _history = history.slice();
-            _history.push(data.payload);
-            setHistory(_history)         
-        })
+    const get_history = data=>{
+        setPlaybackHistory(data.payload);
+    }
 
-        ws_client.subscribe("remove.history", ()=>{
-          setHistory([])
-        });
+    const add_history = data=>{
+        setPlaybackHistory(_h => [..._h, data.payload])
+    }
+
+    const remove_history = ()=>{
+      setPlaybackHistory([])
+    }
+    
+    React.useEffect(()=>{
+
+       ws_client.subscribe("get.history", get_history);
+       ws_client.subscribe("add.history", add_history)
+       ws_client.subscribe("remove.history", remove_history);
         
        ws_client.registerInitHook(()=>{
             ws_client.send({type:"command", key:"get.history"});
         });
 
-       setSetupFlag(true)
-    }
+    }, [])
 
 
   const detectSmallScreen = () => {
@@ -88,21 +93,21 @@ const History = ()=> {
 
   return (
      <Card className={classes.card}>
-         <div className={classes.details}>
-              <CardContent className={classes.content}>
+          <CardContent className={classes.content}>
+             <div className={classes.details}>
                   <Typography variant="headline" component="h2">
                       History
                   </Typography>
-                  { history.length === 0 &&
+                  { (playbackHistory === null || playbackHistory.length === 0 ) &&
                       <Typography component="p">
-                          Nothing in history.
+                          Nothing in playbackHistory.
                       </Typography>
                   }
 
                   <List>        
-                      {history.map((el,idx)=>{
+                      { playbackHistory !== null && playbackHistory.map((el,idx)=>{
                           return (
-                              <div>
+                              <div key={el.played_at+el.id}>
                                   <ListItem spacing={5} key={el.id} >
                                       <span><b>{String(idx+1) + ". "}&nbsp;</b></span>
                                       { !detectSmallScreen() &&
@@ -117,7 +122,6 @@ const History = ()=> {
                                           </div>
                                       }
                                       <IconButton aria-label="more"
-                                        aria-controls="long-menu"
                                         aria-haspopup="true"
                                         aria-controls="simple-menu-{el.id}" 
                                         onClick={menuOpen}
@@ -125,7 +129,7 @@ const History = ()=> {
                                         <MoreVertIcon />
                                       </IconButton>
                                       <Menu id="simple-menu-{el.id}" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={menuClose}>
-                                        <MenuItem onclick={menuClose}>
+                                        <MenuItem onClick={menuClose}>
                                           <Link href={"https://youtube.com/watch?v="+el.id} target="_blank">
                                             Open on Youtube
                                           </Link>
@@ -138,13 +142,13 @@ const History = ()=> {
                                         </MenuItem>
                                       </Menu>
                                   </ListItem>
-                                  { idx !== history.length-11 && <Divider /> }
+                                  { idx !== playbackHistory.length-11 && <Divider /> }
                               </div>
                           )
-                      }).slice(Math.max(0, history.length-11), history.length).reverse()}
+                      }).slice(Math.max(0, playbackHistory.length-11), playbackHistory.length).reverse()}
                   </List>
-              </CardContent>
-          </div>
+              </div>
+          </CardContent>
       </Card>
   )
 }
