@@ -161,6 +161,10 @@ def server_loop(loop, client):
             # filter related videos
             valid_videos = filter_videos(related_videos, magic_mode=True)
 
+            if len(valid_videos) == 0:
+                loop.call_later(1, lambda: server_loop(loop, client))
+                return
+
             # choose related video
             new_video = random.choice(valid_videos[:10])
 
