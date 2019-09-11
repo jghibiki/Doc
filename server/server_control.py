@@ -21,15 +21,13 @@ def filter_videos(videos, magic_mode=False):
     if type(videos) == list:
         valid_videos = []
         for vid in videos:
-            for f in manual_filters:
-                if f in vid["title"].upper():
-                    continue
-            if magic_mode:
-                for f in magic_mode_filters:
-                    if f in vid["title"].upper():
-                        continue
+            failed = not any([ f in vid["title"].upper() for f in manual_filters])
+            if magic_mode and not failed:
+                failed = failed and any([f in vid["title"].upper()
+                    for f in magic_mode_filters])
 
-            valid_videos.append(vid)
+            if not failed:
+                valid_videos.append(vid)
         return valid_videos
 
     else:
@@ -180,7 +178,10 @@ def server_loop(loop, client):
                 video_details = yt.get_video(new_video["id"])
 
                 # record parent and grandparents
-                video_details["magic_mode"] = [ old_video, *old_video.get("magic_mode", []) ]
+                mm_history = old_video.get("magic_mode", [])
+                if hasattr(old_video, "magic_mode"):
+                    del old_video["magic_mode"]
+                video_details["magic_mode"] = [ old_video, *mm_history ]
 
                 # set auto_queued flag
                 video_details["auto_queued"] = True
