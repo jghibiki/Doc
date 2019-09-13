@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';     
+import Link from '@material-ui/core/Link';     
 
 
 import ws_client from './WebSocketClient.js';
@@ -33,9 +33,9 @@ class RequestButton extends Component {
     render(){
         const { classes, theme } = this.props;
         return (
-            <Button primary onClick={()=>this.sendRequest()}>
+            <Link onClick={()=>this.sendRequest()}>
                 Request
-            </Button>
+            </Link>
         )
     }
 }

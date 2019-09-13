@@ -17,8 +17,11 @@ class WebSocketClient {
             once: {},
             init_hooks: [],
             inited: false,
-            debug: false 
+            debug: false ,
+            closed: false
         };
+
+        window.ws_client = this;
     }
 
     init(ip, port){
@@ -219,17 +222,33 @@ class WebSocketClient {
     }
 
     resetConnection(){
-        if (this.state.reset_timer === null){
-            this.state.reset_timer = setInterval(() => {
+        if (this.state.reset_timer === null && !this.state.closed){
+            this.state.reset_timer = setInterval((() => {
                 console.log("Attempting to reconnect...");
                 console.log(this.state.reset_timer);
+                this.state.inited = false;
                 this.init(this.state.factory, this.state.ip, this.state.port);
-            }, 5000);
+            }).bind(this), 5000);
         }
     }
+
+  close(){
+    if(!this.state.closed){
+      this.ws.close();
+      this.state.closed = true;
+    }
+  }
+
 }
 
 const ws_client = new WebSocketClient();
-ws_client.init(Host, "8081");
+
+window.addEventListener('load', (event) => {
+  ws_client.init(Host, "8081");
+});
+
+window.addEventListener('unload', function(event) {
+  ws_client.close();
+});
 
 export default ws_client

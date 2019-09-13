@@ -44,38 +44,46 @@ const useStyles = makeStyles({
 
 
 const History = ()=> {
-
-    const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
-    
-    const [playbackHistory, setPlaybackHistory] = React.useState([]);
-
-    const [setupFlag, setSetupFlag] = React.useState(false);
-
-
-    const get_history = data=>{
-        setPlaybackHistory(data.payload);
-    }
-
-    const add_history = data=>{
-        setPlaybackHistory(_h => [..._h, data.payload])
-    }
-
-    const remove_history = ()=>{
-      setPlaybackHistory([])
-    }
-    
-    React.useEffect(()=>{
-
-       ws_client.subscribe("get.history", get_history);
-       ws_client.subscribe("add.history", add_history)
-       ws_client.subscribe("remove.history", remove_history);
+    const [history, setHistory] = React.useState([]);
+    const [partialHistory, setPartialHistory] = React.useState([]);
+    const [partialHistoryIdx, setPartialHistoryIdx] = React.useState(0);
+    const [menuVideo, setMenuVideo] = React.useState(null);
+    const classes = useStyles();
         
-       ws_client.registerInitHook(()=>{
-            ws_client.send({type:"command", key:"get.history"});
-        });
 
-    }, [])
+    React.useEffect(()=>{
+      ws_client.subscribe("get.history", data=>{
+          setHistory(data.payload);
+
+          var part = data.payload.slice(Math.max(0, data.payload.length-11), data.payload.length).reverse()
+          setPartialHistoryIdx(data.payload.length)
+          setPartialHistory(part)
+      });
+      
+      ws_client.subscribe("add.history", data=>{
+          let _history = history.slice();
+          _history.push(data.payload);
+          setHistory(_history)         
+
+          let part = partialHistory.slice();
+          part.splice(0,0, data.payload);
+          part.pop();
+          setPartialHistoryIdx(partialHistoryIdx+1)
+          setPartialHistory(part)
+      })
+
+      ws_client.subscribe("remove.history", ()=>{
+        setHistory([])
+
+        setPartialHistoryIdx(0)
+        setPartialHistory([])
+      });
+      
+     ws_client.registerInitHook(()=>{
+          ws_client.send({type:"command", key:"get.history"});
+      });
+  }, [])
 
 
   const detectSmallScreen = () => {
@@ -83,12 +91,14 @@ const History = ()=> {
       return width === "sm" || width === "xs"
   }
 
-  const menuOpen = (event) =>{
+  const menuOpen = (event, vid) =>{
+    setMenuVideo(vid)
     setAnchorEl(event.currentTarget); 
   }
 
   const menuClose = (event) =>{
     setAnchorEl(null);
+    setMenuVideo(null)
   }
 
   return (
@@ -98,18 +108,21 @@ const History = ()=> {
                   <Typography variant="headline" component="h2">
                       History
                   </Typography>
-                  { (playbackHistory === null || playbackHistory.length === 0 ) &&
+                  { (partialHistory === null || partialHistory.length === 0 ) &&
                       <Typography component="p">
-                          Nothing in playbackHistory.
+                          Nothing in playback history.
                       </Typography>
                   }
 
                   <List>        
-                      { playbackHistory !== null && playbackHistory.map((el,idx)=>{
+                      {partialHistory.map((el,idx)=>{
                           return (
                               <div key={el.played_at+el.id}>
                                   <ListItem spacing={5} key={el.id} >
-                                      <span><b>{String(idx+1) + ". "}&nbsp;</b></span>
+                                      <span><b>{String(partialHistoryIdx+1-idx) + ". "}</b></span>
+                                      { !detectSmallScreen() &&
+                                          <span>{"| "}</span>
+                                      }
                                       { !detectSmallScreen() &&
                                           <img src={el.thumbnail.url} className={classes.thumbnail}/>
                                       }
@@ -124,29 +137,35 @@ const History = ()=> {
                                       <IconButton aria-label="more"
                                         aria-haspopup="true"
                                         aria-controls="simple-menu-{el.id}" 
-                                        onClick={menuOpen}
+                                        onClick={(e)=>{menuOpen(e, el)}}
                                       >
                                         <MoreVertIcon />
                                       </IconButton>
-                                      <Menu id="simple-menu-{el.id}" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={menuClose}>
-                                        <MenuItem onClick={menuClose}>
-                                          <Link href={"https://youtube.com/watch?v="+el.id} target="_blank">
-                                            Open on Youtube
-                                          </Link>
-                                        </MenuItem>
-                                        <MenuItem>
-                                          <RequestButton song={el}/>
-                                        </MenuItem>
-                                        <MenuItem>
-                                          <FavoriteButton song={el}/>
-                                        </MenuItem>
-                                      </Menu>
                                   </ListItem>
-                                  { idx !== playbackHistory.length-11 && <Divider /> }
+                                  { idx !== partialHistory.length-11 && <Divider /> }
                               </div>
                           )
-                      }).slice(Math.max(0, playbackHistory.length-11), playbackHistory.length).reverse()}
+                      })}
                   </List>
+                  <Menu id="simple-menu-history-options" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={menuClose}>
+                    <MenuItem onclick={menuClose}>
+                      { menuVideo !== null &&
+                        <Link href={"https://youtube.com/watch?v="+menuVideo.id} target="_blank">
+                          Open on Youtube
+                        </Link>
+                      }
+                    </MenuItem>
+                    <MenuItem>
+                      { menuVideo !== null &&
+                        <RequestButton song={menuVideo}/>
+                      }
+                    </MenuItem>
+                    <MenuItem>
+                      { menuVideo !== null &&
+                        <FavoriteButton song={menuVideo}/>
+                      }
+                    </MenuItem>
+                  </Menu>
               </div>
           </CardContent>
       </Card>
