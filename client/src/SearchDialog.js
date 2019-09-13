@@ -16,6 +16,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import withWidth from '@material-ui/core/withWidth';
+import Divider from '@material-ui/core/Divider';
 
 import RequestButton from './RequestButton.js';
 import FavoriteButton from './FavoriteButton.js';
@@ -78,16 +79,18 @@ class Search extends Component {
                                     <div>
                                         <ListItem spacing={5} key={el.id}>
                                             <span><b>{String(idx+1) + ". "}</b></span>
-                                            { !this.detectSmallScreen() &&
-                                                <span>{"| "}</span>
-                                            }
+                                            &nbsp;
                                             { !this.detectSmallScreen() &&
                                                 <img src={el.thumbnail.url} className={classes.thumbnail}/>
                                             }
+                                            &nbsp;
                                             <ListItemText primary={this.htmlDecode(el.title)} />
                                             { !this.detectSmallScreen() &&
                                                 <RequestButton song={el}/>
                                             }
+                                            &nbsp;
+                                            &nbsp;
+                                            &nbsp;
                                             { !this.detectSmallScreen() &&
                                                 <FavoriteButton song={el}/>
                                             }
@@ -98,6 +101,7 @@ class Search extends Component {
                                                 <FavoriteButton song={el}/>
                                             </div>
                                         }
+                                        { idx !== searchResults.length-1 && <Divider/>}
                                     </div>
                                 )
                             })}
