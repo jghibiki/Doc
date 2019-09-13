@@ -62,15 +62,8 @@ const History = ()=> {
       });
       
       ws_client.subscribe("add.history", data=>{
-          let _history = history.slice();
-          _history.push(data.payload);
-          setHistory(_history)         
+        setHistory(h=>{return [...h, data.payload]})
 
-          let part = partialHistory.slice();
-          part.splice(0,0, data.payload);
-          part.pop();
-          setPartialHistoryIdx(partialHistoryIdx+1)
-          setPartialHistory(part)
       })
 
       ws_client.subscribe("remove.history", ()=>{
@@ -84,6 +77,12 @@ const History = ()=> {
           ws_client.send({type:"command", key:"get.history"});
       });
   }, [])
+
+  React.useEffect(()=>{
+    var part = history.slice(Math.max(0, history.length-11), history.length).reverse()
+    setPartialHistoryIdx(part.length)
+    setPartialHistory(part)
+  }, [history])
 
 
   const detectSmallScreen = () => {
@@ -120,9 +119,7 @@ const History = ()=> {
                               <div key={el.played_at+el.id}>
                                   <ListItem spacing={5} key={el.id} >
                                       <span><b>{String(partialHistoryIdx+1-idx) + ". "}</b></span>
-                                      { !detectSmallScreen() &&
-                                          <span>{"| "}</span>
-                                      }
+                                      &nbsp;
                                       { !detectSmallScreen() &&
                                           <img src={el.thumbnail.url} className={classes.thumbnail}/>
                                       }
@@ -142,7 +139,7 @@ const History = ()=> {
                                         <MoreVertIcon />
                                       </IconButton>
                                   </ListItem>
-                                  { idx !== partialHistory.length-11 && <Divider /> }
+                                  { idx !== partialHistory.length-1 && <Divider /> }
                               </div>
                           )
                       })}
