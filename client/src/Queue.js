@@ -53,7 +53,6 @@ function Queue(){
 
     ws_client.subscribe("get.queue", data=>{
       setQueue(data.payload)
-      updateDisplayQueue()
     });
     
     ws_client.subscribe("add.queue", data=>{
@@ -73,7 +72,12 @@ function Queue(){
   }, [])
 
   React.useEffect(()=>{
-    updateDisplayQueue()
+    if (showFullQueue){
+      setDisplayQueue(queue)
+    }
+    else{
+      setDisplayQueue(queue.slice(0, 10))
+    }
   }, [queue, showFullQueue])
 
   const detectSmallScreen = () => {
@@ -90,12 +94,6 @@ function Queue(){
     setShowFullQueue(!showFullQueue)
   }
 
-  const updateDisplayQueue = () => {
-    if (showFullQueue){
-      setDisplayQueue(queue)
-    }
-    setDisplayQueue(queue.slice(0, 10))
-  }
 
   const menuOpen = (event, vid) =>{
     setMenuVideo(vid)
