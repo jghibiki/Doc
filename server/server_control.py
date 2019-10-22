@@ -140,7 +140,7 @@ def server_loop(loop, client):
 
                     # add song to history
                     client.state["history"].append(song)
-                    if filter_videos(song, magic_mode=True):
+                    if filter_videos(song, magic_mode=True) and not hasattr(song, "magic_mode"):
                         client.state["magic_mode_history"].append(song)
 
                     client.sendAll({"key":"add.history", "payload": song})
