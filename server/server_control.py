@@ -140,7 +140,7 @@ def server_loop(loop, client):
 
                     # add song to history
                     client.state["history"].append(song)
-                    if filter_videos(song, magic_mode=True) and not hasattr(song, "magic_mode"):
+                    if filter_videos(song, magic_mode=True) and not hasattr(song, "auto_queued"):
                         client.state["magic_mode_history"].append(song)
 
                     client.sendAll({"key":"add.history", "payload": song})
@@ -154,7 +154,8 @@ def server_loop(loop, client):
             print("Seeking related video...")
 
             # get random video from history
-            old_video = random.choice(client.state["magic_mode_history"])
+            options = list(filter(lambda e:not hasattr(e, "auto_queued"), client.stat["magic_mode_history"]))
+            old_video = random.choice(options)
 
             # get related videos
             related_videos = yt.search_related_videos(old_video["id"])
