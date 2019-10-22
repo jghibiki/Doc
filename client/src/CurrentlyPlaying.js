@@ -51,7 +51,12 @@ class CurrentlyPlaying extends Component {
 
                 var startDate = Date.parse(data.payload.song.played_at);
                 var endDate = Date.parse(data.payload.song.ends_at);
-                var duration = endDate - startDate;
+                var clientSideDate = Date.now();
+
+                var offset = clientSideDate - startDate
+                console.log("client offset", offset)
+
+                var duration = (endDate+offset) - startDate;
 
                 notify.show("Now Playing: " + data.payload.song.title);
             }
@@ -173,9 +178,12 @@ class CurrentlyPlaying extends Component {
             return
         }
 
+        var value = (( Date.now()-this.state.startDate )/this.state.duration)*100
+        var clip = Math.min(value, 100.0)
+
+
         this.setState({
-            progress: (( Date.now()-this.state.startDate )/this.state.duration)*100
-        })
+          progress: clip   })
 
     }
 

@@ -56,9 +56,9 @@ const History = ()=> {
       ws_client.subscribe("get.history", data=>{
           setHistory(data.payload);
 
-          var part = data.payload.slice(Math.max(0, data.payload.length-11), data.payload.length).reverse()
-          setPartialHistoryIdx(data.payload.length)
-          setPartialHistory(part)
+         // var part = data.payload.slice(Math.max(0, data.payload.length-11), data.payload.length).reverse()
+         // setPartialHistoryIdx(data.payload.length)
+         // setPartialHistory(part)
       });
       
       ws_client.subscribe("add.history", data=>{
@@ -69,8 +69,8 @@ const History = ()=> {
       ws_client.subscribe("remove.history", ()=>{
         setHistory([])
 
-        setPartialHistoryIdx(0)
-        setPartialHistory([])
+        //setPartialHistoryIdx(0)
+        //setPartialHistory([])
       });
       
      ws_client.registerInitHook(()=>{
@@ -80,7 +80,7 @@ const History = ()=> {
 
   React.useEffect(()=>{
     var part = history.slice(Math.max(0, history.length-11), history.length).reverse()
-    setPartialHistoryIdx(part.length)
+    setPartialHistoryIdx(history.length)
     setPartialHistory(part)
   }, [history])
 
@@ -118,7 +118,7 @@ const History = ()=> {
                           return (
                               <div key={el.played_at+el.id}>
                                   <ListItem spacing={5} key={el.id} >
-                                      <span><b>{String(partialHistoryIdx+1-idx) + ". "}</b></span>
+                                      <span><b>{String(partialHistoryIdx-idx) + ". "}</b></span>
                                       &nbsp;
                                       { !detectSmallScreen() &&
                                           <img src={el.thumbnail.url} className={classes.thumbnail}/>
@@ -139,7 +139,7 @@ const History = ()=> {
                                         <MoreVertIcon />
                                       </IconButton>
                                   </ListItem>
-                                  { idx !== partialHistory.length-1 && <Divider /> }
+                                  { idx !== partialHistory.length && <Divider /> }
                               </div>
                           )
                       })}
