@@ -154,7 +154,8 @@ def server_loop(loop, client):
             print("Seeking related video...")
 
             # get random video from history
-            options = list(filter(lambda e:not hasattr(e, "auto_queued"), client.stat["magic_mode_history"]))
+            options = list(filter(lambda e:not e.get("auto_queued", False), client.state["magic_mode_history"]))
+            print("options", options)
             old_video = random.choice(options)
 
             # get related videos
